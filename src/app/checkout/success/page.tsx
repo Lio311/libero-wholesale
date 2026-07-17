@@ -1,6 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function CheckoutSuccessPage() {
   return (
@@ -13,9 +14,12 @@ export default function CheckoutSuccessPage() {
         תודה רבה על הזמנתך. ההזמנה שלך התקבלה ונמצאת בטיפול. סיכום הזמנה מלא נשלח אליך למייל.
       </p>
       <div className="flex flex-wrap gap-4 justify-center">
-        <Button asChild size="lg" className="rounded-full font-bold h-14 px-8 text-lg">
-          <Link href="/catalog">חזרה לקטלוג</Link>
-        </Button>
+        <Link 
+          href="/catalog"
+          className={cn(buttonVariants({ size: "lg" }), "rounded-full font-bold h-14 px-8 text-lg")}
+        >
+          חזרה לקטלוג
+        </Link>
       </div>
     </div>
   );
