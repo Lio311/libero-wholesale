@@ -14,6 +14,20 @@ export async function createProduct(formData: FormData) {
     const imageUrl = formData.get("imageUrl") as string || null;
     const price = parseFloat(formData.get("price") as string);
     const stockQuantity = parseInt(formData.get("stockQuantity") as string, 10);
+    
+    // New fields
+    const nameHe = formData.get("nameHe") as string || null;
+    const brandHe = formData.get("brandHe") as string || null;
+    const modelHe = formData.get("modelHe") as string || null;
+    const isBackToStock = formData.get("isBackToStock") === "true";
+    const isOnSale = formData.get("isOnSale") === "true";
+    const isOfficialImporter = formData.get("isOfficialImporter") === "true";
+    
+    const priceDropPriceStr = formData.get("priceDropPrice") as string;
+    const priceDropPrice = priceDropPriceStr ? parseFloat(priceDropPriceStr).toString() : null;
+    
+    const testerRatioStr = formData.get("testerRatio") as string;
+    const testerRatio = testerRatioStr ? parseInt(testerRatioStr, 10) : null;
 
     if (!name || isNaN(price)) {
       return { error: "Missing required fields or invalid format." };
@@ -27,6 +41,14 @@ export async function createProduct(formData: FormData) {
       imageUrl,
       price: price.toString(),
       stockQuantity: isNaN(stockQuantity) ? 0 : stockQuantity,
+      nameHe,
+      brandHe,
+      modelHe,
+      isBackToStock,
+      isOnSale,
+      isOfficialImporter,
+      priceDropPrice,
+      testerRatio,
       status: "active",
     });
 
@@ -49,6 +71,20 @@ export async function updateProduct(id: string, formData: FormData) {
     const priceStr = formData.get("price") as string;
     const stockStr = formData.get("stockQuantity") as string;
     
+    // New fields
+    const nameHe = formData.get("nameHe") as string || null;
+    const brandHe = formData.get("brandHe") as string || null;
+    const modelHe = formData.get("modelHe") as string || null;
+    const isBackToStock = formData.get("isBackToStock") === "true";
+    const isOnSale = formData.get("isOnSale") === "true";
+    const isOfficialImporter = formData.get("isOfficialImporter") === "true";
+    
+    const priceDropPriceStr = formData.get("priceDropPrice") as string;
+    const priceDropPrice = priceDropPriceStr ? parseFloat(priceDropPriceStr).toString() : null;
+    
+    const testerRatioStr = formData.get("testerRatio") as string;
+    const testerRatio = testerRatioStr ? parseInt(testerRatioStr, 10) : null;
+
     if (!name) return { error: "Name is required." };
 
     const updateData: any = {
@@ -56,9 +92,20 @@ export async function updateProduct(id: string, formData: FormData) {
       barcode,
       brand,
       model,
-      imageUrl,
+      nameHe,
+      brandHe,
+      modelHe,
+      isBackToStock,
+      isOnSale,
+      isOfficialImporter,
+      priceDropPrice,
+      testerRatio,
       updatedAt: new Date(),
     };
+    
+    if (imageUrl) {
+      updateData.imageUrl = imageUrl;
+    }
 
     if (priceStr) {
       updateData.price = parseFloat(priceStr).toString();
@@ -80,9 +127,6 @@ export async function updateProduct(id: string, formData: FormData) {
 
 export async function deleteProduct(id: string) {
   try {
-    // Instead of deleting, we can change status or physically delete
-    // We'll physically delete here if it doesn't break foreign keys (like orders)
-    // Actually, marking as archived is safer, but for now we'll delete.
     await db.delete(products).where(eq(products.id, id));
 
     revalidatePath("/admin/products");

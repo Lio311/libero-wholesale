@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +12,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import { createProduct, updateProduct } from "./actions";
@@ -25,6 +25,14 @@ interface ProductRow {
   price: string | number;
   stockQuantity: number;
   imageUrl: string | null;
+  nameHe?: string | null;
+  brandHe?: string | null;
+  modelHe?: string | null;
+  isBackToStock?: boolean;
+  isOnSale?: boolean;
+  isOfficialImporter?: boolean;
+  priceDropPrice?: string | null;
+  testerRatio?: number | null;
 }
 
 interface ProductDialogProps {
@@ -36,8 +44,22 @@ interface ProductDialogProps {
 export function ProductDialog({ product, open, onOpenChange }: ProductDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [base64Image, setBase64Image] = useState<string | null>(null);
 
   const isEditing = !!product;
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBase64Image(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setBase64Image(null);
+    }
+  };
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -46,6 +68,12 @@ export function ProductDialog({ product, open, onOpenChange }: ProductDialogProp
 
     const formData = new FormData(e.currentTarget);
     
+    if (base64Image) {
+      formData.set("imageUrl", base64Image);
+    } else if (product?.imageUrl) {
+      formData.set("imageUrl", product.imageUrl);
+    }
+
     let res;
     if (isEditing && product) {
       res = await updateProduct(product.id, formData);
@@ -58,13 +86,14 @@ export function ProductDialog({ product, open, onOpenChange }: ProductDialogProp
     if (res?.error) {
       setError(res.error);
     } else {
+      setBase64Image(null);
       onOpenChange(false);
     }
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] bg-card border-border rounded-2xl shadow-xl">
+      <DialogContent className="sm:max-w-[700px] bg-card border-border rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{isEditing ? "ערוך מוצר" : "הוסף מוצר חדש"}</DialogTitle>
           <DialogDescription>
@@ -72,38 +101,93 @@ export function ProductDialog({ product, open, onOpenChange }: ProductDialogProp
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={onSubmit}>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right font-medium">שם מוצר</Label>
-              <Input id="name" name="name" defaultValue={product?.name || ""} className="col-span-3 rounded-xl border-border bg-background" required />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+            
+            {/* Right Column (General) */}
+            <div className="space-y-4">
+              <h4 className="font-semibold text-sm text-muted-foreground border-b pb-1">פרטים בסיסיים</h4>
+              
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right font-medium text-xs">שם (אנגלית)</Label>
+                <Input id="name" name="name" defaultValue={product?.name || ""} className="col-span-3 rounded-xl border-border bg-background" required />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="nameHe" className="text-right font-medium text-xs">שם (עברית)</Label>
+                <Input id="nameHe" name="nameHe" defaultValue={product?.nameHe || ""} className="col-span-3 rounded-xl border-border bg-background" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="brand" className="text-right font-medium text-xs">מותג (אנגלית)</Label>
+                <Input id="brand" name="brand" defaultValue={product?.brand || ""} className="col-span-3 rounded-xl border-border bg-background" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="brandHe" className="text-right font-medium text-xs">מותג (עברית)</Label>
+                <Input id="brandHe" name="brandHe" defaultValue={product?.brandHe || ""} className="col-span-3 rounded-xl border-border bg-background" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="model" className="text-right font-medium text-xs">דגם (אנגלית)</Label>
+                <Input id="model" name="model" defaultValue={product?.model || ""} className="col-span-3 rounded-xl border-border bg-background" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="modelHe" className="text-right font-medium text-xs">דגם (עברית)</Label>
+                <Input id="modelHe" name="modelHe" defaultValue={product?.modelHe || ""} className="col-span-3 rounded-xl border-border bg-background" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="barcode" className="text-right font-medium text-xs">מק״ט/ברקוד</Label>
+                <Input id="barcode" name="barcode" defaultValue={product?.barcode || ""} className="col-span-3 rounded-xl border-border bg-background" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="imageUpload" className="text-right font-medium text-xs">העלאת תמונה</Label>
+                <Input id="imageUpload" type="file" accept="image/*" onChange={handleImageChange} className="col-span-3 rounded-xl border-border bg-background text-xs" />
+              </div>
+              {(base64Image || product?.imageUrl) && (
+                <div className="flex justify-center mt-2">
+                  <img src={base64Image || product?.imageUrl || ""} alt="Preview" className="h-20 w-20 object-contain rounded-md border p-1 bg-white" />
+                </div>
+              )}
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="brand" className="text-right font-medium">מותג</Label>
-              <Input id="brand" name="brand" defaultValue={product?.brand || ""} className="col-span-3 rounded-xl border-border bg-background" />
+
+            {/* Left Column (Pricing & Badges) */}
+            <div className="space-y-4">
+              <h4 className="font-semibold text-sm text-muted-foreground border-b pb-1">תמחור ומלאי</h4>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="price" className="text-right font-medium text-xs">מחיר רגיל</Label>
+                <Input id="price" name="price" type="number" step="0.01" defaultValue={product?.price || ""} className="col-span-3 rounded-xl border-border bg-background" required />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="priceDropPrice" className="text-right font-medium text-xs text-red-500">מחיר מבצע</Label>
+                <Input id="priceDropPrice" name="priceDropPrice" type="number" step="0.01" defaultValue={product?.priceDropPrice || ""} className="col-span-3 rounded-xl border-border bg-background" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="stockQuantity" className="text-right font-medium text-xs">מלאי זמין</Label>
+                <Input id="stockQuantity" name="stockQuantity" type="number" defaultValue={product?.stockQuantity || 0} className="col-span-3 rounded-xl border-border bg-background" required />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="testerRatio" className="text-right font-medium text-xs text-pink-600">יחס טסטרים</Label>
+                <Input id="testerRatio" name="testerRatio" type="number" placeholder="לדוגמה: 6 (1 ל-6)" defaultValue={product?.testerRatio || ""} className="col-span-3 rounded-xl border-border bg-background" />
+              </div>
+
+              <h4 className="font-semibold text-sm text-muted-foreground border-b pb-1 mt-6 pt-2">תגיות ותצוגה</h4>
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between bg-muted/30 p-2 rounded-lg border border-border/50">
+                  <Label htmlFor="isOnSale" className="font-medium">מוצר במבצע</Label>
+                  <Switch id="isOnSale" name="isOnSale" value="true" defaultChecked={product?.isOnSale} />
+                </div>
+                <div className="flex items-center justify-between bg-muted/30 p-2 rounded-lg border border-border/50">
+                  <Label htmlFor="isBackToStock" className="font-medium">חזר למלאי</Label>
+                  <Switch id="isBackToStock" name="isBackToStock" value="true" defaultChecked={product?.isBackToStock} />
+                </div>
+                <div className="flex items-center justify-between bg-muted/30 p-2 rounded-lg border border-border/50">
+                  <Label htmlFor="isOfficialImporter" className="font-medium">יבואן רשמי</Label>
+                  <Switch id="isOfficialImporter" name="isOfficialImporter" value="true" defaultChecked={product?.isOfficialImporter} />
+                </div>
+              </div>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="model" className="text-right font-medium">דגם/וריאציה</Label>
-              <Input id="model" name="model" defaultValue={product?.model || ""} className="col-span-3 rounded-xl border-border bg-background" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="barcode" className="text-right font-medium">מק״ט/ברקוד</Label>
-              <Input id="barcode" name="barcode" defaultValue={product?.barcode || ""} className="col-span-3 rounded-xl border-border bg-background" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="price" className="text-right font-medium">מחיר סיטונאי</Label>
-              <Input id="price" name="price" type="number" step="0.01" defaultValue={product?.price || ""} className="col-span-3 rounded-xl border-border bg-background" required />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="stockQuantity" className="text-right font-medium">מלאי זמין</Label>
-              <Input id="stockQuantity" name="stockQuantity" type="number" defaultValue={product?.stockQuantity || 0} className="col-span-3 rounded-xl border-border bg-background" required />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="imageUrl" className="text-right font-medium">תמונה (URL)</Label>
-              <Input id="imageUrl" name="imageUrl" type="url" defaultValue={product?.imageUrl || ""} className="col-span-3 rounded-xl border-border bg-background" placeholder="https://..." />
-            </div>
+
           </div>
-          {error && <p className="text-sm text-destructive font-medium mb-4">{error}</p>}
-          <DialogFooter>
+
+          {error && <p className="text-sm text-destructive font-medium mb-4 text-center">{error}</p>}
+          <DialogFooter className="mt-4 pt-4 border-t border-border">
             <Button type="submit" disabled={isLoading} className="rounded-full w-full sm:w-auto font-semibold shadow-sm">
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isEditing ? "שמור שינויים" : "הוסף מוצר"}
