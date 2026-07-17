@@ -1,11 +1,12 @@
 const fs = require('fs');
-const pdf = require('pdf-parse');
+const PDFParser = require("pdf2json");
 
-let dataBuffer = fs.readFileSync('public/הזמנות ליברו - הזמנות ליברו.pdf');
+const pdfParser = new PDFParser(this, 1);
 
-pdf(dataBuffer).then(function(data) {
-    fs.writeFileSync('pdf-text.txt', data.text);
-    console.log('Done parsing PDF. Wrote to pdf-text.txt');
-}).catch(err => {
-    console.error(err);
+pdfParser.on("pdfParser_dataError", errData => console.error(errData.parserError) );
+pdfParser.on("pdfParser_dataReady", pdfData => {
+    fs.writeFileSync("pdf-text.txt", pdfParser.getRawTextContent());
+    console.log("Wrote text to pdf-text.txt");
 });
+
+pdfParser.loadPDF("public/הזמנות ליברו - הזמנות ליברו.pdf");
