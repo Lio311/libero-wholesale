@@ -40,7 +40,7 @@ export function CartSheet() {
           ) : (
             items.map((item) => (
               <div key={item.product.id} className="flex gap-4 items-start group">
-                <div className="relative h-20 w-20 rounded-md bg-muted/30 border border-border/50 overflow-hidden flex-shrink-0">
+                <div className="relative h-20 w-20 rounded-md bg-white border border-border/50 overflow-hidden flex-shrink-0">
                   {item.product.imageUrl ? (
                     <Image
                       src={item.product.imageUrl}

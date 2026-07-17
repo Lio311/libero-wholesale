@@ -229,7 +229,7 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
             ))}
           </div>
         ) : (
-          <div className="bg-card border border-border/50 rounded-lg overflow-x-auto mx-2 md:mx-4 shadow-sm">
+          <div className="bg-card border border-border/50 rounded-lg overflow-x-auto mx-2 md:mx-4 shadow-sm [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <Table className="w-full">
               <TableHeader>
                 <TableRow className="bg-muted/50 hover:bg-muted/50">
