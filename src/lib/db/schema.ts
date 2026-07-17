@@ -81,6 +81,7 @@ export const orders = pgTable('orders', {
   orderNumber: serial('order_number').notNull(),
   status: orderStatusEnum('status').default('pending').notNull(),
   totalAmount: decimal('total_amount', { precision: 12, scale: 2 }).notNull(),
+  discountAmount: decimal('discount_amount', { precision: 12, scale: 2 }).default('0').notNull(),
   itemsCount: integer('items_count').notNull(),
   shippingMethod: text('shipping_method'),
   comaxRef: text('comax_ref'),

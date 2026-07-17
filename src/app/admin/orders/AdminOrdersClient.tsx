@@ -6,13 +6,16 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2, Plus, Minus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface AdminOrderRow {
   id: string;
   orderNumber: number;
   status: string;
   totalAmount: string | number;
+  discountAmount?: string | number;
   itemsCount: number;
   createdAt: Date;
   comaxRef?: string | null;
@@ -45,6 +48,14 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
   const [orders, setOrders] = useState<AdminOrderRow[]>(initialOrders);
   const [selectedOrder, setSelectedOrder] = useState<AdminOrderRow | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [updatingItemIds, setUpdatingItemIds] = useState<Set<string>>(new Set());
+  const [discountInput, setDiscountInput] = useState<string>("");
+
+  // Sync discount input when order is selected
+  const handleOpenOrder = (order: AdminOrderRow) => {
+    setSelectedOrder(order);
+    setDiscountInput(order.discountAmount ? order.discountAmount.toString() : "");
+  };
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     setUpdatingId(orderId);
@@ -64,6 +75,116 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
       }
     } catch (e) {
       alert("שגיאה בעדכון הסטטוס");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleDeleteOrder = async (orderId: string) => {
+    if (!confirm("האם אתה בטוח שברצונך למחוק הזמנה זו? כל המלאי יוחזר למוצרים ולא ניתן יהיה לשחזר פעולה זו.")) return;
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}`, { method: "DELETE" });
+      if (res.ok) {
+        setOrders(orders.filter(o => o.id !== orderId));
+        if (selectedOrder?.id === orderId) setSelectedOrder(null);
+      } else {
+        alert("שגיאה במחיקת ההזמנה");
+      }
+    } catch (e) {
+      alert("שגיאה במחיקת ההזמנה");
+    }
+  };
+
+  const handleUpdateItemQuantity = async (orderId: string, itemId: string, newQuantity: number) => {
+    if (newQuantity < 1) return;
+    setUpdatingItemIds(prev => new Set(prev).add(itemId));
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}/items/${itemId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quantity: newQuantity })
+      });
+      if (res.ok) {
+        const order = orders.find(o => o.id === orderId);
+        if (order && order.orderItems) {
+           const item = order.orderItems.find(i => i.id === itemId);
+           if (item) {
+             item.quantity = newQuantity;
+             item.totalPrice = newQuantity * Number(item.unitPrice);
+             const newSum = order.orderItems.reduce((acc, curr) => acc + Number(curr.totalPrice), 0);
+             order.totalAmount = Math.max(0, newSum - Number(order.discountAmount || 0));
+             setOrders([...orders]);
+             if (selectedOrder?.id === orderId) setSelectedOrder({...order});
+           }
+        }
+      } else {
+        alert("שגיאה בעדכון כמות פריט");
+      }
+    } catch (e) {
+      alert("שגיאה בעדכון כמות פריט");
+    } finally {
+      setUpdatingItemIds(prev => {
+        const next = new Set(prev);
+        next.delete(itemId);
+        return next;
+      });
+    }
+  };
+
+  const handleDeleteItem = async (orderId: string, itemId: string) => {
+    if (!confirm("האם למחוק פריט זה מההזמנה? הכמות תוחזר למלאי.")) return;
+    setUpdatingItemIds(prev => new Set(prev).add(itemId));
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}/items/${itemId}`, { method: "DELETE" });
+      if (res.ok) {
+        const order = orders.find(o => o.id === orderId);
+        if (order && order.orderItems) {
+           order.orderItems = order.orderItems.filter(i => i.id !== itemId);
+           order.itemsCount = order.orderItems.length;
+           const newSum = order.orderItems.reduce((acc, curr) => acc + Number(curr.totalPrice), 0);
+           order.totalAmount = Math.max(0, newSum - Number(order.discountAmount || 0));
+           setOrders([...orders]);
+           if (selectedOrder?.id === orderId) setSelectedOrder({...order});
+        }
+      } else {
+        alert("שגיאה במחיקת הפריט");
+      }
+    } catch (e) {
+      alert("שגיאה במחיקת הפריט");
+    } finally {
+      setUpdatingItemIds(prev => {
+        const next = new Set(prev);
+        next.delete(itemId);
+        return next;
+      });
+    }
+  };
+
+  const handleUpdateDiscount = async (orderId: string) => {
+    const num = Number(discountInput);
+    if (isNaN(num) || num < 0) return alert("אנא הזן סכום הנחה תקין");
+    setUpdatingId("discount");
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}/discount`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ discountAmount: num })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const order = orders.find(o => o.id === orderId);
+        if (order) {
+           order.discountAmount = num;
+           order.totalAmount = data.finalAmount;
+           setOrders([...orders]);
+           if (selectedOrder?.id === orderId) setSelectedOrder({...order});
+        }
+        alert("הנחה עודכנה בהצלחה!");
+      } else {
+        alert("שגיאה בעדכון הנחה");
+      }
+    } catch (e) {
+      alert("שגיאה בעדכון הנחה");
     } finally {
       setUpdatingId(null);
     }
@@ -116,15 +237,15 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                 <TableRow key={order.id} className="border-border hover:bg-muted/20 transition-colors group">
                   <TableCell 
                     className="font-mono font-medium cursor-pointer text-primary hover:underline"
-                    onClick={() => setSelectedOrder(order)}
+                    onClick={() => handleOpenOrder(order)}
                   >
                     #{order.orderNumber}
                   </TableCell>
-                  <TableCell className="cursor-pointer" onClick={() => setSelectedOrder(order)}>
+                  <TableCell className="cursor-pointer" onClick={() => handleOpenOrder(order)}>
                     <div className="font-medium">{order.store?.name || "לקוח מזדמן"}</div>
                     {order.store?.contactName && <div className="text-xs text-muted-foreground">{order.store.contactName}</div>}
                   </TableCell>
-                  <TableCell className="text-muted-foreground cursor-pointer" onClick={() => setSelectedOrder(order)}>
+                  <TableCell className="text-muted-foreground cursor-pointer" onClick={() => handleOpenOrder(order)}>
                     {format(new Date(order.createdAt), "dd/MM/yyyy HH:mm")}
                   </TableCell>
                   <TableCell>
@@ -148,7 +269,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                       </Select>
                     )}
                   </TableCell>
-                  <TableCell className="text-left font-mono font-bold cursor-pointer" onClick={() => setSelectedOrder(order)}>
+                  <TableCell className="text-left font-mono font-bold cursor-pointer" onClick={() => handleOpenOrder(order)}>
                     ₪{Number(order.totalAmount).toFixed(2)}
                   </TableCell>
                 </TableRow>
@@ -167,6 +288,10 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                   <span>הזמנה #{selectedOrder.orderNumber}</span>
                   {getStatusBadge(selectedOrder.status)}
                 </div>
+                <Button variant="destructive" size="sm" onClick={() => handleDeleteOrder(selectedOrder.id)}>
+                  <Trash2 className="w-4 h-4 ml-2" />
+                  מחק הזמנה
+                </Button>
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-6 mt-4">
@@ -206,9 +331,10 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                     <TableRow className="hover:bg-transparent">
                       <TableHead className="w-16 text-center">תמונה</TableHead>
                       <TableHead className="text-right">מוצר</TableHead>
-                      <TableHead className="text-center">כמות</TableHead>
+                      <TableHead className="text-center w-[120px]">כמות</TableHead>
                       <TableHead className="text-center">מחיר יחידה</TableHead>
                       <TableHead className="text-center">סה״כ</TableHead>
+                      <TableHead className="w-[50px]"></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -230,13 +356,74 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                             {item.product.barcode && <span>• ברקוד: {item.product.barcode}</span>}
                           </div>
                         </TableCell>
-                        <TableCell className="text-center font-bold text-lg">{item.quantity}</TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="icon" 
+                              className="h-6 w-6" 
+                              disabled={item.quantity <= 1 || updatingItemIds.has(item.id)}
+                              onClick={() => handleUpdateItemQuantity(selectedOrder.id, item.id, item.quantity - 1)}
+                            >
+                              <Minus className="w-3 h-3" />
+                            </Button>
+                            <span className="font-bold text-lg w-6 text-center">
+                              {updatingItemIds.has(item.id) ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : item.quantity}
+                            </span>
+                            <Button 
+                              variant="outline" 
+                              size="icon" 
+                              className="h-6 w-6" 
+                              disabled={updatingItemIds.has(item.id)}
+                              onClick={() => handleUpdateItemQuantity(selectedOrder.id, item.id, item.quantity + 1)}
+                            >
+                              <Plus className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </TableCell>
                         <TableCell className="text-center font-mono" dir="ltr">₪{Number(item.unitPrice).toFixed(2)}</TableCell>
                         <TableCell className="text-center font-mono font-bold" dir="ltr">₪{Number(item.totalPrice).toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="text-destructive hover:bg-destructive/10 h-8 w-8"
+                            disabled={updatingItemIds.has(item.id)}
+                            onClick={() => handleDeleteItem(selectedOrder.id, item.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
+                
+                <div className="bg-muted/30 p-4 border-t flex flex-col md:flex-row justify-between items-center gap-4">
+                  <div className="flex items-center gap-2 w-full md:w-auto">
+                    <span className="text-sm text-muted-foreground whitespace-nowrap">הנחה להזמנה (₪):</span>
+                    <Input 
+                      type="number" 
+                      min="0"
+                      className="w-24 h-8 text-left" 
+                      value={discountInput}
+                      onChange={(e) => setDiscountInput(e.target.value)}
+                      placeholder="0.00"
+                    />
+                    <Button 
+                      size="sm" 
+                      variant="secondary" 
+                      disabled={updatingId === "discount"}
+                      onClick={() => handleUpdateDiscount(selectedOrder.id)}
+                    >
+                      {updatingId === "discount" ? <Loader2 className="w-4 h-4 animate-spin" /> : "החל"}
+                    </Button>
+                  </div>
+                  <div className="text-lg font-bold">
+                    <span>סה״כ לתשלום: </span>
+                    <span className="text-primary font-mono">₪{Number(selectedOrder.totalAmount).toFixed(2)}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </DialogContent>
