@@ -4,8 +4,11 @@ import { useState, useEffect } from "react";
 import { Product } from "@/lib/types";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2 } from "lucide-react";
+import { Search, Loader2, RotateCcw } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface CatalogClientProps {
   initialProducts: Product[];
@@ -14,54 +17,112 @@ interface CatalogClientProps {
 export function CatalogClient({ initialProducts }: CatalogClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 400);
+  const [selectedBrand, setSelectedBrand] = useState<string>("all");
+  const [filterBackToStock, setFilterBackToStock] = useState(false);
+  const [filterOnSale, setFilterOnSale] = useState(false);
+  const [filterOfficial, setFilterOfficial] = useState(false);
+  const [filterPriceDrop, setFilterPriceDrop] = useState(false);
+  
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Extract unique brands for filter
+  const brands = Array.from(new Set(initialProducts.map(p => p.brandHe || p.brand || "").filter(Boolean))).sort();
+
+  const resetFilters = () => {
+    setSearchQuery("");
+    setSelectedBrand("all");
+    setFilterBackToStock(false);
+    setFilterOnSale(false);
+    setFilterOfficial(false);
+    setFilterPriceDrop(false);
+  };
+
   useEffect(() => {
-    async function searchProducts() {
-      if (!debouncedSearch.trim()) {
-        setProducts(initialProducts);
-        return;
-      }
-
-      setIsLoading(true);
-      try {
-        const res = await fetch(`/api/search/autocomplete?q=${encodeURIComponent(debouncedSearch)}`);
-        if (res.ok) {
-          const data = await res.json();
-          // Map partial API results to Product interface if needed
-          setProducts(data.results || []);
-        }
-      } catch (error) {
-        console.error("Search failed:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    searchProducts();
-  }, [debouncedSearch, initialProducts]);
+    const term = debouncedSearch.toLowerCase().trim();
+    
+    const filtered = initialProducts.filter(p => {
+      // Text Search
+      const matchesSearch = !term || 
+        p.name.toLowerCase().includes(term) ||
+        (p.brand && p.brand.toLowerCase().includes(term)) ||
+        (p.barcode && p.barcode.includes(term)) ||
+        (p.model && p.model.toLowerCase().includes(term));
+        
+      // Brand Search
+      const matchesBrand = selectedBrand === "all" || (p.brandHe === selectedBrand || p.brand === selectedBrand);
+      
+      // Mock toggles (currently just pass through since no DB support yet)
+      // In reality, you'd check p.isOnSale, p.isOfficialImporter etc.
+      
+      return matchesSearch && matchesBrand;
+    });
+    
+    setProducts(filtered);
+  }, [debouncedSearch, selectedBrand, filterBackToStock, filterOnSale, filterOfficial, filterPriceDrop, initialProducts]);
 
   return (
     <div className="w-full space-y-6">
-      {/* Top Bar with Search */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-8 px-4 sm:px-8 max-w-4xl mx-auto w-full">
-        <div className="relative w-full">
-          <Search className="absolute right-6 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground/50" />
-          <Input
-            type="text"
-            placeholder="חפש מותג, בושם או ברקוד..."
-            className="w-full pr-16 pl-12 bg-muted/30 hover:bg-muted/50 focus:bg-background border-transparent focus:border-border text-xl md:text-2xl py-8 rounded-full shadow-sm transition-all duration-300 font-medium placeholder:text-muted-foreground/50"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          {isLoading && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2">
-              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      {/* Filters Bar */}
+      <div className="bg-card border-b border-border/40 p-4 sticky top-0 z-20 shadow-sm">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          
+          {/* Toggles */}
+          <div className="flex flex-wrap items-center gap-4 text-sm">
+            <div className="flex items-center gap-2">
+              <Switch id="back-to-stock" checked={filterBackToStock} onCheckedChange={setFilterBackToStock} />
+              <Label htmlFor="back-to-stock" className="whitespace-nowrap cursor-pointer">חזר למלאי</Label>
             </div>
-          )}
+            <div className="flex items-center gap-2">
+              <Switch id="on-sale" checked={filterOnSale} onCheckedChange={setFilterOnSale} />
+              <Label htmlFor="on-sale" className="whitespace-nowrap cursor-pointer">במבצע</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch id="official" checked={filterOfficial} onCheckedChange={setFilterOfficial} />
+              <Label htmlFor="official" className="whitespace-nowrap cursor-pointer">יבואן רשמי</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch id="price-drop" checked={filterPriceDrop} onCheckedChange={setFilterPriceDrop} />
+              <Label htmlFor="price-drop" className="whitespace-nowrap cursor-pointer">ירד המחיר</Label>
+            </div>
+          </div>
+
+          {/* Search & Brand */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <Button variant="outline" size="sm" onClick={resetFilters} className="w-full sm:w-auto">
+              <RotateCcw className="h-4 w-4 ml-2" />
+              איפוס
+            </Button>
+            
+            <div className="relative w-full sm:w-[200px]">
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="חיפוש חופשי..."
+                className="w-full pr-9 bg-background"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
+            <div className="w-full sm:w-[200px]">
+              <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+                <SelectTrigger className="w-full bg-background">
+                  <SelectValue placeholder="סינון לפי מותג" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">הכל</SelectItem>
+                  {brands.map(b => (
+                    <SelectItem key={b} value={b}>{b}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
-        
+      </div>
+
+      <div className="flex justify-between items-center px-4">
         <div className="text-sm text-muted-foreground font-mono">
           {products.length} תוצאות
         </div>
@@ -69,7 +130,7 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
 
       {/* Product Grid */}
       {products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2 md:gap-4 px-2 md:px-4">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

@@ -17,7 +17,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Card className="flex flex-col h-full bg-card/50 backdrop-blur-sm border-border hover:border-white/20 transition-all duration-300 shadow-xl overflow-hidden group">
       {/* Image Area */}
-      <div className="relative aspect-square bg-muted/30 w-full overflow-hidden flex items-center justify-center p-4">
+      <div className="relative aspect-square bg-muted/10 w-full overflow-hidden flex items-center justify-center p-2">
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}
@@ -39,38 +39,49 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
 
-      <CardHeader className="p-4 pb-2">
-        <div className="flex justify-between items-start gap-2">
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">{product.brandHe || product.brand}</p>
-            <CardTitle className="text-base font-semibold leading-tight mt-1 line-clamp-2">
+      <CardHeader className="p-2 pb-1">
+        <div className="flex justify-between items-start gap-1">
+          <div className="w-full">
+            <p className="text-[9px] md:text-[10px] text-muted-foreground uppercase tracking-wider truncate">{product.brandHe || product.brand}</p>
+            <CardTitle className="text-xs md:text-sm font-semibold leading-tight mt-0.5 line-clamp-2" title={product.nameHe || product.name}>
               {product.nameHe || product.name}
             </CardTitle>
           </div>
         </div>
       </CardHeader>
       
-      <CardContent className="p-4 pt-0 flex-1 flex flex-col justify-end">
-        <p className="text-xs text-muted-foreground mb-3 font-mono">{product.barcode || product.modelHe || product.model}</p>
+      <CardContent className="p-2 pt-0 flex-1 flex flex-col justify-end">
+        <p className="text-[10px] text-muted-foreground mb-1 font-mono truncate">{product.barcode || product.modelHe || product.model}</p>
         <div className="flex items-end justify-between mt-auto">
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground mb-1">מחיר סיטונאי</span>
-            <span className="text-2xl font-bold font-mono tracking-tight text-white/90">
+            <span className="text-[10px] text-muted-foreground mb-0.5">מחיר</span>
+            <span className="text-sm md:text-base font-bold font-mono tracking-tight text-foreground">
               ₪{Number(product.price).toFixed(2)}
             </span>
           </div>
         </div>
       </CardContent>
       
-      <CardFooter className="p-4 pt-0">
+      <CardFooter className="p-2 pt-0 flex gap-1">
+        <Input 
+          type="number" 
+          min={1} 
+          defaultValue={1}
+          className="w-12 h-8 px-1 text-center text-xs"
+          id={`qty-${product.id}`}
+        />
         <Button 
-          className="w-full rounded-full font-medium" 
+          className="flex-1 h-8 rounded-md font-medium text-xs px-2" 
           variant={isOutOfStock ? "secondary" : "default"}
           disabled={isOutOfStock}
-          onClick={() => addItem(product)}
+          onClick={() => {
+            const qtyInput = document.getElementById(`qty-${product.id}`) as HTMLInputElement;
+            const qty = parseInt(qtyInput?.value || "1", 10);
+            addItem(product, qty);
+          }}
         >
-          <ShoppingCart className="ml-2 h-4 w-4" />
-          {isOutOfStock ? 'אזל המלאי' : 'הוסף לעגלה'}
+          <ShoppingCart className="md:ml-1 h-3 w-3 hidden md:inline-block" />
+          {isOutOfStock ? 'אזל' : 'הוסף'}
         </Button>
       </CardFooter>
     </Card>

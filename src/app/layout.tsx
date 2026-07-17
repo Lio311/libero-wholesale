@@ -77,11 +77,12 @@ export default async function RootLayout({
           <TooltipProvider>
             <SidebarProvider>
               <AppSidebar isAdmin={isAdmin} />
-              <main className="flex-1 w-full relative p-2 md:p-4">
-                <div className="absolute top-6 right-6 md:hidden z-50">
+              <main className="flex-1 w-full relative p-0 md:p-4 flex flex-col h-[100dvh] md:h-auto">
+                <div className="flex items-center justify-between p-4 md:hidden border-b border-border/40 bg-card z-10 shrink-0 shadow-sm">
+                  <img src="/libero-w.png" alt="Libero Logo" className="h-8 object-contain" />
                   <SidebarTrigger />
                 </div>
-                <div className="bg-card w-full h-full rounded-[2.5rem] shadow-sm border border-border/40 overflow-hidden relative">
+                <div className="bg-card w-full h-full md:rounded-[2.5rem] shadow-sm md:border border-border/40 overflow-y-auto relative flex-1">
                   {children}
                 </div>
               </main>
