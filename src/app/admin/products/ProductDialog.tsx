@@ -135,7 +135,7 @@ export function ProductDialog({ product, open, onOpenChange, brands = [] }: Prod
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="brandSelect" className="text-right font-medium text-xs">מותג</Label>
                 <div className="col-span-3">
-                  <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+                  <Select value={selectedBrand} onValueChange={(val) => setSelectedBrand(val || "none")}>
                     <SelectTrigger className="w-full rounded-xl border-border bg-background" dir="rtl">
                       <SelectValue placeholder="בחר מותג..." />
                     </SelectTrigger>
