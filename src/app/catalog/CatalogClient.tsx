@@ -18,7 +18,7 @@ interface CatalogClientProps {
 export function CatalogClient({ initialProducts }: CatalogClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 400);
-  const [selectedBrand, setSelectedBrand] = useState<string>("all");
+  const [selectedBrand, setSelectedBrand] = useState<string>("הכל");
   const [filterBackToStock, setFilterBackToStock] = useState(false);
   const [filterOnSale, setFilterOnSale] = useState(false);
   const [filterOfficial, setFilterOfficial] = useState(false);
@@ -32,7 +32,7 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
 
   const resetFilters = () => {
     setSearchQuery("");
-    setSelectedBrand("all");
+    setSelectedBrand("הכל");
     setFilterBackToStock(false);
     setFilterOnSale(false);
     setFilterOfficial(false);
@@ -51,7 +51,7 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
         (p.model && p.model.toLowerCase().includes(term));
         
       // Brand Search
-      const matchesBrand = selectedBrand === "all" || (p.brandHe === selectedBrand || p.brand === selectedBrand);
+      const matchesBrand = selectedBrand === "הכל" || (p.brandHe === selectedBrand || p.brand === selectedBrand);
       
       // Mock toggles (currently just pass through since no DB support yet)
       // In reality, you'd check p.isOnSale, p.isOfficialImporter etc.
@@ -107,12 +107,12 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
             </div>
 
             <div className="w-full sm:w-[200px]">
-              <Select value={selectedBrand} onValueChange={(val) => setSelectedBrand(val || "all")}>
+              <Select value={selectedBrand} onValueChange={(val) => setSelectedBrand(val || "הכל")}>
                 <SelectTrigger className="w-full bg-background">
                   <SelectValue placeholder="סינון לפי מותג" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">הכל</SelectItem>
+                  <SelectItem value="הכל">הכל</SelectItem>
                   {brands.map(b => (
                     <SelectItem key={b} value={b}>{b}</SelectItem>
                   ))}
