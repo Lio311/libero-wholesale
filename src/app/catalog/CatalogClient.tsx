@@ -194,7 +194,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
           <div className="flex flex-col sm:flex-row items-end gap-3 w-full md:w-auto">
             
             {/* Brand Filter */}
-            <div className="w-full sm:w-[200px] flex flex-col gap-1.5">
+            <div className="w-full sm:w-[260px] flex flex-col gap-1.5">
               <label className="text-xs font-medium text-muted-foreground px-1">סינון לפי מותג</label>
               <Select value={selectedBrand} onValueChange={(val) => setSelectedBrand(val || "הכל")}>
                 <SelectTrigger className="w-full bg-background h-9">
