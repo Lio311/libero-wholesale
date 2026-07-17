@@ -12,9 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import { Separator } from "./ui/separator";
+import { useRouter } from "next/navigation";
 
 export function CartSheet() {
   const { items, isOpen, setIsOpen, updateQuantity, removeItem, getTotalPrice, getTotalItems } = useCartStore();
+  const router = useRouter();
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -105,7 +107,14 @@ export function CartSheet() {
               <span className="text-2xl font-bold font-mono tracking-tight">₪{getTotalPrice().toFixed(2)}</span>
             </div>
             <Separator className="bg-muted/20" />
-            <Button size="lg" className="w-full text-lg font-semibold h-12 shadow-lg shadow-primary/20">
+            <Button 
+              size="lg" 
+              className="w-full text-lg font-semibold h-12 shadow-lg shadow-primary/20"
+              onClick={() => {
+                setIsOpen(false);
+                router.push("/checkout");
+              }}
+            >
               המשך לקופה
             </Button>
           </SheetFooter>
