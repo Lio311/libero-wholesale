@@ -92,7 +92,7 @@ export default async function RootLayout({
         dir="rtl"
         className={`${heebo.variable} ${ibmMono.variable} h-full antialiased`}
       >
-        <body className="h-[100dvh] overflow-hidden flex flex-col font-sans bg-background text-foreground">
+        <body className="h-[100dvh] overflow-hidden flex flex-col font-sans bg-background text-foreground select-none">
           <TooltipProvider>
             <SidebarProvider>
               <AppSidebar isAdmin={isAdmin} />

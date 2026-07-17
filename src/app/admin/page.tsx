@@ -12,14 +12,36 @@ export default async function AdminDashboardPage() {
     limit: 10,
   });
 
+  const allOrdersList = await db.query.orders.findMany();
   const storesList = await db.query.stores.findMany();
   const productsList = await db.query.products.findMany();
 
-  // Aggregate stats
-  const totalRevenue = recentOrdersList.reduce((acc, order) => acc + Number(order.totalAmount), 0);
-  const activeOrdersCount = recentOrdersList.filter(o => o.status === 'pending' || o.status === 'processing').length;
+  const now = new Date();
+  const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+  const thisMonthOrders = allOrdersList.filter(o => new Date(o.createdAt) >= startOfThisMonth);
+  const lastMonthOrders = allOrdersList.filter(o => {
+    const d = new Date(o.createdAt);
+    return d >= startOfLastMonth && d < startOfThisMonth;
+  });
+
+  const thisMonthRevenue = thisMonthOrders.reduce((acc, order) => acc + Number(order.totalAmount), 0);
+  const lastMonthRevenue = lastMonthOrders.reduce((acc, order) => acc + Number(order.totalAmount), 0);
+
+  let revenueGrowth = 0;
+  if (lastMonthRevenue > 0) {
+    revenueGrowth = ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100;
+  } else if (thisMonthRevenue > 0) {
+    revenueGrowth = 100;
+  }
+
+  const activeOrdersCount = allOrdersList.filter(o => o.status === 'pending' || o.status === 'processing').length;
+  
   const totalCustomers = storesList.length;
-  const lowStockItems = productsList.filter(p => p.stockQuantity < 10).length; // Arbitrary low stock threshold
+  const newCustomers = storesList.filter(s => new Date(s.createdAt) >= startOfThisMonth).length;
+
+  const lowStockItems = productsList.filter(p => p.stockQuantity < 10).length;
 
   // Map stores to orders for the UI
   const ordersWithStores = recentOrdersList.map(order => {
@@ -31,9 +53,11 @@ export default async function AdminDashboardPage() {
   });
 
   const stats = {
-    totalRevenue,
+    totalRevenue: thisMonthRevenue,
+    revenueGrowth,
     activeOrders: activeOrdersCount,
     totalCustomers,
+    newCustomers,
     lowStockItems
   };
 

@@ -9,8 +9,10 @@ import { format } from "date-fns";
 interface AdminClientProps {
   stats: {
     totalRevenue: number;
+    revenueGrowth: number;
     activeOrders: number;
     totalCustomers: number;
+    newCustomers: number;
     lowStockItems: number;
   };
   recentOrders: any[];
@@ -30,11 +32,11 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-mono font-bold">₪{stats.totalRevenue.toLocaleString()}</div>
-            <p className="text-xs text-green-400 flex items-center mt-1 gap-1">
+            <p className={`text-xs flex items-center mt-1 gap-1 ${stats.revenueGrowth >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               <span>מהחודש שעבר</span>
               <span dir="ltr" className="flex items-center gap-0.5">
-                <ArrowUpRight className="h-3 w-3" />
-                <span>+12.5%</span>
+                {stats.revenueGrowth >= 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                <span>{stats.revenueGrowth > 0 ? '+' : ''}{stats.revenueGrowth.toFixed(1)}%</span>
               </span>
             </p>
           </CardContent>
@@ -65,10 +67,10 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
           <CardContent>
             <div className="text-3xl font-mono font-bold">{stats.totalCustomers}</div>
             <p className="text-xs text-green-400 flex items-center mt-1 gap-1">
-              <span>לקוחות חדשים</span>
+              <span>לקוחות חדשים בחודש זה</span>
               <span dir="ltr" className="flex items-center gap-0.5">
                 <ArrowUpRight className="h-3 w-3" />
-                <span>+2</span>
+                <span>+{stats.newCustomers}</span>
               </span>
             </p>
           </CardContent>
