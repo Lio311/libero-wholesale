@@ -187,7 +187,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
         </SidebarGroup>
       )}
       <SidebarFooter className="p-4 border-t border-white/10 mt-auto bg-black/20 [&_.cl-userButtonOuterIdentifier]:!text-white [&_.cl-userButtonOuterIdentifier]:font-medium [&_.cl-userButtonOuterIdentifier]:ml-2">
-        <div className="flex items-center justify-start text-foreground px-2 py-2">
+        <div className="flex items-center justify-center text-foreground px-2 py-2">
           <div className="flex items-center gap-3">
             <UserButton showName />
           </div>
