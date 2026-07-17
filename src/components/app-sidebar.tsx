@@ -59,7 +59,7 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
   }
 
   return (
-    <Sidebar side="right" className="dark border-l-0">
+    <Sidebar side="right" className="dark border-l-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
       <SidebarHeader className="p-4 hidden md:flex items-center justify-center">
         <img src="/libero-w-white.png" alt="Libero Wholesale" className="w-[90%] h-auto object-contain drop-shadow-sm" />
       </SidebarHeader>
@@ -80,7 +80,7 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
                         <item.icon className={getIconClass(item.url)} />
                         <span className={isActive ? "font-semibold text-foreground" : ""}>{item.title}</span>
                         {totalItems > 0 && (
-                          <span className="mr-auto bg-primary text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
+                          <span className="mr-auto bg-white text-black text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
                             {totalItems}
                           </span>
                         )}
