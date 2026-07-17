@@ -8,10 +8,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Search, Loader2, RotateCcw, LayoutGrid, List } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useRef } from "react";
 
 type SortColumn = 'barcode' | 'name' | 'brand' | 'stock' | 'price' | null;
 
@@ -44,6 +46,34 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
   
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const isMobile = useIsMobile();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [mobileVisibleCount, setMobileVisibleCount] = useState(10);
+  const itemsPerPage = 10;
+  const observerTarget = useRef<HTMLDivElement>(null);
+
+  // Infinite scroll observer for mobile
+  useEffect(() => {
+    if (!isMobile) return;
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting) {
+          setMobileVisibleCount(prev => prev + 10);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    const currentTarget = observerTarget.current;
+    return () => {
+      if (currentTarget) observer.unobserve(currentTarget);
+    };
+  }, [isMobile, products.length, mobileVisibleCount]);
 
   // Extract unique brands for filter
   const brands = Array.from(new Set(initialProducts.map(p => p.brandHe || p.brand || "").filter(Boolean))).sort();
@@ -57,6 +87,8 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
     setFilterPriceDrop(false);
     setSortCol(null);
     setSortDir('asc');
+    setCurrentPage(1);
+    setMobileVisibleCount(10);
   };
 
   const handleSort = (col: SortColumn) => {
@@ -125,7 +157,15 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
     }
     
     setProducts(filtered);
+    setCurrentPage(1);
+    setMobileVisibleCount(10);
   }, [debouncedSearch, selectedBrand, filterBackToStock, filterOnSale, filterOfficial, filterPriceDrop, sortCol, sortDir, initialProducts]);
+
+  const displayedProducts = isMobile 
+    ? products.slice(0, mobileVisibleCount) 
+    : products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  
+  const totalPages = Math.ceil(products.length / itemsPerPage);
 
   return (
     <div className="w-full space-y-6">
@@ -224,7 +264,7 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
       {products.length > 0 ? (
         viewMode === 'grid' ? (
           <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2 md:gap-4 px-2 md:px-4">
-            {products.map((product) => (
+            {displayedProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -258,7 +298,7 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {products.map((product) => (
+                {displayedProducts.map((product) => (
                   <ProductTableRow key={product.id} product={product} />
                 ))}
               </TableBody>
@@ -274,6 +314,36 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
           <p className="text-muted-foreground max-w-md">
             נסה לחפש במילים אחרות או לבדוק את איות המילה. המערכת שלנו תומכת בחיפוש בעברית ובאנגלית.
           </p>
+        </div>
+      )}
+
+      {/* Mobile Infinite Scroll Trigger */}
+      {isMobile && mobileVisibleCount < products.length && (
+        <div ref={observerTarget} className="h-10 flex items-center justify-center py-4">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      )}
+
+      {/* Desktop Pagination */}
+      {!isMobile && totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-4 pb-8">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))} 
+            disabled={currentPage === 1}
+          >
+            הקודם
+          </Button>
+          <span className="text-sm font-medium">עמוד {currentPage} מתוך {totalPages}</span>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} 
+            disabled={currentPage === totalPages}
+          >
+            הבא
+          </Button>
         </div>
       )}
     </div>
