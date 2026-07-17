@@ -29,7 +29,7 @@ export async function submitOnboarding(formData: FormData) {
       email: email,
       phone: phone,
       address: address,
-      status: "active",
+      status: "pending",
     });
 
     revalidatePath("/", "layout");

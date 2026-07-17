@@ -12,11 +12,14 @@ export async function PATCH(
   try {
     const { id } = await params;
     const user = await currentUser();
-    const email = user?.emailAddresses[0]?.emailAddress?.toLowerCase();
-    const isAdmin = await checkIsAdmin(email);
-
-    if (!isAdmin) {
+    if (!user || !user.emailAddresses.length) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const email = user.emailAddresses[0].emailAddress;
+    const isAdmin = await checkIsAdmin(email);
+    if (!isAdmin) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const { status } = await request.json();

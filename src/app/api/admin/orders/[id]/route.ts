@@ -2,16 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { orders, orderItems, products } from "@/lib/db/schema";
 import { eq, sql } from "drizzle-orm";
-import { getAuth } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
+import { checkIsAdmin } from "@/lib/admin";
 
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = getAuth(req);
-    if (!userId) {
+    const user = await currentUser();
+    if (!user || !user.emailAddresses.length) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const email = user.emailAddresses[0].emailAddress;
+    const isAdmin = await checkIsAdmin(email);
+    if (!isAdmin) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const { id } = await params;

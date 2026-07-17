@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Trash2, Plus, Minus } from "lucide-react";
+import { Loader2, Trash2, Plus, Minus, Edit, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -241,14 +241,16 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
               <TableHead className="w-[100px] text-right">מספר הזמנה</TableHead>
               <TableHead className="text-right">לקוח / חנות</TableHead>
               <TableHead className="text-right">תאריך</TableHead>
+              <TableHead className="text-center">פריטים</TableHead>
               <TableHead className="text-right">סטטוס</TableHead>
               <TableHead className="text-left">סכום כולל</TableHead>
+              <TableHead className="w-[100px] text-center">פעולות</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {orders.length === 0 ? (
               <TableRow className="border-border hover:bg-muted/20">
-                <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
+                <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
                   אין הזמנות קודמות
                 </TableCell>
               </TableRow>
@@ -267,6 +269,9 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                   </TableCell>
                   <TableCell className="text-muted-foreground cursor-pointer" onClick={() => handleOpenOrder(order)}>
                     {format(new Date(order.createdAt), "dd/MM/yyyy HH:mm")}
+                  </TableCell>
+                  <TableCell className="text-center text-muted-foreground cursor-pointer" onClick={() => handleOpenOrder(order)}>
+                    {order.itemsCount}
                   </TableCell>
                   <TableCell>
                     {updatingId === order.id ? (
@@ -291,6 +296,28 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                   </TableCell>
                   <TableCell className="text-left font-mono font-bold cursor-pointer" onClick={() => handleOpenOrder(order)}>
                     ₪{Number(order.totalAmount).toFixed(2)}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center justify-center gap-2">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-muted-foreground hover:text-primary"
+                        onClick={() => handleOpenOrder(order)}
+                        title="צפה וערוך"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => handleDeleteOrder(order.id)}
+                        title="מחק הזמנה"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
