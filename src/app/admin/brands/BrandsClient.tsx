@@ -14,6 +14,7 @@ import {
 import { Search, Plus, Edit2, Trash2 } from "lucide-react";
 import { BrandDialog } from "./BrandDialog";
 import { deleteBrand } from "./actions";
+import { toast } from "sonner";
 
 interface Brand {
   id: string;
@@ -35,14 +36,22 @@ export function BrandsClient({ initialBrands }: { initialBrands: Brand[] }) {
   );
 
   const handleDelete = async (id: string) => {
-    if (confirm("האם אתה בטוח שברצונך למחוק מותג זה? (לא ימחק מוצרים המשויכים אליו)")) {
-      const res = await deleteBrand(id);
-      if (res.success) {
-        setBrands(brands.filter(b => b.id !== id));
-      } else {
-        alert(res.error);
-      }
-    }
+    toast("מחיקת מותג", {
+      description: "האם אתה בטוח שברצונך למחוק מותג זה? (לא ימחק מוצרים המשויכים אליו)",
+      action: {
+        label: "מחק",
+        onClick: async () => {
+          const res = await deleteBrand(id);
+          if (res.success) {
+            setBrands(brands.filter(b => b.id !== id));
+            toast.success("המותג נמחק בהצלחה");
+          } else {
+            toast.error(res.error || "שגיאה במחיקת מותג");
+          }
+        }
+      },
+      cancel: { label: "ביטול" }
+    });
   };
 
   return (

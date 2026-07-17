@@ -11,6 +11,7 @@ import { Search, Plus, MoreHorizontal, Edit, Trash2, Loader2, ArrowUpDown, Arrow
 import { ProductDialog } from "./ProductDialog";
 import { ImageModal } from "@/components/ImageModal";
 import { deleteProduct } from "./actions";
+import { toast } from "sonner";
 
 interface ProductRow {
   id: string;
@@ -101,10 +102,19 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("האם אתה בטוח שברצונך למחוק מוצר זה?")) return;
-    setIsDeleting(id);
-    await deleteProduct(id);
-    setIsDeleting(null);
+    toast("מחיקת מוצר", {
+      description: "האם אתה בטוח שברצונך למחוק מוצר זה?",
+      action: {
+        label: "מחק מוצר",
+        onClick: async () => {
+          setIsDeleting(id);
+          await deleteProduct(id);
+          setIsDeleting(null);
+          toast.success("המוצר נמחק בהצלחה");
+        }
+      },
+      cancel: { label: "ביטול" }
+    });
   };
 
   return (

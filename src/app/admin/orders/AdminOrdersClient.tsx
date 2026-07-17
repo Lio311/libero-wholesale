@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Trash2, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface AdminOrderRow {
   id: string;
@@ -70,29 +71,39 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
         if (selectedOrder?.id === orderId) {
           setSelectedOrder({ ...selectedOrder, status: newStatus });
         }
+        toast.success("הסטטוס עודכן בהצלחה");
       } else {
-        alert("שגיאה בעדכון הסטטוס");
+        toast.error("שגיאה בעדכון הסטטוס");
       }
     } catch (e) {
-      alert("שגיאה בעדכון הסטטוס");
+      toast.error("שגיאה בעדכון הסטטוס");
     } finally {
       setUpdatingId(null);
     }
   };
 
   const handleDeleteOrder = async (orderId: string) => {
-    if (!confirm("האם אתה בטוח שברצונך למחוק הזמנה זו? כל המלאי יוחזר למוצרים ולא ניתן יהיה לשחזר פעולה זו.")) return;
-    try {
-      const res = await fetch(`/api/admin/orders/${orderId}`, { method: "DELETE" });
-      if (res.ok) {
-        setOrders(orders.filter(o => o.id !== orderId));
-        if (selectedOrder?.id === orderId) setSelectedOrder(null);
-      } else {
-        alert("שגיאה במחיקת ההזמנה");
-      }
-    } catch (e) {
-      alert("שגיאה במחיקת ההזמנה");
-    }
+    toast("מחיקת הזמנה", {
+      description: "האם אתה בטוח שברצונך למחוק הזמנה זו? כל המלאי יוחזר למוצרים ולא ניתן יהיה לשחזר פעולה זו.",
+      action: {
+        label: "מחק הזמנה",
+        onClick: async () => {
+          try {
+            const res = await fetch(`/api/admin/orders/${orderId}`, { method: "DELETE" });
+            if (res.ok) {
+              setOrders(orders.filter(o => o.id !== orderId));
+              if (selectedOrder?.id === orderId) setSelectedOrder(null);
+              toast.success("ההזמנה נמחקה בהצלחה");
+            } else {
+              toast.error("שגיאה במחיקת ההזמנה");
+            }
+          } catch (e) {
+            toast.error("שגיאה במחיקת ההזמנה");
+          }
+        }
+      },
+      cancel: { label: "ביטול" }
+    });
   };
 
   const handleUpdateItemQuantity = async (orderId: string, itemId: string, newQuantity: number) => {
@@ -118,10 +129,10 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
            }
         }
       } else {
-        alert("שגיאה בעדכון כמות פריט");
+        toast.error("שגיאה בעדכון כמות פריט");
       }
     } catch (e) {
-      alert("שגיאה בעדכון כמות פריט");
+      toast.error("שגיאה בעדכון כמות פריט");
     } finally {
       setUpdatingItemIds(prev => {
         const next = new Set(prev);
@@ -132,37 +143,46 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
   };
 
   const handleDeleteItem = async (orderId: string, itemId: string) => {
-    if (!confirm("האם למחוק פריט זה מההזמנה? הכמות תוחזר למלאי.")) return;
-    setUpdatingItemIds(prev => new Set(prev).add(itemId));
-    try {
-      const res = await fetch(`/api/admin/orders/${orderId}/items/${itemId}`, { method: "DELETE" });
-      if (res.ok) {
-        const order = orders.find(o => o.id === orderId);
-        if (order && order.orderItems) {
-           order.orderItems = order.orderItems.filter(i => i.id !== itemId);
-           order.itemsCount = order.orderItems.length;
-           const newSum = order.orderItems.reduce((acc, curr) => acc + Number(curr.totalPrice), 0);
-           order.totalAmount = Math.max(0, newSum - Number(order.discountAmount || 0));
-           setOrders([...orders]);
-           if (selectedOrder?.id === orderId) setSelectedOrder({...order});
+    toast("מחיקת פריט מההזמנה", {
+      description: "האם למחוק פריט זה מההזמנה? הכמות תוחזר למלאי.",
+      action: {
+        label: "מחק פריט",
+        onClick: async () => {
+          setUpdatingItemIds(prev => new Set(prev).add(itemId));
+          try {
+            const res = await fetch(`/api/admin/orders/${orderId}/items/${itemId}`, { method: "DELETE" });
+            if (res.ok) {
+              const order = orders.find(o => o.id === orderId);
+              if (order && order.orderItems) {
+                 order.orderItems = order.orderItems.filter(i => i.id !== itemId);
+                 order.itemsCount = order.orderItems.length;
+                 const newSum = order.orderItems.reduce((acc, curr) => acc + Number(curr.totalPrice), 0);
+                 order.totalAmount = Math.max(0, newSum - Number(order.discountAmount || 0));
+                 setOrders([...orders]);
+                 if (selectedOrder?.id === orderId) setSelectedOrder({...order});
+              }
+              toast.success("הפריט נמחק בהצלחה");
+            } else {
+              toast.error("שגיאה במחיקת הפריט");
+            }
+          } catch (e) {
+            toast.error("שגיאה במחיקת הפריט");
+          } finally {
+            setUpdatingItemIds(prev => {
+              const next = new Set(prev);
+              next.delete(itemId);
+              return next;
+            });
+          }
         }
-      } else {
-        alert("שגיאה במחיקת הפריט");
-      }
-    } catch (e) {
-      alert("שגיאה במחיקת הפריט");
-    } finally {
-      setUpdatingItemIds(prev => {
-        const next = new Set(prev);
-        next.delete(itemId);
-        return next;
-      });
-    }
+      },
+      cancel: { label: "ביטול" }
+    });
   };
 
   const handleUpdateDiscount = async (orderId: string) => {
     const num = Number(discountInput);
-    if (isNaN(num) || num < 0) return alert("אנא הזן סכום הנחה תקין");
+    if (isNaN(num) || num < 0) return toast.error("אנא הזן סכום הנחה תקין");
     setUpdatingId("discount");
     try {
       const res = await fetch(`/api/admin/orders/${orderId}/discount`, {
@@ -179,12 +199,12 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
            setOrders([...orders]);
            if (selectedOrder?.id === orderId) setSelectedOrder({...order});
         }
-        alert("הנחה עודכנה בהצלחה!");
+        toast.success("הנחה עודכנה בהצלחה!");
       } else {
-        alert("שגיאה בעדכון הנחה");
+        toast.error("שגיאה בעדכון הנחה");
       }
     } catch (e) {
-      alert("שגיאה בעדכון הנחה");
+      toast.error("שגיאה בעדכון הנחה");
     } finally {
       setUpdatingId(null);
     }

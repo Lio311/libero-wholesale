@@ -56,11 +56,11 @@ export function ProductDialog({ product, open, onOpenChange, brands = [] }: Prod
   const [error, setError] = useState<string | null>(null);
   const [base64Image, setBase64Image] = useState<string | null>(null);
   const [isOnSale, setIsOnSale] = useState(product?.isOnSale || false);
-  const [selectedBrand, setSelectedBrand] = useState<string>(product?.brand || "none");
+  const [selectedBrand, setSelectedBrand] = useState<string>(product?.brand || "no_brand");
 
   useEffect(() => {
     setIsOnSale(product?.isOnSale || false);
-    setSelectedBrand(product?.brand || "none");
+    setSelectedBrand(product?.brand || "no_brand");
   }, [product, open]);
 
   const isEditing = !!product;
@@ -135,24 +135,24 @@ export function ProductDialog({ product, open, onOpenChange, brands = [] }: Prod
               <div className="grid grid-cols-4 items-start gap-4">
                 <Label htmlFor="brandSelect" className="text-right font-medium text-xs mt-3">מותג</Label>
                 <div className="col-span-3 space-y-2">
-                  <Select value={selectedBrand} onValueChange={(val) => setSelectedBrand(val || "none")}>
+                  <Select value={selectedBrand} onValueChange={(val) => setSelectedBrand(val || "no_brand")}>
                     <SelectTrigger className="w-full rounded-xl border-border bg-background" dir="rtl">
                       <SelectValue placeholder="בחר מותג..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">ללא מותג</SelectItem>
+                      <SelectItem value="no_brand">בחר מותג</SelectItem>
                       {brands.map((b) => (
                         <SelectItem key={b.id} value={b.name}>
                           {b.nameHe ? `${b.nameHe} (${b.name})` : b.name}
                         </SelectItem>
                       ))}
-                      <SelectItem value="_new_" className="text-primary font-medium">
-                        + הוסף מותג חדש...
+                      <SelectItem value="new_brand" className="text-primary font-medium">
+                        מותג חדש
                       </SelectItem>
                     </SelectContent>
                   </Select>
                   
-                  {selectedBrand === "_new_" ? (
+                  {selectedBrand === "new_brand" ? (
                     <div className="bg-muted/30 p-3 rounded-lg border border-border/50 space-y-3 mt-2">
                       <div>
                         <Label htmlFor="newBrandName" className="text-xs mb-1 block">שם מותג חדש (אנגלית) *</Label>
@@ -165,8 +165,8 @@ export function ProductDialog({ product, open, onOpenChange, brands = [] }: Prod
                     </div>
                   ) : (
                     <>
-                      <input type="hidden" name="brand" value={selectedBrand === "none" ? "" : selectedBrand} />
-                      <input type="hidden" name="brandHe" value={selectedBrand === "none" ? "" : (brands.find(b => b.name === selectedBrand)?.nameHe || "")} />
+                      <input type="hidden" name="brand" value={selectedBrand === "no_brand" ? "" : selectedBrand} />
+                      <input type="hidden" name="brandHe" value={selectedBrand === "no_brand" ? "" : (brands.find(b => b.name === selectedBrand)?.nameHe || "")} />
                     </>
                   )}
                 </div>

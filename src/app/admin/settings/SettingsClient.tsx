@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Loader2, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function SettingsClient() {
   const [isLoading, setIsLoading] = useState(true);
@@ -54,14 +55,14 @@ export default function SettingsClient() {
       });
       
       if (res.ok) {
-        alert("ההגדרות נשמרו בהצלחה!");
+        toast.success("ההגדרות נשמרו בהצלחה!");
         router.refresh();
       } else {
-        alert("שגיאה בשמירת הגדרות");
+        toast.error("שגיאה בשמירת הגדרות");
       }
     } catch (error) {
       console.error("Save error", error);
-      alert("שגיאה בשמירת הגדרות");
+      toast.error("שגיאה בשמירת הגדרות");
     } finally {
       setIsSaving(false);
     }

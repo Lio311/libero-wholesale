@@ -13,6 +13,7 @@ import { db } from "@/lib/db";
 import { stores } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { checkIsAdmin } from "@/lib/admin";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const heebo = Heebo({
@@ -105,6 +106,7 @@ export default async function RootLayout({
               </main>
               <CartSheet />
               {requiresOnboarding && <OnboardingDialog open={true} defaultEmail={email} />}
+              <Toaster position="top-center" richColors />
             </SidebarProvider>
           </TooltipProvider>
         </body>
