@@ -9,13 +9,10 @@ export default function Page() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
       
       {/* Login Box Container */}
-      <div className="relative z-10 w-full max-w-md p-4">
+      <div className="relative z-10 w-full max-w-md p-4 flex flex-col items-center">
+        <img src="/logo2.png" alt="Libero Logo" className="h-16 mb-8 drop-shadow-2xl brightness-200" />
         <SignIn 
           appearance={{
-            layout: {
-              logoImageUrl: "/logo2.png",
-              logoPlacement: "inside"
-            },
             elements: {
               rootBox: "mx-auto w-full",
               card: "bg-card/80 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl w-full",
