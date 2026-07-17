@@ -16,7 +16,8 @@ export default function SettingsClient() {
     phone: "",
     address: "",
     min_order: "",
-    logo_url: ""
+    logo_url: "",
+    admin_emails: ""
   });
   const router = useRouter();
 
@@ -138,6 +139,18 @@ export default function SettingsClient() {
               dir="ltr"
             />
             <p className="text-xs text-muted-foreground">השאר ריק כדי להשתמש בלוגו ברירת המחדל של המערכת.</p>
+          </div>
+
+          <div className="space-y-2 border-t pt-4 mt-4">
+            <Label>אימיילים של מנהלי מערכת (מופרדים בפסיקים)</Label>
+            <Input 
+              name="admin_emails" 
+              value={settings.admin_emails || ""} 
+              onChange={handleChange} 
+              placeholder="admin@example.com, user@example.com" 
+              dir="ltr"
+            />
+            <p className="text-xs text-muted-foreground">משתמשים אלו יקבלו גישה מלאה לממשק הניהול. lior31197@gmail.com הוא מנהל תמיד.</p>
           </div>
           
           <Button 

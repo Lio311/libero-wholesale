@@ -12,6 +12,7 @@ import { OnboardingDialog } from "@/components/OnboardingDialog";
 import { db } from "@/lib/db";
 import { stores } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { checkIsAdmin } from "@/lib/admin";
 import "./globals.css";
 
 const heebo = Heebo({
@@ -55,7 +56,7 @@ export default async function RootLayout({
 }>) {
   const user = await currentUser();
   const email = user?.emailAddresses[0]?.emailAddress?.toLowerCase();
-  const isAdmin = email === "lior31197@gmail.com";
+  const isAdmin = await checkIsAdmin(email);
 
   let requiresOnboarding = false;
   if (user && !isAdmin) {

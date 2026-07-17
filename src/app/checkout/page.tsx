@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { stores } from "@/lib/db/schema";
 import { currentUser } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
+import { checkIsAdmin } from "@/lib/admin";
 import { CheckoutForm } from "./CheckoutForm";
 import { redirect } from "next/navigation";
 
@@ -9,7 +10,7 @@ export default async function CheckoutPage() {
   const user = await currentUser();
   
   const email = user?.emailAddresses[0]?.emailAddress?.toLowerCase();
-  const isAdmin = email === "lior31197@gmail.com";
+  const isAdmin = await checkIsAdmin(email);
 
   if (!user && !isAdmin) {
     redirect("/");
