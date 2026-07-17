@@ -82,9 +82,10 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="rounded-md border border-border overflow-hidden">
-            <Table>
+        <CardContent className="p-0 sm:p-6 overflow-hidden">
+          <div className="overflow-x-auto w-full">
+            <div className="rounded-md border border-border min-w-[800px]">
+              <Table>
               <TableHeader className="bg-muted/50">
                 <TableRow className="border-border">
                   <TableHead className="text-right">מק״ט / ברקוד</TableHead>
@@ -132,7 +133,8 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
                   ))
                 )}
               </TableBody>
-            </Table>
+              </Table>
+            </div>
           </div>
         </CardContent>
       </Card>

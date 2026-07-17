@@ -15,6 +15,7 @@ import {
 import { Box, Home, ShoppingCart, User, Settings, FileText } from "lucide-react"
 import { useCartStore } from "@/store/cart"
 import { usePathname } from "next/navigation"
+import { UserButton, SignOutButton } from "@clerk/nextjs"
 
 const items = [
   {
@@ -45,7 +46,7 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname()
 
   const getButtonClass = (url: string) => {
-    const isActive = pathname === url || (url !== "/" && pathname?.startsWith(url))
+    const isActive = pathname === url || (url !== "/" && url !== "/admin" && pathname?.startsWith(url))
     return `transition-all duration-300 ease-out rounded-xl my-1 h-12 flex items-center px-4 w-full text-right ${
       isActive 
         ? "bg-black/5 dark:bg-white/10 font-medium text-foreground shadow-sm" 
@@ -54,7 +55,7 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
   }
 
   const getIconClass = (url: string) => {
-    const isActive = pathname === url || (url !== "/" && pathname?.startsWith(url))
+    const isActive = pathname === url || (url !== "/" && url !== "/admin" && pathname?.startsWith(url))
     return `transition-colors ${isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"}`
   }
 
@@ -69,7 +70,7 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => {
-                const isActive = pathname === item.url || (item.url !== "/" && pathname?.startsWith(item.url));
+                const isActive = pathname === item.url || (item.url !== "/" && item.url !== "/admin" && pathname?.startsWith(item.url));
                 if (item.url === "/cart") {
                   return (
                     <SidebarMenuItem key={item.title}>
@@ -150,6 +151,13 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
           </SidebarGroupContent>
         </SidebarGroup>
       )}
+      <SidebarFooter className="p-4 border-t border-white/10 mt-auto md:hidden">
+        <div className="flex items-center justify-between text-foreground px-2 py-1">
+          <div className="flex items-center gap-3">
+            <UserButton showName />
+          </div>
+        </div>
+      </SidebarFooter>
     </Sidebar>
   )
 }
