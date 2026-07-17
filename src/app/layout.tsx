@@ -93,8 +93,8 @@ export default async function RootLayout({
               <AppSidebar isAdmin={isAdmin} />
               <main className="flex-1 w-full relative p-0 md:p-4 flex flex-col h-[100dvh] md:h-auto">
                 <MobileHeader />
-                <div className="bg-card w-full h-full md:rounded-[2.5rem] shadow-sm md:border border-border/40 overflow-y-auto relative flex-1" dir="ltr">
-                  <div dir="rtl" className="h-full min-h-max">
+                <div className="bg-card w-full h-full md:rounded-[2.5rem] shadow-sm md:border border-border/40 overflow-y-auto relative flex-1">
+                  <div className="h-full min-h-max">
                     {children}
                   </div>
                 </div>
