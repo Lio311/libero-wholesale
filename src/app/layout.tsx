@@ -78,9 +78,12 @@ export default async function RootLayout({
             <SidebarProvider>
               <AppSidebar isAdmin={isAdmin} />
               <main className="flex-1 w-full relative p-0 md:p-4 flex flex-col h-[100dvh] md:h-auto">
-                <div className="flex items-center justify-between p-4 md:hidden border-b border-border/40 bg-card z-10 shrink-0 shadow-sm">
-                  <img src="/libero-w.png" alt="Libero Logo" className="h-8 object-contain" />
-                  <SidebarTrigger />
+                <div className="relative flex items-center justify-between px-4 md:hidden border-b border-border/40 bg-card z-10 shrink-0 shadow-sm h-24">
+                  <SidebarTrigger className="h-10 w-10 [&_svg]:size-6" />
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <img src="/libero-w.png" alt="Libero Logo" className="h-12 object-contain" />
+                  </div>
+                  <div className="w-10"></div>
                 </div>
                 <div className="bg-card w-full h-full md:rounded-[2.5rem] shadow-sm md:border border-border/40 overflow-y-auto relative flex-1">
                   {children}
