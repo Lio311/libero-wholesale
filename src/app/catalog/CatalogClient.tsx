@@ -13,6 +13,19 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
+type SortColumn = 'barcode' | 'name' | 'brand' | 'stock' | 'price' | null;
+
+const SortIcon = ({ activeDir }: { activeDir?: 'asc' | 'desc' | null }) => (
+  <div className="inline-flex flex-col ml-1.5 align-middle opacity-60 hover:opacity-100 transition-opacity translate-y-[1px]">
+    <svg width="9" height="6" viewBox="0 0 8 6" className={`mb-[1.5px] ${activeDir === 'asc' ? 'fill-foreground opacity-100' : 'fill-muted-foreground opacity-30'}`}>
+      <path d="M4 0L8 6H0L4 0Z" />
+    </svg>
+    <svg width="9" height="6" viewBox="0 0 8 6" className={`${activeDir === 'desc' ? 'fill-foreground opacity-100' : 'fill-muted-foreground opacity-30'}`}>
+      <path d="M4 6L0 0H8L4 6Z" />
+    </svg>
+  </div>
+);
+
 interface CatalogClientProps {
   initialProducts: Product[];
 }
@@ -25,7 +38,9 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
   const [filterOnSale, setFilterOnSale] = useState(false);
   const [filterOfficial, setFilterOfficial] = useState(false);
   const [filterPriceDrop, setFilterPriceDrop] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
+  const [sortCol, setSortCol] = useState<SortColumn>(null);
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,6 +55,18 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
     setFilterOnSale(false);
     setFilterOfficial(false);
     setFilterPriceDrop(false);
+    setSortCol(null);
+    setSortDir('asc');
+  };
+
+  const handleSort = (col: SortColumn) => {
+    if (sortCol === col) {
+      if (sortDir === 'asc') setSortDir('desc');
+      else { setSortCol(null); setSortDir('asc'); }
+    } else {
+      setSortCol(col);
+      setSortDir('asc');
+    }
   };
 
   useEffect(() => {
@@ -67,9 +94,38 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
       
       return matchesSearch && matchesBrand && matchesBackToStock && matchesOnSale && matchesOfficial && matchesPriceDrop;
     });
+
+    // Apply sorting
+    if (sortCol) {
+      filtered.sort((a, b) => {
+        let valA: any = a[sortCol as keyof Product];
+        let valB: any = b[sortCol as keyof Product];
+
+        if (sortCol === 'name') {
+          valA = a.nameHe || a.name;
+          valB = b.nameHe || b.name;
+        } else if (sortCol === 'brand') {
+          valA = a.brandHe || a.brand;
+          valB = b.brandHe || b.brand;
+        } else if (sortCol === 'price') {
+          valA = Number(a.priceDropPrice || a.price);
+          valB = Number(b.priceDropPrice || b.price);
+        } else if (sortCol === 'stock') {
+          valA = a.stockQuantity;
+          valB = b.stockQuantity;
+        } else if (sortCol === 'barcode') {
+          valA = a.barcode || "";
+          valB = b.barcode || "";
+        }
+
+        if (valA < valB) return sortDir === 'asc' ? -1 : 1;
+        if (valA > valB) return sortDir === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
     
     setProducts(filtered);
-  }, [debouncedSearch, selectedBrand, filterBackToStock, filterOnSale, filterOfficial, filterPriceDrop, initialProducts]);
+  }, [debouncedSearch, selectedBrand, filterBackToStock, filterOnSale, filterOfficial, filterPriceDrop, sortCol, sortDir, initialProducts]);
 
   return (
     <div className="w-full space-y-6">
@@ -178,14 +234,24 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
               <TableHeader>
                 <TableRow className="bg-muted/50 hover:bg-muted/50">
                   <TableHead className="w-[60px] text-center">תמונה</TableHead>
-                  <TableHead>ברקוד</TableHead>
-                  <TableHead>שם ומאפיינים</TableHead>
-                  <TableHead>מותג</TableHead>
-                  <TableHead className="text-center">מלאי</TableHead>
-                  <TableHead className="text-right">מחיר יחידה</TableHead>
+                  <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort('barcode')}>
+                    ברקוד <SortIcon activeDir={sortCol === 'barcode' ? sortDir : null} />
+                  </TableHead>
+                  <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort('name')}>
+                    שם ומאפיינים <SortIcon activeDir={sortCol === 'name' ? sortDir : null} />
+                  </TableHead>
+                  <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort('brand')}>
+                    מותג <SortIcon activeDir={sortCol === 'brand' ? sortDir : null} />
+                  </TableHead>
+                  <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort('stock')}>
+                    מלאי <SortIcon activeDir={sortCol === 'stock' ? sortDir : null} />
+                  </TableHead>
+                  <TableHead className="text-center cursor-pointer select-none" onClick={() => handleSort('price')}>
+                    מחיר יחידה <SortIcon activeDir={sortCol === 'price' ? sortDir : null} />
+                  </TableHead>
                   <TableHead className="text-center">כמות</TableHead>
                   <TableHead className="text-center">סה"כ</TableHead>
-                  <TableHead className="text-left"></TableHead>
+                  <TableHead className="text-center"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
