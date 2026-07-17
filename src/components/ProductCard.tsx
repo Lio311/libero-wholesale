@@ -52,7 +52,7 @@ export function ProductCard({ product }: ProductCardProps) {
       </CardHeader>
       
       <CardContent className="p-2 pt-0 flex-1 flex flex-col justify-end">
-        <p className="text-[10px] text-muted-foreground mb-1 font-mono truncate">{product.barcode || product.modelHe || product.model}</p>
+        <p className="text-[10px] text-muted-foreground mb-1 font-medium truncate">במלאי: {product.stockQuantity} יח'</p>
         <div className="flex items-end justify-between mt-auto">
           <div className="flex flex-col">
             <span className="text-[10px] text-muted-foreground mb-0.5">מחיר</span>

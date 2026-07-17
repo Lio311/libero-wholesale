@@ -106,7 +106,8 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
               />
             </div>
 
-            <div className="w-full sm:w-[200px]">
+            <div className="w-full sm:w-[200px] flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-muted-foreground px-1">סינון לפי מותג</label>
               <Select value={selectedBrand} onValueChange={(val) => setSelectedBrand(val || "הכל")}>
                 <SelectTrigger className="w-full bg-background">
                   <SelectValue placeholder="סינון לפי מותג" />
