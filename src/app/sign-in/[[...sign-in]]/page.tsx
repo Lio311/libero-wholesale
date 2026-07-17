@@ -10,7 +10,7 @@ export default function Page() {
       
       {/* Login Box Container */}
       <div className="relative z-10 w-full max-w-md p-4 flex flex-col items-center">
-        <img src="/logo2.png" alt="Libero Logo" className="h-16 mb-8 drop-shadow-sm rounded-lg" />
+        <img src="/libero-w2.png" alt="Libero Logo" className="h-16 mb-8 drop-shadow-sm rounded-lg" />
         <SignIn 
           appearance={{
             elements: {
