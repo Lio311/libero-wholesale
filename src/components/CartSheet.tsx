@@ -20,7 +20,7 @@ export function CartSheet() {
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetContent className="w-full sm:max-w-md flex flex-col p-0 border-l border-border bg-background/95 backdrop-blur-xl">
+      <SheetContent side="left" className="w-full sm:max-w-md flex flex-col p-0 border-r border-border bg-background/95 backdrop-blur-xl">
         <SheetHeader className="p-6 pb-4 border-b border-border/50">
           <SheetTitle className="flex items-center gap-2 text-2xl font-bold">
             <ShoppingBag className="h-6 w-6" />
