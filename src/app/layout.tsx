@@ -87,13 +87,13 @@ export default async function RootLayout({
         dir="rtl"
         className={`${heebo.variable} ${ibmMono.variable} h-full antialiased`}
       >
-        <body className="min-h-full flex flex-col font-sans bg-background text-foreground">
+        <body className="h-[100dvh] overflow-hidden flex flex-col font-sans bg-background text-foreground">
           <TooltipProvider>
             <SidebarProvider>
               <AppSidebar isAdmin={isAdmin} />
-              <main className="flex-1 w-full relative p-0 md:p-4 flex flex-col h-[100dvh] md:h-auto">
+              <main className="flex-1 w-full relative p-0 md:p-4 flex flex-col h-[100dvh]">
                 <MobileHeader />
-                <div className="bg-card w-full h-full md:rounded-[2.5rem] shadow-sm md:border border-border/40 overflow-y-auto relative flex-1">
+                <div className="bg-card w-full h-full md:rounded-[2.5rem] shadow-sm md:border border-border/40 overflow-y-auto relative flex-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                   <div className="h-full min-h-max">
                     {children}
                   </div>

@@ -55,7 +55,7 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
       <TableCell className="max-w-[150px] md:max-w-[200px] xl:max-w-[300px] text-center px-1 md:px-4">
         <div className="flex flex-col truncate pr-2 w-full max-w-[150px] sm:max-w-[200px] md:max-w-none">
           {brandLogo ? (
-            <div className="h-4 w-16 relative flex items-center justify-start mb-0.5 opacity-80">
+            <div className="h-6 w-24 relative flex items-center justify-start mb-1 opacity-90">
               <img src={brandLogo} alt={product.brand || "Brand"} className="max-h-full max-w-full object-contain" />
             </div>
           ) : (
@@ -86,7 +86,7 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
       <TableCell className="text-center font-mono text-xs w-[60px] md:w-[80px]">{product.size || "-"}</TableCell>
       <TableCell className="hidden md:table-cell px-1 md:px-4 text-center">
         {brandLogo ? (
-          <div className="h-8 w-16 mx-auto relative flex items-center justify-center">
+          <div className="h-12 w-24 mx-auto relative flex items-center justify-center">
             <img src={brandLogo} alt={product.brand || "Brand"} className="max-h-full max-w-full object-contain" />
           </div>
         ) : (
