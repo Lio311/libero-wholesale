@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
-import { createBusinessProfile } from "./actions";
+import { OnboardingDialog } from "@/components/OnboardingDialog";
 
 interface StoreData {
   id: string;
@@ -34,78 +34,35 @@ export function AccountClient({ store }: AccountClientProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (!store) {
-    async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-      e.preventDefault();
-      setIsLoading(true);
-      setError(null);
-      const formData = new FormData(e.currentTarget);
-      const res = await createBusinessProfile(formData);
-      setIsLoading(false);
-      if (res?.error) {
-        setError(res.error);
-      }
-    }
+  const isMissingStore = !store;
+  const displayStore = store || {
+    id: "placeholder",
+    name: "שם העסק",
+    contactName: "-",
+    phone: "-",
+    email: "-",
+    address: "-",
+    creditLimit: 0,
+    currentBalance: 0,
+    paymentTerms: "לא הוגדרו",
+    status: "pending" as const
+  };
 
-    return (
-      <Card className="max-w-2xl mx-auto bg-card border-border shadow-xl rounded-3xl overflow-hidden mt-10">
-        <CardHeader className="text-center bg-muted/30 pb-8 pt-10">
-          <Building2 className="h-16 w-16 text-primary mx-auto mb-4" />
-          <CardTitle className="text-2xl font-bold">הגדר את העסק שלך</CardTitle>
-          <CardDescription className="text-base max-w-sm mx-auto">
-            מלא את פרטי העסק כדי לפתוח חשבון סיטונאי ולהתחיל להזמין ישירות מהמערכת.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-8 px-8 pb-10">
-          <form onSubmit={onSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="name">שם העסק / החברה</Label>
-                <Input id="name" name="name" required className="bg-background border-border rounded-xl" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="contactName">שם איש קשר</Label>
-                <Input id="contactName" name="contactName" required className="bg-background border-border rounded-xl" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">אימייל (לקבלת חשבוניות)</Label>
-                <Input id="email" name="email" type="email" defaultValue={user?.primaryEmailAddress?.emailAddress || ""} required className="bg-background border-border rounded-xl" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">טלפון נייד</Label>
-                <Input id="phone" name="phone" required className="bg-background border-border rounded-xl" />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="address">כתובת מלאה למשלוחים</Label>
-                <Input id="address" name="address" required className="bg-background border-border rounded-xl" />
-              </div>
-            </div>
-            
-            {error && <p className="text-sm text-destructive font-medium">{error}</p>}
-            
-            <Button type="submit" disabled={isLoading} className="w-full rounded-full h-12 text-base font-bold shadow-sm">
-              {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "שלח בקשה לפתיחת חשבון"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const availableCredit = Number(store.creditLimit) - Number(store.currentBalance);
-  const creditPercentage = Math.min(100, (Number(store.currentBalance) / Number(store.creditLimit)) * 100);
+  const availableCredit = Number(displayStore.creditLimit) - Number(displayStore.currentBalance);
+  const creditLimitNum = Number(displayStore.creditLimit);
+  const creditPercentage = creditLimitNum > 0 ? Math.min(100, (Number(displayStore.currentBalance) / creditLimitNum) * 100) : 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 relative ${isMissingStore ? 'opacity-50 blur-sm pointer-events-none select-none' : ''}`}>
       {/* Main Info */}
       <Card className="md:col-span-2 bg-card border-border shadow-sm">
         <CardHeader className="flex flex-row items-start justify-between pb-4">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <CardTitle className="text-2xl">{store.name}</CardTitle>
-              {store.status === "active" && <Badge className="bg-green-500/20 text-green-400 border-green-500/50">פעיל</Badge>}
-              {store.status === "pending" && <Badge variant="secondary">בהמתנה</Badge>}
-              {store.status === "suspended" && <Badge variant="destructive">מוקפא</Badge>}
+              <CardTitle className="text-2xl">{displayStore.name}</CardTitle>
+              {displayStore.status === "active" && <Badge className="bg-green-500/20 text-green-400 border-green-500/50">פעיל</Badge>}
+              {displayStore.status === "pending" && <Badge variant="secondary">בהמתנה</Badge>}
+              {displayStore.status === "suspended" && <Badge variant="destructive">מוקפא</Badge>}
             </div>
             <CardDescription>פרטי העסק ואיש קשר</CardDescription>
           </div>
@@ -120,7 +77,7 @@ export function AccountClient({ store }: AccountClientProps) {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">איש קשר</p>
-              <p className="font-medium">{store.contactName}</p>
+              <p className="font-medium">{displayStore.contactName}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -129,7 +86,7 @@ export function AccountClient({ store }: AccountClientProps) {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">טלפון</p>
-              <p className="font-medium font-mono">{store.phone}</p>
+              <p className="font-medium font-mono">{displayStore.phone}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -138,7 +95,7 @@ export function AccountClient({ store }: AccountClientProps) {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">אימייל</p>
-              <p className="font-medium">{store.email}</p>
+              <p className="font-medium">{displayStore.email}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -147,7 +104,7 @@ export function AccountClient({ store }: AccountClientProps) {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">כתובת למשלוח</p>
-              <p className="font-medium">{store.address}</p>
+              <p className="font-medium">{displayStore.address}</p>
             </div>
           </div>
         </CardContent>
@@ -162,7 +119,7 @@ export function AccountClient({ store }: AccountClientProps) {
               <Wallet className="h-4 w-4" />
               אובליגו (יתרת חוב)
             </CardDescription>
-            <CardTitle className="text-3xl font-mono">₪{Number(store.currentBalance).toLocaleString('en-US', { minimumFractionDigits: 2 })}</CardTitle>
+            <CardTitle className="text-3xl font-mono">₪{Number(displayStore.currentBalance).toLocaleString('en-US', { minimumFractionDigits: 2 })}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="mt-4">
@@ -178,7 +135,7 @@ export function AccountClient({ store }: AccountClientProps) {
               </div>
               <div className="flex justify-between text-xs mt-1.5 text-muted-foreground">
                 <span>זמין: ₪{availableCredit.toLocaleString('en-US')}</span>
-                <span>מסגרת: ₪{Number(store.creditLimit).toLocaleString('en-US')}</span>
+                <span>מסגרת: ₪{creditLimitNum.toLocaleString('en-US')}</span>
               </div>
             </div>
           </CardContent>
@@ -192,11 +149,13 @@ export function AccountClient({ store }: AccountClientProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-lg font-medium">{store.paymentTerms || "לא הוגדרו תנאי תשלום"}</div>
+            <div className="text-lg font-medium">{displayStore.paymentTerms || "לא הוגדרו תנאי תשלום"}</div>
             <p className="text-xs text-muted-foreground mt-1">יש לפנות להנהלת חשבונות לשינוי תנאים</p>
           </CardContent>
         </Card>
       </div>
+
+      <OnboardingDialog open={isMissingStore} defaultEmail={user?.primaryEmailAddress?.emailAddress || ""} />
     </div>
   );
 }
