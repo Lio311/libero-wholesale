@@ -42,21 +42,24 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
   useEffect(() => {
     const term = debouncedSearch.toLowerCase().trim();
     
-    const filtered = initialProducts.filter(p => {
+    const filtered = initialProducts.filter(product => {
       // Text Search
       const matchesSearch = !term || 
-        p.name.toLowerCase().includes(term) ||
-        (p.brand && p.brand.toLowerCase().includes(term)) ||
-        (p.barcode && p.barcode.includes(term)) ||
-        (p.model && p.model.toLowerCase().includes(term));
+        product.name.toLowerCase().includes(term) ||
+        (product.brand && product.brand.toLowerCase().includes(term)) ||
+        (product.barcode && product.barcode.includes(term)) ||
+        (product.model && product.model.toLowerCase().includes(term));
         
       // Brand Search
-      const matchesBrand = selectedBrand === "הכל" || (p.brandHe === selectedBrand || p.brand === selectedBrand);
+      const matchesBrand = selectedBrand === "הכל" || (product.brandHe === selectedBrand || product.brand === selectedBrand);
       
-      // Mock toggles (currently just pass through since no DB support yet)
-      // In reality, you'd check p.isOnSale, p.isOfficialImporter etc.
+      // Boolean toggles
+      const matchesBackToStock = !filterBackToStock || product.isBackToStock;
+      const matchesOnSale = !filterOnSale || product.isOnSale;
+      const matchesOfficial = !filterOfficial || product.isOfficialImporter;
+      const matchesPriceDrop = !filterPriceDrop || (product.priceDropPrice !== null);
       
-      return matchesSearch && matchesBrand;
+      return matchesSearch && matchesBrand && matchesBackToStock && matchesOnSale && matchesOfficial && matchesPriceDrop;
     });
     
     setProducts(filtered);
