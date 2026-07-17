@@ -11,9 +11,10 @@ import { useState } from "react";
 interface ProductTableRowProps {
   product: Product;
   brandLogo?: string | null;
+  onImageClick?: (url: string) => void;
 }
 
-export function ProductTableRow({ product, brandLogo }: ProductTableRowProps) {
+export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTableRowProps) {
   const isOutOfStock = product.stockQuantity <= 0;
   const addItem = useCartStore(state => state.addItem);
   const [qty, setQty] = useState(1);
@@ -35,10 +36,16 @@ export function ProductTableRow({ product, brandLogo }: ProductTableRowProps) {
   return (
     <>
     <TableRow className="hover:bg-muted/50 group cursor-pointer md:cursor-default" onClick={toggleExpand}>
-      <TableCell className="p-1 md:p-2 w-[50px] md:w-[60px] text-center">
-        <div className="relative h-10 w-10 md:h-12 md:w-12 bg-white rounded flex items-center justify-center overflow-hidden border border-border/50 mx-auto">
+      <TableCell className="p-1 md:p-2 text-center w-[60px] md:w-[80px]">
+        <div 
+          className={`relative h-12 w-12 md:h-16 md:w-16 bg-white rounded-lg flex items-center justify-center overflow-hidden border border-border/50 mx-auto transition-transform hover:scale-105 ${onImageClick && product.imageUrl ? "cursor-pointer" : ""}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onImageClick && product.imageUrl) onImageClick(product.imageUrl);
+          }}
+        >
           {product.imageUrl ? (
-            <Image src={product.imageUrl} alt={product.nameHe || product.name} fill className="object-contain p-0.5" />
+            <Image src={product.imageUrl} alt={product.name} fill className="object-contain p-1" />
           ) : (
             <div className="text-muted-foreground/50 text-[8px] font-mono opacity-20">N/A</div>
           )}

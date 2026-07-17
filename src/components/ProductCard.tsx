@@ -10,16 +10,22 @@ import { useCartStore } from "@/store/cart";
 interface ProductCardProps {
   product: Product;
   brandLogo?: string | null;
+  onImageClick?: (url: string) => void;
 }
 
-export function ProductCard({ product, brandLogo }: ProductCardProps) {
+export function ProductCard({ product, brandLogo, onImageClick }: ProductCardProps) {
   const isOutOfStock = product.stockQuantity <= 0;
   const addItem = useCartStore(state => state.addItem);
   
   return (
     <Card className="flex flex-col h-full bg-card/50 backdrop-blur-sm border-border hover:border-white/20 transition-all duration-300 shadow-xl overflow-hidden group">
       {/* Image Area */}
-      <div className="relative aspect-square bg-white w-full overflow-hidden flex items-center justify-center p-2">
+      <div 
+        className={`relative aspect-square bg-white w-full overflow-hidden flex items-center justify-center p-2 ${onImageClick && product.imageUrl ? "cursor-pointer" : ""}`}
+        onClick={() => {
+          if (onImageClick && product.imageUrl) onImageClick(product.imageUrl);
+        }}
+      >
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}

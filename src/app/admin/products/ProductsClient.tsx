@@ -7,8 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, MoreHorizontal, Edit, Trash2, Loader2, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Search, Plus, MoreHorizontal, Edit, Trash2, Loader2, ArrowUpDown, ArrowUp, ArrowDown, Image as ImageIcon } from "lucide-react";
 import { ProductDialog } from "./ProductDialog";
+import { ImageModal } from "@/components/ImageModal";
 import { deleteProduct } from "./actions";
 
 interface ProductRow {
@@ -42,6 +43,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductRow | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const [sortConfig, setSortConfig] = useState<{ key: keyof ProductRow; direction: "asc" | "desc" } | null>(null);
 
@@ -169,11 +171,16 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                   sortedProducts.map((product) => (
                     <TableRow key={product.id} className={`border-border hover:bg-muted/20 transition-colors ${product.isDraft ? "opacity-50 grayscale-[50%]" : ""}`}>
                       <TableCell className="p-1 px-2 text-center">
-                        <div className="relative h-10 w-10 bg-white rounded flex items-center justify-center overflow-hidden border border-border/50 mx-auto">
+                        <div 
+                          className={`h-12 w-12 bg-white rounded-md flex items-center justify-center overflow-hidden border border-border/50 mx-auto ${product.imageUrl ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+                          onClick={() => {
+                            if (product.imageUrl) setSelectedImage(product.imageUrl);
+                          }}
+                        >
                           {product.imageUrl ? (
-                            <Image src={product.imageUrl} alt={product.name} fill className="object-contain p-0.5" />
+                            <Image src={product.imageUrl} alt={product.name} fill className="object-contain p-1" />
                           ) : (
-                            <div className="text-muted-foreground/50 text-[10px] font-mono opacity-30">N/A</div>
+                            <ImageIcon className="h-4 w-4 text-muted-foreground/30" />
                           )}
                         </div>
                       </TableCell>
@@ -233,6 +240,8 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
         onOpenChange={setIsDialogOpen} 
         brands={brands}
       />
+      
+      <ImageModal imageUrl={selectedImage} onClose={() => setSelectedImage(null)} />
     </div>
   );
 }

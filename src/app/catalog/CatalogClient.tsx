@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Product } from "@/lib/types";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductTableRow } from "@/components/ProductTableRow";
+import { ImageModal } from "@/components/ImageModal";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Search, Loader2, RotateCcw, LayoutGrid, List } from "lucide-react";
@@ -54,6 +55,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
   
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   
   const isMobile = useIsMobile();
   const [currentPage, setCurrentPage] = useState(1);
@@ -273,7 +275,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
         viewMode === 'grid' ? (
           <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2 md:gap-4 px-2 md:px-4">
             {displayedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} brandLogo={brands.find(b => b.name === product.brand || b.nameHe === product.brand)?.logoUrl} />
+              <ProductCard key={product.id} product={product} brandLogo={brands.find(b => b.name === product.brand || b.nameHe === product.brand)?.logoUrl} onImageClick={setSelectedImage} />
             ))}
           </div>
         ) : (
@@ -307,7 +309,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
               </TableHeader>
               <TableBody>
                 {displayedProducts.map((product) => (
-                  <ProductTableRow key={product.id} product={product} brandLogo={brands.find(b => b.name === product.brand || b.nameHe === product.brand)?.logoUrl} />
+                  <ProductTableRow key={product.id} product={product} brandLogo={brands.find(b => b.name === product.brand || b.nameHe === product.brand)?.logoUrl} onImageClick={setSelectedImage} />
                 ))}
               </TableBody>
             </Table>
@@ -354,6 +356,9 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
           </Button>
         </div>
       )}
+
+      {/* Image Modal */}
+      <ImageModal imageUrl={selectedImage} onClose={() => setSelectedImage(null)} />
     </div>
   );
 }
