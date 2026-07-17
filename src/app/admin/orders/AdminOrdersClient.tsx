@@ -328,7 +328,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
 
       {selectedOrder && (
         <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
-          <DialogContent className="w-[95vw] max-w-6xl max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] px-4 md:px-6">
+          <DialogContent className="w-[95vw] max-w-6xl sm:max-w-6xl max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] px-4 md:px-6">
             <DialogHeader>
               <DialogTitle className="text-xl flex items-center gap-3">
                 <span>הזמנה #{selectedOrder.orderNumber}</span>
