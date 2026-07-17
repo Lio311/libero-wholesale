@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Box, Home, ShoppingCart, User, Settings, FileText } from "lucide-react"
 import { useCartStore } from "@/store/cart"
+import { usePathname } from "next/navigation"
 
 const items = [
   {
@@ -41,6 +42,21 @@ const items = [
 export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
   const setIsOpen = useCartStore((state) => state.setIsOpen)
   const totalItems = useCartStore((state) => state.getTotalItems())
+  const pathname = usePathname()
+
+  const getButtonClass = (url: string) => {
+    const isActive = pathname === url || (url !== "/" && pathname?.startsWith(url))
+    return `transition-all duration-300 ease-out rounded-xl my-1 h-12 flex items-center px-4 w-full text-right ${
+      isActive 
+        ? "bg-black/5 dark:bg-white/10 font-medium text-foreground shadow-sm" 
+        : "hover:bg-black/5 dark:hover:bg-white/10 text-muted-foreground hover:text-foreground"
+    }`
+  }
+
+  const getIconClass = (url: string) => {
+    const isActive = pathname === url || (url !== "/" && pathname?.startsWith(url))
+    return `transition-colors ${isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"}`
+  }
 
   return (
     <Sidebar side="right">
@@ -53,17 +69,18 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => {
+                const isActive = pathname === item.url || (item.url !== "/" && pathname?.startsWith(item.url));
                 if (item.url === "/cart") {
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton 
                         onClick={() => setIsOpen(true)}
-                        className="transition-all duration-300 ease-out hover:bg-gradient-to-l hover:from-primary/20 hover:to-primary/5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_10px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group rounded-xl my-1 h-12"
+                        className={`group ${getButtonClass(item.url)}`}
                       >
-                        <item.icon className="text-primary/70 group-hover:text-primary transition-colors" />
-                        <span>{item.title}</span>
+                        <item.icon className={getIconClass(item.url)} />
+                        <span className={isActive ? "font-semibold text-foreground" : ""}>{item.title}</span>
                         {totalItems > 0 && (
-                          <span className="ml-auto bg-primary text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
+                          <span className="mr-auto bg-primary text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
                             {totalItems}
                           </span>
                         )}
@@ -76,10 +93,10 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton 
                       render={<a href={item.url} />}
-                      className="transition-all duration-300 ease-out hover:bg-gradient-to-l hover:from-primary/20 hover:to-primary/5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_10px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group rounded-xl my-1 h-12"
+                      className={`group ${getButtonClass(item.url)}`}
                     >
-                      <item.icon className="text-muted-foreground group-hover:text-primary transition-colors" />
-                      <span>{item.title}</span>
+                      <item.icon className={getIconClass(item.url)} />
+                      <span className={isActive ? "font-semibold text-foreground" : ""}>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
@@ -96,37 +113,37 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
               <SidebarMenuItem>
                 <SidebarMenuButton 
                   render={<a href="/admin" />}
-                  className="transition-all duration-300 ease-out hover:bg-gradient-to-l hover:from-primary/20 hover:to-primary/5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_10px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group rounded-xl my-1 h-12"
+                  className={`group ${getButtonClass("/admin")}`}
                 >
-                  <Home className="text-muted-foreground group-hover:text-primary transition-colors" />
-                  <span>לוח בקרה</span>
+                  <Home className={getIconClass("/admin")} />
+                  <span className={pathname === "/admin" ? "font-semibold text-foreground" : ""}>לוח בקרה</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton 
                   render={<a href="/admin/products" />}
-                  className="transition-all duration-300 ease-out hover:bg-gradient-to-l hover:from-primary/20 hover:to-primary/5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_10px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group rounded-xl my-1 h-12"
+                  className={`group ${getButtonClass("/admin/products")}`}
                 >
-                  <Box className="text-muted-foreground group-hover:text-primary transition-colors" />
-                  <span>ניהול מוצרים</span>
+                  <Box className={getIconClass("/admin/products")} />
+                  <span className={pathname === "/admin/products" ? "font-semibold text-foreground" : ""}>ניהול מוצרים</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton 
                   render={<a href="/admin/stores" />}
-                  className="transition-all duration-300 ease-out hover:bg-gradient-to-l hover:from-primary/20 hover:to-primary/5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_10px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group rounded-xl my-1 h-12"
+                  className={`group ${getButtonClass("/admin/stores")}`}
                 >
-                  <User className="text-muted-foreground group-hover:text-primary transition-colors" />
-                  <span>ניהול לקוחות</span>
+                  <User className={getIconClass("/admin/stores")} />
+                  <span className={pathname === "/admin/stores" ? "font-semibold text-foreground" : ""}>ניהול לקוחות</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton 
                   render={<a href="/admin/settings" />}
-                  className="transition-all duration-300 ease-out hover:bg-gradient-to-l hover:from-primary/20 hover:to-primary/5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_10px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group rounded-xl my-1 h-12"
+                  className={`group ${getButtonClass("/admin/settings")}`}
                 >
-                  <Settings className="text-muted-foreground group-hover:text-primary transition-colors" />
-                  <span>הגדרות עסק</span>
+                  <Settings className={getIconClass("/admin/settings")} />
+                  <span className={pathname === "/admin/settings" ? "font-semibold text-foreground" : ""}>הגדרות עסק</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
