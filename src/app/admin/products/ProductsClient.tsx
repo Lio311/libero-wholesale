@@ -25,11 +25,19 @@ interface ProductRow {
   isDraft?: boolean;
 }
 
-interface ProductsClientProps {
-  products: ProductRow[];
+interface Brand {
+  id: string;
+  name: string;
+  nameHe: string | null;
+  logoUrl: string | null;
 }
 
-export function ProductsClient({ products: initialProducts }: ProductsClientProps) {
+interface ProductsClientProps {
+  products: ProductRow[];
+  brands?: Brand[];
+}
+
+export function ProductsClient({ products: initialProducts, brands = [] }: ProductsClientProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductRow | null>(null);
@@ -179,7 +187,19 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
                         </div>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm text-center">{product.size || '-'}</TableCell>
-                      <TableCell className="text-center">{product.brand || '-'}</TableCell>
+                      <TableCell className="text-center">
+                        {(() => {
+                          const matchingBrand = brands.find(b => b.name === product.brand || b.nameHe === product.brand);
+                          if (matchingBrand?.logoUrl) {
+                            return (
+                              <div className="h-8 w-16 mx-auto relative flex items-center justify-center">
+                                <Image src={matchingBrand.logoUrl} alt={product.brand || "Brand"} fill className="object-contain" />
+                              </div>
+                            );
+                          }
+                          return product.brand || '-';
+                        })()}
+                      </TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-2">
                           {product.stockQuantity}
@@ -211,6 +231,7 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
         product={editingProduct} 
         open={isDialogOpen} 
         onOpenChange={setIsDialogOpen} 
+        brands={brands}
       />
     </div>
   );

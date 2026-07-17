@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { products } from "@/lib/db/schema";
+import { products, brands } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
 import { ProductsClient } from "./ProductsClient";
 
@@ -10,6 +10,8 @@ export default async function AdminProductsPage() {
     orderBy: [desc(products.createdAt)],
   });
 
+  const allBrands = await db.query.brands.findMany();
+
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto w-full">
       <div className="mb-8">
@@ -19,7 +21,7 @@ export default async function AdminProductsPage() {
         </p>
       </div>
 
-      <ProductsClient products={allProducts} />
+      <ProductsClient products={allProducts} brands={allBrands} />
     </div>
   );
 }

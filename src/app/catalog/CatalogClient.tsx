@@ -28,11 +28,19 @@ const SortIcon = ({ activeDir }: { activeDir?: 'asc' | 'desc' | null }) => (
   </div>
 );
 
-interface CatalogClientProps {
-  initialProducts: Product[];
+interface Brand {
+  id: string;
+  name: string;
+  nameHe: string | null;
+  logoUrl: string | null;
 }
 
-export function CatalogClient({ initialProducts }: CatalogClientProps) {
+interface CatalogClientProps {
+  initialProducts: Product[];
+  brands?: Brand[];
+}
+
+export function CatalogClient({ initialProducts, brands = [] }: CatalogClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 400);
   const [selectedBrand, setSelectedBrand] = useState<string>("הכל");
@@ -265,7 +273,7 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
         viewMode === 'grid' ? (
           <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2 md:gap-4 px-2 md:px-4">
             {displayedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} brandLogo={brands.find(b => b.name === product.brand || b.nameHe === product.brand)?.logoUrl} />
             ))}
           </div>
         ) : (
@@ -299,7 +307,7 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
               </TableHeader>
               <TableBody>
                 {displayedProducts.map((product) => (
-                  <ProductTableRow key={product.id} product={product} />
+                  <ProductTableRow key={product.id} product={product} brandLogo={brands.find(b => b.name === product.brand || b.nameHe === product.brand)?.logoUrl} />
                 ))}
               </TableBody>
             </Table>

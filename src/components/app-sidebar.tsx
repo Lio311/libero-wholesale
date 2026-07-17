@@ -12,7 +12,17 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar"
-import { Box, Home, ShoppingCart, User, Settings, FileText } from "lucide-react"
+import { 
+  Home, 
+  Settings, 
+  ShoppingBag,
+  Users,
+  PackageSearch,
+  ShoppingCart,
+  Box,
+  User,
+  FileText
+} from "lucide-react";
 import { useCartStore } from "@/store/cart"
 import { usePathname } from "next/navigation"
 import { UserButton, SignOutButton } from "@clerk/nextjs"
@@ -127,6 +137,15 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
                 >
                   <Box className={getIconClass("/admin/products")} />
                   <span className={pathname === "/admin/products" ? "font-semibold text-foreground" : ""}>ניהול מוצרים</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  render={<a href="/admin/brands" />}
+                  className={`group ${getButtonClass("/admin/brands")}`}
+                >
+                  <ShoppingBag className={getIconClass("/admin/brands")} />
+                  <span className={pathname === "/admin/brands" ? "font-semibold text-foreground" : ""}>ניהול מותגים</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>

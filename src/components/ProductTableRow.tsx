@@ -10,9 +10,10 @@ import { useState } from "react";
 
 interface ProductTableRowProps {
   product: Product;
+  brandLogo?: string | null;
 }
 
-export function ProductTableRow({ product }: ProductTableRowProps) {
+export function ProductTableRow({ product, brandLogo }: ProductTableRowProps) {
   const isOutOfStock = product.stockQuantity <= 0;
   const addItem = useCartStore(state => state.addItem);
   const [qty, setQty] = useState(1);
@@ -45,9 +46,18 @@ export function ProductTableRow({ product }: ProductTableRowProps) {
       </TableCell>
       <TableCell className="hidden md:table-cell font-mono text-xs text-muted-foreground w-[120px] text-center">{product.barcode || "-"}</TableCell>
       <TableCell className="max-w-[150px] md:max-w-[200px] xl:max-w-[300px] text-center px-1 md:px-4">
-        <div className="flex flex-col gap-1 items-center">
-          <span className="font-semibold text-[11px] md:text-sm truncate w-full" title={product.brand ? `${product.brandHe || product.brand} - ${product.nameHe || product.name}` : (product.nameHe || product.name)}>
-            {product.brand ? `${product.brandHe || product.brand} - ${product.nameHe || product.name}` : (product.nameHe || product.name)}
+        <div className="flex flex-col truncate pr-2 w-full max-w-[150px] sm:max-w-[200px] md:max-w-none">
+          {brandLogo ? (
+            <div className="h-4 w-16 relative flex items-center justify-start mb-0.5 opacity-80">
+              <img src={brandLogo} alt={product.brand || "Brand"} className="max-h-full max-w-full object-contain" />
+            </div>
+          ) : (
+            <span className="text-[10px] text-muted-foreground truncate w-full" title={product.brandHe || product.brand || ""}>
+              {product.brandHe || product.brand || "לא צוין מותג"}
+            </span>
+          )}
+          <span className="font-semibold text-[11px] md:text-sm truncate w-full" title={product.nameHe || product.name}>
+            {product.nameHe || product.name}
           </span>
           <div className="flex flex-wrap items-center justify-center gap-1">
             {product.isOfficialImporter && <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-[9px] px-1 h-4 shadow-none">יבואן רשמי</Badge>}
@@ -67,7 +77,15 @@ export function ProductTableRow({ product }: ProductTableRowProps) {
         </div>
       </TableCell>
       <TableCell className="text-center font-mono text-xs w-[60px] md:w-[80px]">{product.size || "-"}</TableCell>
-      <TableCell className="hidden md:table-cell text-xs text-muted-foreground w-[120px] text-center">{product.brandHe || product.brand || "-"}</TableCell>
+      <TableCell className="hidden md:table-cell px-1 md:px-4 text-center">
+        {brandLogo ? (
+          <div className="h-8 w-16 mx-auto relative flex items-center justify-center">
+            <img src={brandLogo} alt={product.brand || "Brand"} className="max-h-full max-w-full object-contain" />
+          </div>
+        ) : (
+          <span className="text-sm truncate max-w-[120px] inline-block">{product.brandHe || product.brand || '-'}</span>
+        )}
+      </TableCell>
       <TableCell className="text-center font-medium w-[60px] md:w-[80px] text-xs md:text-sm">{product.stockQuantity}</TableCell>
       <TableCell className="text-center w-[80px] md:w-[100px]">
         <div className="flex flex-col items-center">

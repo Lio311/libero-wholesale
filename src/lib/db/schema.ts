@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, decimal, integer, boolean, timestamp, serial, pgEnum, AnyPgColumn } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, decimal, integer, boolean, timestamp, serial, pgEnum, AnyPgColumn, varchar } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 // Enums
@@ -8,6 +8,15 @@ export const orderStatusEnum = pgEnum('order_status', ['pending', 'processing', 
 export const transactionTypeEnum = pgEnum('transaction_type', ['payment', 'charge', 'refund', 'adjustment']);
 
 // Stores Table
+export const brands = pgTable('brands', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: varchar('name', { length: 255 }).notNull().unique(),
+  nameHe: varchar('name_he', { length: 255 }),
+  logoUrl: varchar('logo_url', { length: 1024 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 export const stores = pgTable('stores', {
   id: uuid('id').defaultRandom().primaryKey(),
   clerkUserId: text('clerk_user_id').notNull().unique(), // The admin/user ID owning this store

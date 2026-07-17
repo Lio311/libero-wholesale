@@ -12,9 +12,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import { createProduct, updateProduct } from "./actions";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ProductRow {
   id: string;
@@ -41,16 +47,19 @@ interface ProductDialogProps {
   product?: ProductRow | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  brands?: any[];
 }
 
-export function ProductDialog({ product, open, onOpenChange }: ProductDialogProps) {
+export function ProductDialog({ product, open, onOpenChange, brands = [] }: ProductDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [base64Image, setBase64Image] = useState<string | null>(null);
   const [isOnSale, setIsOnSale] = useState(product?.isOnSale || false);
+  const [selectedBrand, setSelectedBrand] = useState<string>(product?.brand || "none");
 
   useEffect(() => {
     setIsOnSale(product?.isOnSale || false);
+    setSelectedBrand(product?.brand || "none");
   }, [product, open]);
 
   const isEditing = !!product;
@@ -123,12 +132,24 @@ export function ProductDialog({ product, open, onOpenChange }: ProductDialogProp
                 <Input id="nameHe" name="nameHe" defaultValue={product?.nameHe || ""} className="col-span-3 rounded-xl border-border bg-background" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="brand" className="text-right font-medium text-xs">מותג (אנגלית)</Label>
-                <Input id="brand" name="brand" defaultValue={product?.brand || ""} className="col-span-3 rounded-xl border-border bg-background" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="brandHe" className="text-right font-medium text-xs">מותג (עברית)</Label>
-                <Input id="brandHe" name="brandHe" defaultValue={product?.brandHe || ""} className="col-span-3 rounded-xl border-border bg-background" />
+                <Label htmlFor="brandSelect" className="text-right font-medium text-xs">מותג</Label>
+                <div className="col-span-3">
+                  <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+                    <SelectTrigger className="w-full rounded-xl border-border bg-background" dir="rtl">
+                      <SelectValue placeholder="בחר מותג..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">ללא מותג</SelectItem>
+                      {brands.map((b) => (
+                        <SelectItem key={b.id} value={b.name}>
+                          {b.nameHe ? `${b.nameHe} (${b.name})` : b.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <input type="hidden" name="brand" value={selectedBrand === "none" ? "" : selectedBrand} />
+                  <input type="hidden" name="brandHe" value={selectedBrand === "none" ? "" : (brands.find(b => b.name === selectedBrand)?.nameHe || "")} />
+                </div>
               </div>
 
               <div className="grid grid-cols-4 items-center gap-4">

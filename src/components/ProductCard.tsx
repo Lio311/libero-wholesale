@@ -9,9 +9,10 @@ import { useCartStore } from "@/store/cart";
 
 interface ProductCardProps {
   product: Product;
+  brandLogo?: string | null;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, brandLogo }: ProductCardProps) {
   const isOutOfStock = product.stockQuantity <= 0;
   const addItem = useCartStore(state => state.addItem);
   
@@ -51,7 +52,15 @@ export function ProductCard({ product }: ProductCardProps) {
         )}
         <div className="flex justify-between items-start gap-1">
           <div className="w-full">
-            <p className="text-[9px] md:text-[10px] text-muted-foreground uppercase tracking-wider truncate">{product.brandHe || product.brand}</p>
+            {brandLogo ? (
+              <div className="h-4 w-12 relative flex items-center justify-start opacity-70 mb-1">
+                <img src={brandLogo} alt={product.brand || "Brand"} className="max-h-full max-w-full object-contain" />
+              </div>
+            ) : (
+              <span className="text-[10px] md:text-xs text-muted-foreground truncate w-full tracking-tight mb-1" title={product.brandHe || product.brand || ""}>
+                {product.brandHe || product.brand || '\u00A0'}
+              </span>
+            )}
             <CardTitle className="text-xs md:text-sm font-semibold leading-tight mt-0.5 line-clamp-2" title={product.nameHe || product.name}>
               {product.nameHe || product.name}
             </CardTitle>

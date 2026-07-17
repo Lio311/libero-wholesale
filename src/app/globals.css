@@ -126,7 +126,11 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: #f1f5f9;
+    border-radius: 10px;
+  }
+  .dark ::-webkit-scrollbar-track {
+    background: #1e293b;
   }
   ::-webkit-scrollbar-thumb {
     background: #cbd5e1;
