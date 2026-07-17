@@ -54,15 +54,9 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
       <TableCell className="hidden md:table-cell font-mono text-xs text-muted-foreground w-[120px] text-center">{product.barcode || "-"}</TableCell>
       <TableCell className="max-w-[150px] md:max-w-[200px] xl:max-w-[300px] text-center px-1 md:px-4">
         <div className="flex flex-col truncate pr-2 w-full max-w-[150px] sm:max-w-[200px] md:max-w-none">
-          {brandLogo ? (
-            <div className="h-6 w-24 relative flex items-center justify-start mb-1 opacity-90">
-              <img src={brandLogo} alt={product.brand || "Brand"} className="max-h-full max-w-full object-contain" />
-            </div>
-          ) : (
-            <span className="text-[10px] text-muted-foreground truncate w-full" title={product.brandHe || product.brand || ""}>
-              {product.brandHe || product.brand || "לא צוין מותג"}
-            </span>
-          )}
+          <span className="text-[10px] text-muted-foreground truncate w-full text-center" title={product.brandHe || product.brand || ""}>
+            {product.brandHe || product.brand || "לא צוין מותג"}
+          </span>
           <span className="font-semibold text-[11px] md:text-sm truncate w-full" title={product.nameHe || product.name}>
             {product.nameHe || product.name}
           </span>
