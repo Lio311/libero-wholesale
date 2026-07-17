@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, MoreHorizontal, Edit, Trash2, Loader2 } from "lucide-react";
+import { Search, Plus, MoreHorizontal, Edit, Trash2, Loader2, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { ProductDialog } from "./ProductDialog";
 import { deleteProduct } from "./actions";
 
@@ -21,6 +21,8 @@ interface ProductRow {
   stockQuantity: number;
   status: string;
   imageUrl: string | null;
+  size?: string | null;
+  isDraft?: boolean;
 }
 
 interface ProductsClientProps {
@@ -33,11 +35,50 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
   const [editingProduct, setEditingProduct] = useState<ProductRow | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
+  const [sortConfig, setSortConfig] = useState<{ key: keyof ProductRow; direction: "asc" | "desc" } | null>(null);
+
   const filteredProducts = initialProducts.filter(p => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     (p.barcode && p.barcode.includes(searchTerm)) ||
     (p.brand && p.brand.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (!sortConfig) return 0;
+    
+    const aValue = a[sortConfig.key];
+    const bValue = b[sortConfig.key];
+
+    if (aValue === null || aValue === undefined) return sortConfig.direction === "asc" ? 1 : -1;
+    if (bValue === null || bValue === undefined) return sortConfig.direction === "asc" ? -1 : 1;
+
+    if (aValue < bValue) {
+      return sortConfig.direction === "asc" ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return sortConfig.direction === "asc" ? 1 : -1;
+    }
+    return 0;
+  });
+
+  const handleSort = (key: keyof ProductRow) => {
+    let direction: "asc" | "desc" = "asc";
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const SortIcon = ({ columnKey }: { columnKey: keyof ProductRow }) => {
+    if (sortConfig?.key !== columnKey) {
+      return <ArrowUpDown className="ml-1 h-3 w-3 opacity-50 inline-block" />;
+    }
+    return sortConfig.direction === "asc" ? (
+      <ArrowUp className="ml-1 h-3 w-3 inline-block" />
+    ) : (
+      <ArrowDown className="ml-1 h-3 w-3 inline-block" />
+    );
+  };
 
   const handleEdit = (product: ProductRow) => {
     setEditingProduct(product);
@@ -90,22 +131,35 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
               <TableHeader className="bg-muted/50">
                 <TableRow className="border-border">
                   <TableHead className="text-right w-[60px] px-2">תמונה</TableHead>
-                  <TableHead className="text-right">מק״ט / ברקוד</TableHead>
-                  <TableHead className="text-right">מוצר</TableHead>
-                  <TableHead className="text-right">מותג</TableHead>
-                  <TableHead className="text-right">מלאי</TableHead>
-                  <TableHead className="text-left">מחיר סיטונאי</TableHead>
+                  <TableHead className="text-right cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("barcode")}>
+                    מק״ט / ברקוד <SortIcon columnKey="barcode" />
+                  </TableHead>
+                  <TableHead className="text-right cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("name")}>
+                    שם <SortIcon columnKey="name" />
+                  </TableHead>
+                  <TableHead className="text-right cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("size")}>
+                    גודל <SortIcon columnKey="size" />
+                  </TableHead>
+                  <TableHead className="text-right cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("brand")}>
+                    מותג <SortIcon columnKey="brand" />
+                  </TableHead>
+                  <TableHead className="text-right cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("stockQuantity")}>
+                    מלאי <SortIcon columnKey="stockQuantity" />
+                  </TableHead>
+                  <TableHead className="text-left cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("price")}>
+                    מחיר סיטונאי <SortIcon columnKey="price" />
+                  </TableHead>
                   <TableHead className="text-center w-[100px]">פעולות</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProducts.length === 0 ? (
+                {sortedProducts.length === 0 ? (
                   <TableRow className="border-border">
-                    <TableCell colSpan={7} className="text-center h-32 text-muted-foreground">לא נמצאו מוצרים</TableCell>
+                    <TableCell colSpan={8} className="text-center h-32 text-muted-foreground">לא נמצאו מוצרים</TableCell>
                   </TableRow>
                 ) : (
-                  filteredProducts.map((product) => (
-                    <TableRow key={product.id} className="border-border hover:bg-muted/20 transition-colors">
+                  sortedProducts.map((product) => (
+                    <TableRow key={product.id} className={`border-border hover:bg-muted/20 transition-colors ${product.isDraft ? "opacity-50 grayscale-[50%]" : ""}`}>
                       <TableCell className="p-1 px-2">
                         <div className="relative h-10 w-10 bg-white rounded flex items-center justify-center overflow-hidden border border-border/50">
                           {product.imageUrl ? (
@@ -118,10 +172,14 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
                       <TableCell className="font-mono text-xs">{product.barcode || '-'}</TableCell>
                       <TableCell className="font-medium">
                         <div className="flex flex-col">
-                          <span>{product.name}</span>
+                          <span className="flex items-center gap-2">
+                            {product.name}
+                            {product.isDraft && <Badge variant="secondary" className="h-5 px-1 text-[10px]">טיוטה</Badge>}
+                          </span>
                           {product.model && <span className="text-xs text-muted-foreground">{product.model}</span>}
                         </div>
                       </TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{product.size || '-'}</TableCell>
                       <TableCell>{product.brand || '-'}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">

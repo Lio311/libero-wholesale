@@ -33,6 +33,8 @@ interface ProductRow {
   isOfficialImporter?: boolean;
   priceDropPrice?: string | null;
   testerRatio?: number | null;
+  size?: string | null;
+  isDraft?: boolean;
 }
 
 interface ProductDialogProps {
@@ -137,6 +139,10 @@ export function ProductDialog({ product, open, onOpenChange }: ProductDialogProp
                 <Input id="modelHe" name="modelHe" defaultValue={product?.modelHe || ""} className="col-span-3 rounded-xl border-border bg-background" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="size" className="text-right font-medium text-xs">גודל (Size)</Label>
+                <Input id="size" name="size" defaultValue={product?.size || ""} className="col-span-3 rounded-xl border-border bg-background" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="barcode" className="text-right font-medium text-xs">מק״ט/ברקוד</Label>
                 <Input id="barcode" name="barcode" defaultValue={product?.barcode || ""} className="col-span-3 rounded-xl border-border bg-background" />
               </div>
@@ -212,6 +218,10 @@ export function ProductDialog({ product, open, onOpenChange }: ProductDialogProp
                 <div className="flex items-center justify-between bg-muted/30 p-2 rounded-lg border border-border/50">
                   <Label htmlFor="isOfficialImporter" className="font-medium">יבואן רשמי</Label>
                   <Switch id="isOfficialImporter" name="isOfficialImporter" value="true" defaultChecked={product?.isOfficialImporter} />
+                </div>
+                <div className="flex items-center justify-between bg-muted/30 p-2 rounded-lg border border-border/50">
+                  <Label htmlFor="isDraft" className="font-medium text-muted-foreground">מצב טיוטה</Label>
+                  <Switch id="isDraft" name="isDraft" value="true" defaultChecked={product?.isDraft} />
                 </div>
               </div>
             </div>

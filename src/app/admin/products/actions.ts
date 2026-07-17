@@ -22,6 +22,8 @@ export async function createProduct(formData: FormData) {
     const isBackToStock = formData.get("isBackToStock") === "true";
     const isOnSale = formData.get("isOnSale") === "true";
     const isOfficialImporter = formData.get("isOfficialImporter") === "true";
+    const isDraft = formData.get("isDraft") === "true";
+    const size = formData.get("size") as string || null;
     
     const priceDropPriceStr = formData.get("priceDropPrice") as string;
     const priceDropPrice = priceDropPriceStr ? parseFloat(priceDropPriceStr).toString() : null;
@@ -47,6 +49,8 @@ export async function createProduct(formData: FormData) {
       isBackToStock,
       isOnSale,
       isOfficialImporter,
+      isDraft,
+      size,
       priceDropPrice,
       testerRatio,
       status: "active",
@@ -78,6 +82,8 @@ export async function updateProduct(id: string, formData: FormData) {
     const isBackToStock = formData.get("isBackToStock") === "true";
     const isOnSale = formData.get("isOnSale") === "true";
     const isOfficialImporter = formData.get("isOfficialImporter") === "true";
+    const isDraft = formData.get("isDraft") === "true";
+    const size = formData.get("size") as string || null;
     
     const priceDropPriceStr = formData.get("priceDropPrice") as string;
     const priceDropPrice = priceDropPriceStr ? parseFloat(priceDropPriceStr).toString() : null;
@@ -98,6 +104,8 @@ export async function updateProduct(id: string, formData: FormData) {
       isBackToStock,
       isOnSale,
       isOfficialImporter,
+      isDraft,
+      size,
       priceDropPrice,
       testerRatio,
       updatedAt: new Date(),
