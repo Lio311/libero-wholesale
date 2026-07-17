@@ -137,7 +137,9 @@ export function ProductDialog({ product, open, onOpenChange, brands = [] }: Prod
                 <div className="col-span-3 space-y-2">
                   <Select value={selectedBrand} onValueChange={(val) => setSelectedBrand(val || "no_brand")}>
                     <SelectTrigger className="w-full rounded-xl border-border bg-background" dir="rtl">
-                      <SelectValue placeholder="בחר מותג..." />
+                      <SelectValue placeholder="בחר מותג...">
+                        {selectedBrand === "no_brand" ? "בחר מותג" : selectedBrand === "new_brand" ? "מותג חדש" : (brands.find(b => b.name === selectedBrand)?.nameHe ? `${brands.find(b => b.name === selectedBrand)?.nameHe} (${selectedBrand})` : selectedBrand)}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="no_brand">בחר מותג</SelectItem>

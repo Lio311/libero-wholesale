@@ -58,8 +58,8 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
   
   const isMobile = useIsMobile();
   const [currentPage, setCurrentPage] = useState(1);
-  const [mobileVisibleCount, setMobileVisibleCount] = useState(10);
-  const itemsPerPage = 10;
+  const [mobileVisibleCount, setMobileVisibleCount] = useState(16);
+  const itemsPerPage = 16;
   const observerTarget = useRef<HTMLDivElement>(null);
 
   // Infinite scroll observer for mobile
@@ -68,7 +68,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
     const observer = new IntersectionObserver(
       entries => {
         if (entries[0].isIntersecting) {
-          setMobileVisibleCount(prev => prev + 10);
+          setMobileVisibleCount(prev => prev + 16);
         }
       },
       { threshold: 0.1 }
@@ -108,7 +108,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
     setSortCol(null);
     setSortDir('asc');
     setCurrentPage(1);
-    setMobileVisibleCount(10);
+    setMobileVisibleCount(16);
   };
 
   const handleSort = (col: SortColumn) => {
@@ -178,7 +178,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
     
     setProducts(filtered);
     setCurrentPage(1);
-    setMobileVisibleCount(10);
+    setMobileVisibleCount(16);
   }, [debouncedSearch, selectedBrand, filterBackToStock, filterOfficial, filterOutOfStock, sortCol, sortDir, initialProducts]);
 
   const displayedProducts = isMobile 
@@ -346,7 +346,10 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))} 
+            onClick={() => {
+              setCurrentPage(p => Math.max(1, p - 1));
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }} 
             disabled={currentPage === 1}
           >
             הקודם
@@ -355,7 +358,10 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} 
+            onClick={() => {
+              setCurrentPage(p => Math.min(totalPages, p + 1));
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }} 
             disabled={currentPage === totalPages}
           >
             הבא
