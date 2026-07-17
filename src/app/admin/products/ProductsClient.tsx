@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -88,6 +89,7 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
               <Table>
               <TableHeader className="bg-muted/50">
                 <TableRow className="border-border">
+                  <TableHead className="text-right w-[60px] px-2">תמונה</TableHead>
                   <TableHead className="text-right">מק״ט / ברקוד</TableHead>
                   <TableHead className="text-right">מוצר</TableHead>
                   <TableHead className="text-right">מותג</TableHead>
@@ -99,11 +101,20 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
               <TableBody>
                 {filteredProducts.length === 0 ? (
                   <TableRow className="border-border">
-                    <TableCell colSpan={6} className="text-center h-32 text-muted-foreground">לא נמצאו מוצרים</TableCell>
+                    <TableCell colSpan={7} className="text-center h-32 text-muted-foreground">לא נמצאו מוצרים</TableCell>
                   </TableRow>
                 ) : (
                   filteredProducts.map((product) => (
                     <TableRow key={product.id} className="border-border hover:bg-muted/20 transition-colors">
+                      <TableCell className="p-1 px-2">
+                        <div className="relative h-10 w-10 bg-white rounded flex items-center justify-center overflow-hidden border border-border/50">
+                          {product.imageUrl ? (
+                            <Image src={product.imageUrl} alt={product.name} fill className="object-contain p-0.5" />
+                          ) : (
+                            <div className="text-muted-foreground/50 text-[10px] font-mono opacity-30">N/A</div>
+                          )}
+                        </div>
+                      </TableCell>
                       <TableCell className="font-mono text-xs">{product.barcode || '-'}</TableCell>
                       <TableCell className="font-medium">
                         <div className="flex flex-col">
