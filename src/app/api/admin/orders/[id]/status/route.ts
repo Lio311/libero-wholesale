@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { orders } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -6,10 +6,11 @@ import { checkIsAdmin } from "@/lib/admin";
 import { currentUser } from "@clerk/nextjs/server";
 
 export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const user = await currentUser();
     const email = user?.emailAddresses[0]?.emailAddress?.toLowerCase();
     const isAdmin = await checkIsAdmin(email);
@@ -26,7 +27,7 @@ export async function PATCH(
 
     await db.update(orders)
       .set({ status, updatedAt: new Date() })
-      .where(eq(orders.id, params.id));
+      .where(eq(orders.id, id));
 
     return NextResponse.json({ success: true });
   } catch (error) {

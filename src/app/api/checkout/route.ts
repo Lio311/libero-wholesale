@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { orders, orderItems, products } from "@/lib/db/schema";
 import { auth } from "@clerk/nextjs/server";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 export async function POST(req: Request) {
   try {
@@ -53,15 +53,9 @@ export async function POST(req: Request) {
       });
       
       // Update stock quantity
-      // Assuming we decrease the stock immediately. If we want it to be pending, we might skip this.
-      // But for a wholesale portal, decreasing stock is standard.
-      // We will skip stock update in this MVP to prevent negative stock issues unless specified, 
-      // but let's do a basic update.
-      /*
       await db.execute(
         sql`UPDATE products SET stock_quantity = stock_quantity - ${item.quantity} WHERE id = ${item.product.id}`
       );
-      */
     }
 
     // TODO: Send emails and generate PDF invoice (Phase 3)
