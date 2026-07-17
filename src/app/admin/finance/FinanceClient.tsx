@@ -10,7 +10,7 @@ interface FinanceStoreRow {
   name: string;
   creditLimit: string | number;
   currentBalance: string | number;
-  paymentTerms: string;
+  paymentTerms: string | null;
 }
 
 interface FinanceClientProps {
