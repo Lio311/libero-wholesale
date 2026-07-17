@@ -50,7 +50,7 @@ export function BrandsClient({ initialBrands }: { initialBrands: Brand[] }) {
           }
         }
       },
-      cancel: { label: "ביטול" }
+      cancel: { label: "ביטול", onClick: () => {} }
     });
   };
 

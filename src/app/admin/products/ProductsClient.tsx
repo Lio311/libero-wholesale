@@ -113,7 +113,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
           toast.success("המוצר נמחק בהצלחה");
         }
       },
-      cancel: { label: "ביטול" }
+      cancel: { label: "ביטול", onClick: () => {} }
     });
   };
 

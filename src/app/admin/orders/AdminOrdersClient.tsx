@@ -102,7 +102,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
           }
         }
       },
-      cancel: { label: "ביטול" }
+      cancel: { label: "ביטול", onClick: () => {} }
     });
   };
 
@@ -176,7 +176,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
           }
         }
       },
-      cancel: { label: "ביטול" }
+      cancel: { label: "ביטול", onClick: () => {} }
     });
   };
 
