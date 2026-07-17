@@ -48,6 +48,8 @@
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
+    "pdf-parse": "^2.4.5",
+    "pdf2json": "^4.0.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

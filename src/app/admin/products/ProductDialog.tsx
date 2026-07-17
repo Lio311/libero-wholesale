@@ -157,7 +157,9 @@ export function ProductDialog({ product, open, onOpenChange }: ProductDialogProp
               </div>
               {(base64Image || product?.imageUrl) && (
                 <div className="flex justify-center mt-2">
-                  <img src={base64Image || product?.imageUrl || ""} alt="Preview" className="h-20 w-20 object-contain rounded-md border p-1 bg-white" />
+                  <div className="h-24 w-24 bg-white rounded-xl border flex items-center justify-center overflow-hidden shadow-sm">
+                    <img src={base64Image || product?.imageUrl || ""} alt="Preview" className="max-h-full max-w-full object-contain" />
+                  </div>
                 </div>
               )}
             </div>
