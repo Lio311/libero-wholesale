@@ -281,17 +281,11 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
 
       {selectedOrder && (
         <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
-          <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <DialogContent className="w-[95vw] max-w-4xl max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <DialogHeader>
-              <DialogTitle className="text-xl flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span>הזמנה #{selectedOrder.orderNumber}</span>
-                  {getStatusBadge(selectedOrder.status)}
-                </div>
-                <Button variant="destructive" size="sm" onClick={() => handleDeleteOrder(selectedOrder.id)}>
-                  <Trash2 className="w-4 h-4 ml-2" />
-                  מחק הזמנה
-                </Button>
+              <DialogTitle className="text-xl flex items-center gap-3">
+                <span>הזמנה #{selectedOrder.orderNumber}</span>
+                {getStatusBadge(selectedOrder.status)}
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-6 mt-4">
@@ -400,7 +394,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                 </Table>
                 
                 <div className="bg-muted/30 p-4 border-t flex flex-col md:flex-row justify-between items-center gap-4">
-                  <div className="flex items-center gap-2 w-full md:w-auto">
+                  <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
                     <span className="text-sm text-muted-foreground whitespace-nowrap">הנחה להזמנה (₪):</span>
                     <Input 
                       type="number" 
@@ -419,9 +413,15 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                       {updatingId === "discount" ? <Loader2 className="w-4 h-4 animate-spin" /> : "החל"}
                     </Button>
                   </div>
-                  <div className="text-lg font-bold">
-                    <span>סה״כ לתשלום: </span>
-                    <span className="text-primary font-mono">₪{Number(selectedOrder.totalAmount).toFixed(2)}</span>
+                  <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+                    <Button variant="destructive" size="sm" onClick={() => handleDeleteOrder(selectedOrder.id)}>
+                      <Trash2 className="w-4 h-4 ml-2" />
+                      מחק הזמנה
+                    </Button>
+                    <div className="text-lg font-bold">
+                      <span>סה״כ: </span>
+                      <span className="text-primary font-mono">₪{Number(selectedOrder.totalAmount).toFixed(2)}</span>
+                    </div>
                   </div>
                 </div>
               </div>

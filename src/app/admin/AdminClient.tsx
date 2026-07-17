@@ -30,9 +30,12 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-mono font-bold">₪{stats.totalRevenue.toLocaleString()}</div>
-            <p className="text-xs text-green-400 flex items-center mt-1">
-              <ArrowUpRight className="h-3 w-3 mr-1" />
-              +12.5% מהחודש שעבר
+            <p className="text-xs text-green-400 flex items-center mt-1 gap-1">
+              <span>מהחודש שעבר</span>
+              <span dir="ltr" className="flex items-center gap-0.5">
+                <ArrowUpRight className="h-3 w-3" />
+                <span>+12.5%</span>
+              </span>
             </p>
           </CardContent>
         </Card>
@@ -61,9 +64,12 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-mono font-bold">{stats.totalCustomers}</div>
-            <p className="text-xs text-green-400 flex items-center mt-1">
-              <ArrowUpRight className="h-3 w-3 mr-1" />
-              +2 לקוחות חדשים
+            <p className="text-xs text-green-400 flex items-center mt-1 gap-1">
+              <span>לקוחות חדשים</span>
+              <span dir="ltr" className="flex items-center gap-0.5">
+                <ArrowUpRight className="h-3 w-3" />
+                <span>+2</span>
+              </span>
             </p>
           </CardContent>
         </Card>
