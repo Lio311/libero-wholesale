@@ -8,10 +8,13 @@ import { format } from "date-fns";
 interface SearchLogRow {
   id: string;
   query: string;
-  hebrewTerm: string | null;
-  englishTerm: string | null;
   resultsCount: number;
-  timestamp: Date;
+  userId: string | null;
+  userEmail: string | null;
+  platform: string | null;
+  userAgent: string | null;
+  ipAddress: string | null;
+  createdAt: Date;
 }
 
 interface AnalyticsClientProps {
@@ -119,7 +122,6 @@ export function AnalyticsClient({ logs }: AnalyticsClientProps) {
               <TableHeader className="bg-muted/50">
                 <TableRow className="border-border">
                   <TableHead className="text-right">חיפוש</TableHead>
-                  <TableHead className="text-right">תרגום מנוע</TableHead>
                   <TableHead className="text-right">תוצאות</TableHead>
                   <TableHead className="text-right">זמן</TableHead>
                 </TableRow>
@@ -128,14 +130,13 @@ export function AnalyticsClient({ logs }: AnalyticsClientProps) {
                 {logs.slice(0, 10).map((log) => (
                   <TableRow key={log.id} className="border-border hover:bg-muted/20">
                     <TableCell className="font-medium">{log.query}</TableCell>
-                    <TableCell className="text-muted-foreground">{log.englishTerm || '-'}</TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 rounded-full text-xs font-bold ${log.resultsCount === 0 ? 'bg-destructive/20 text-destructive' : 'bg-primary/20 text-primary'}`}>
                         {log.resultsCount}
                       </span>
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground font-mono">
-                      {format(new Date(log.timestamp), "HH:mm dd/MM")}
+                      {format(new Date(log.createdAt), "HH:mm dd/MM")}
                     </TableCell>
                   </TableRow>
                 ))}
