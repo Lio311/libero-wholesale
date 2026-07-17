@@ -65,7 +65,8 @@ export const products = pgTable('products', {
 // Orders Table
 export const orders = pgTable('orders', {
   id: uuid('id').defaultRandom().primaryKey(),
-  storeId: uuid('store_id').references(() => stores.id).notNull(),
+  storeId: uuid('store_id').references(() => stores.id), // optional for guest orders
+  clerkUserId: text('clerk_user_id'), // For the personal area
   orderNumber: serial('order_number').notNull(),
   status: orderStatusEnum('status').default('pending').notNull(),
   totalAmount: decimal('total_amount', { precision: 12, scale: 2 }).notNull(),
@@ -73,6 +74,13 @@ export const orders = pgTable('orders', {
   shippingMethod: text('shipping_method'),
   comaxRef: text('comax_ref'),
   notes: text('notes'),
+  
+  // Customer details for checkout
+  customerName: text('customer_name'),
+  businessName: text('business_name'),
+  customerEmail: text('customer_email'),
+  customerPhone: text('customer_phone'),
+  deliveryAddress: text('delivery_address'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

@@ -7,7 +7,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { CartSheet } from "@/components/CartSheet";
-import { Menu } from "lucide-react";
+import { MobileHeader } from "@/components/MobileHeader";
+import { OnboardingDialog } from "@/components/OnboardingDialog";
+import { db } from "@/lib/db";
+import { stores } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import "./globals.css";
 
 const heebo = Heebo({
@@ -52,6 +56,14 @@ export default async function RootLayout({
   const user = await currentUser();
   const email = user?.emailAddresses[0]?.emailAddress?.toLowerCase();
   const isAdmin = email === "lior31197@gmail.com";
+
+  let requiresOnboarding = false;
+  if (user && !isAdmin) {
+    const storeRecord = await db.select().from(stores).where(eq(stores.clerkUserId, user.id)).limit(1);
+    if (storeRecord.length === 0) {
+      requiresOnboarding = true;
+    }
+  }
   return (
     <ClerkProvider 
       localization={heIL}
@@ -79,20 +91,13 @@ export default async function RootLayout({
             <SidebarProvider>
               <AppSidebar isAdmin={isAdmin} />
               <main className="flex-1 w-full relative p-0 md:p-4 flex flex-col h-[100dvh] md:h-auto">
-                <div className="relative flex items-center justify-between px-4 md:hidden border-b border-border/40 bg-black/95 backdrop-blur-md z-10 shrink-0 shadow-sm h-16">
-                  <SidebarTrigger className="h-10 w-10 text-white hover:text-white/80 hover:bg-white/10">
-                    <Menu className="h-6 w-6" />
-                  </SidebarTrigger>
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <img src="/libero-w.png" alt="Libero Logo" className="h-12 object-contain" />
-                  </div>
-                  <div className="w-10"></div>
-                </div>
+                <MobileHeader />
                 <div className="bg-card w-full h-full md:rounded-[2.5rem] shadow-sm md:border border-border/40 overflow-y-auto relative flex-1">
                   {children}
                 </div>
               </main>
               <CartSheet />
+              {requiresOnboarding && <OnboardingDialog open={true} defaultEmail={email} />}
             </SidebarProvider>
           </TooltipProvider>
         </body>

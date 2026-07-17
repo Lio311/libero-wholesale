@@ -59,9 +59,9 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
   }
 
   return (
-    <Sidebar side="right">
+    <Sidebar side="right" className="dark border-l-0">
       <SidebarHeader className="p-4 hidden md:flex items-center justify-center">
-        <img src="/libero-w.png" alt="Libero Wholesale" className="w-[90%] h-auto object-contain drop-shadow-sm invert brightness-0" />
+        <img src="/libero-w-white.png" alt="Libero Wholesale" className="w-[90%] h-auto object-contain drop-shadow-sm" />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
