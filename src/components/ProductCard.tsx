@@ -18,7 +18,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Card className="flex flex-col h-full bg-card/50 backdrop-blur-sm border-border hover:border-white/20 transition-all duration-300 shadow-xl overflow-hidden group">
       {/* Image Area */}
-      <div className="relative aspect-square bg-muted/10 w-full overflow-hidden flex items-center justify-center p-2">
+      <div className="relative aspect-square bg-white w-full overflow-hidden flex items-center justify-center p-2">
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}
@@ -29,25 +29,26 @@ export function ProductCard({ product }: ProductCardProps) {
         ) : (
           <div className="text-muted-foreground/50 text-4xl font-mono opacity-20">N/A</div>
         )}
-        
-        {/* Right Badges */}
-        <div className="absolute top-2 right-2 flex flex-col items-end gap-1.5 z-10">
-          {product.isOfficialImporter && <Badge variant="secondary" className="bg-blue-500/20 text-blue-500 border-blue-500/50 hover:bg-blue-500/30 text-[9px] px-1.5 h-4">יבואן רשמי</Badge>}
-          {product.isOnSale && <Badge variant="secondary" className="bg-green-500/20 text-green-500 border-green-500/50 hover:bg-green-500/30 text-[9px] px-1.5 h-4">מבצע</Badge>}
-          {product.isBackToStock && <Badge variant="secondary" className="bg-purple-500/20 text-purple-500 border-purple-500/50 hover:bg-purple-500/30 text-[9px] px-1.5 h-4">חזר למלאי</Badge>}
-        </div>
-
-        {/* Left Badges */}
-        <div className="absolute top-2 left-2 flex flex-col gap-1.5 z-10">
-          {isOutOfStock ? (
-            <Badge variant="destructive" className="shadow-lg text-[9px] px-1.5 h-4">חסר במלאי</Badge>
-          ) : product.stockQuantity < 10 ? (
-            <Badge variant="secondary" className="bg-orange-500/20 text-orange-400 border-orange-500/50 text-[9px] px-1.5 h-4">מלאי נמוך</Badge>
-          ) : null}
-        </div>
       </div>
 
       <CardHeader className="p-2 pb-1">
+        {/* Badges moved below image */}
+        <div className="flex flex-wrap gap-1 mb-1.5 min-h-4">
+          {product.isOfficialImporter && <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-[9px] px-1.5 h-4 shadow-none">יבואן רשמי</Badge>}
+          {product.isOnSale && <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20 text-[9px] px-1.5 h-4 shadow-none">מבצע</Badge>}
+          {product.isBackToStock && <Badge variant="secondary" className="bg-purple-500/10 text-purple-600 border-purple-500/20 text-[9px] px-1.5 h-4 shadow-none">חזר למלאי</Badge>}
+          {isOutOfStock ? (
+            <Badge variant="destructive" className="shadow-none text-[9px] px-1.5 h-4">חסר במלאי</Badge>
+          ) : product.stockQuantity < 10 ? (
+            <Badge variant="secondary" className="bg-orange-500/10 text-orange-600 border-orange-500/20 text-[9px] px-1.5 h-4 shadow-none">מלאי נמוך</Badge>
+          ) : null}
+        </div>
+        
+        {product.testerRatio && (
+          <div className="text-[10px] text-pink-600 bg-pink-500/10 rounded px-1.5 py-0.5 font-medium mb-1.5 flex items-center gap-1 w-max border border-pink-500/20">
+            <span>🎁</span> 1 טסטר על כל {product.testerRatio} יח'
+          </div>
+        )}
         <div className="flex justify-between items-start gap-1">
           <div className="w-full">
             <p className="text-[9px] md:text-[10px] text-muted-foreground uppercase tracking-wider truncate">{product.brandHe || product.brand}</p>

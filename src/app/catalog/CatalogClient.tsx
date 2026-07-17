@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { Product } from "@/lib/types";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductListItem } from "@/components/ProductListItem";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2, RotateCcw } from "lucide-react";
+import { Search, Loader2, RotateCcw, LayoutGrid, List } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
@@ -23,6 +24,7 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
   const [filterOnSale, setFilterOnSale] = useState(false);
   const [filterOfficial, setFilterOfficial] = useState(false);
   const [filterPriceDrop, setFilterPriceDrop] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [isLoading, setIsLoading] = useState(false);
@@ -107,6 +109,26 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
               <RotateCcw className="h-4 w-4 ml-2" />
               איפוס
             </Button>
+
+            {/* View Toggle */}
+            <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-md h-9 mr-auto">
+              <Button 
+                variant={viewMode === 'grid' ? "secondary" : "ghost"} 
+                size="icon" 
+                className={`h-7 w-7 ${viewMode === 'grid' ? 'shadow-sm bg-background hover:bg-background' : ''}`}
+                onClick={() => setViewMode('grid')}
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant={viewMode === 'table' ? "secondary" : "ghost"} 
+                size="icon" 
+                className={`h-7 w-7 ${viewMode === 'table' ? 'shadow-sm bg-background hover:bg-background' : ''}`}
+                onClick={() => setViewMode('table')}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
 
           {/* Toggles */}
@@ -138,13 +160,21 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
         </div>
       </div>
 
-      {/* Product Grid */}
+      {/* Product Grid / List */}
       {products.length > 0 ? (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2 md:gap-4 px-2 md:px-4">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        viewMode === 'grid' ? (
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2 md:gap-4 px-2 md:px-4">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-3 px-2 md:px-4">
+            {products.map((product) => (
+              <ProductListItem key={product.id} product={product} />
+            ))}
+          </div>
+        )
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
           <div className="bg-muted/50 p-6 rounded-full">

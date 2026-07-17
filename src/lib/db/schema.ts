@@ -56,6 +56,7 @@ export const products = pgTable('products', {
   isOfficialImporter: boolean('is_official_importer').default(false).notNull(),
   priceDropPrice: decimal('price_drop_price', { precision: 10, scale: 2 }),
   priceDropExpiresAt: timestamp('price_drop_expires_at'),
+  testerRatio: integer('tester_ratio'),
   status: productStatusEnum('status').default('active').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
