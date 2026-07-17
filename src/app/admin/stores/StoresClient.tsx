@@ -41,23 +41,23 @@ export function StoresClient({ stores: initialStores }: StoresClientProps) {
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input 
             placeholder="חיפוש חנות, איש קשר או אימייל..." 
-            className="pr-9 bg-card/40 border-white/10"
+            className="pr-9 bg-card border-border"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
 
-      <Card className="bg-card/40 backdrop-blur-md border-white/10">
+      <Card className="bg-card border-border shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle>רשימת לקוחות B2B</CardTitle>
           <CardDescription>סה״כ {filteredStores.length} חנויות רשומות</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border border-white/10 overflow-hidden">
+          <div className="rounded-md border border-border overflow-hidden">
             <Table>
-              <TableHeader className="bg-black/40">
-                <TableRow className="border-white/10">
+              <TableHeader className="bg-muted/50">
+                <TableRow className="border-border">
                   <TableHead className="text-right">חנות ואיש קשר</TableHead>
                   <TableHead className="text-right">פרטי התקשרות</TableHead>
                   <TableHead className="text-right">סטטוס</TableHead>
@@ -68,7 +68,7 @@ export function StoresClient({ stores: initialStores }: StoresClientProps) {
               </TableHeader>
               <TableBody>
                 {filteredStores.length === 0 ? (
-                  <TableRow className="border-white/10">
+                  <TableRow className="border-border">
                     <TableCell colSpan={6} className="text-center h-32 text-muted-foreground">לא נמצאו לקוחות</TableCell>
                   </TableRow>
                 ) : (
@@ -78,7 +78,7 @@ export function StoresClient({ stores: initialStores }: StoresClientProps) {
                     const utilization = limit > 0 ? (balance / limit) * 100 : 0;
                     
                     return (
-                      <TableRow key={store.id} className="border-white/10 hover:bg-white/5 transition-colors">
+                      <TableRow key={store.id} className="border-border hover:bg-muted/20 transition-colors">
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="font-medium text-primary">{store.name}</span>
@@ -120,7 +120,7 @@ export function StoresClient({ stores: initialStores }: StoresClientProps) {
                                 <CheckCircle2 className="h-4 w-4" />
                               </Button>
                             )}
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-white" title="הגדרות אשראי">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" title="הגדרות אשראי">
                               <CreditCard className="h-4 w-4" />
                             </Button>
                           </div>

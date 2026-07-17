@@ -76,10 +76,10 @@ export function OrdersClient({ orders }: OrdersClientProps) {
         />
       </div>
 
-      <div className="border border-white/10 rounded-xl overflow-hidden bg-card/30 backdrop-blur-md">
+      <div className="border border-border rounded-xl overflow-hidden bg-card/30 backdrop-blur-md">
         <Table>
-          <TableHeader className="bg-black/40">
-            <TableRow className="border-white/10 hover:bg-transparent">
+          <TableHeader className="bg-muted/50">
+            <TableRow className="border-border hover:bg-transparent">
               <TableHead className="w-[100px] text-right">מספר הזמנה</TableHead>
               <TableHead className="text-right">תאריך</TableHead>
               <TableHead className="text-right">סטטוס</TableHead>
@@ -90,14 +90,14 @@ export function OrdersClient({ orders }: OrdersClientProps) {
           </TableHeader>
           <TableBody>
             {orders.length === 0 ? (
-              <TableRow className="border-white/10 hover:bg-white/5">
+              <TableRow className="border-border hover:bg-muted/20">
                 <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
                   אין הזמנות קודמות
                 </TableCell>
               </TableRow>
             ) : (
               orders.map((order) => (
-                <TableRow key={order.id} className="border-white/10 hover:bg-white/5 transition-colors cursor-pointer group">
+                <TableRow key={order.id} className="border-border hover:bg-muted/20 transition-colors cursor-pointer group">
                   <TableCell className="font-mono font-medium">#{order.orderNumber}</TableCell>
                   <TableCell className="text-muted-foreground">
                     {format(new Date(order.createdAt), "dd/MM/yyyy HH:mm")}

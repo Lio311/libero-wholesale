@@ -43,7 +43,7 @@ export function AccountClient({ store }: AccountClientProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* Main Info */}
-      <Card className="md:col-span-2 bg-card/40 backdrop-blur-md border-white/10">
+      <Card className="md:col-span-2 bg-card border-border shadow-sm">
         <CardHeader className="flex flex-row items-start justify-between pb-4">
           <div>
             <div className="flex items-center gap-3 mb-1">
@@ -54,7 +54,7 @@ export function AccountClient({ store }: AccountClientProps) {
             </div>
             <CardDescription>פרטי העסק ואיש קשר</CardDescription>
           </div>
-          <div className="p-1 bg-white/5 rounded-full border border-white/10">
+          <div className="p-1 bg-muted/20 rounded-full border border-border">
             <UserButton appearance={{ elements: { userButtonAvatarBox: "h-12 w-12" } }} />
           </div>
         </CardHeader>
@@ -100,7 +100,7 @@ export function AccountClient({ store }: AccountClientProps) {
 
       {/* Financial Info */}
       <div className="flex flex-col gap-6">
-        <Card className="bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-md border-white/10 relative overflow-hidden">
+        <Card className="bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-md border-border relative overflow-hidden">
           <div className="absolute top-0 right-0 p-32 bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
           <CardHeader className="pb-2">
             <CardDescription className="flex items-center gap-2">
@@ -129,7 +129,7 @@ export function AccountClient({ store }: AccountClientProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardDescription className="flex items-center gap-2">
               <FileSignature className="h-4 w-4" />

@@ -39,7 +39,7 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input 
             placeholder="חיפוש לפי מק״ט, שם או מותג..." 
-            className="pr-9 bg-card/40 border-white/10"
+            className="pr-9 bg-card border-border"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -50,7 +50,7 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
         </Button>
       </div>
 
-      <Card className="bg-card/40 backdrop-blur-md border-white/10">
+      <Card className="bg-card border-border shadow-sm">
         <CardHeader className="pb-2">
           <div className="flex justify-between">
             <div>
@@ -60,10 +60,10 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border border-white/10 overflow-hidden">
+          <div className="rounded-md border border-border overflow-hidden">
             <Table>
-              <TableHeader className="bg-black/40">
-                <TableRow className="border-white/10">
+              <TableHeader className="bg-muted/50">
+                <TableRow className="border-border">
                   <TableHead className="text-right">מק״ט / ברקוד</TableHead>
                   <TableHead className="text-right">מוצר</TableHead>
                   <TableHead className="text-right">מותג</TableHead>
@@ -74,12 +74,12 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
               </TableHeader>
               <TableBody>
                 {filteredProducts.length === 0 ? (
-                  <TableRow className="border-white/10">
+                  <TableRow className="border-border">
                     <TableCell colSpan={6} className="text-center h-32 text-muted-foreground">לא נמצאו מוצרים</TableCell>
                   </TableRow>
                 ) : (
                   filteredProducts.map((product) => (
-                    <TableRow key={product.id} className="border-white/10 hover:bg-white/5 transition-colors">
+                    <TableRow key={product.id} className="border-border hover:bg-muted/20 transition-colors">
                       <TableCell className="font-mono text-xs">{product.barcode || '-'}</TableCell>
                       <TableCell className="font-medium">
                         <div className="flex flex-col">
@@ -97,7 +97,7 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
                       <TableCell className="text-left font-mono font-bold text-primary">₪{Number(product.price).toFixed(2)}</TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-2">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-white">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">

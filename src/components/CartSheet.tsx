@@ -18,8 +18,8 @@ export function CartSheet() {
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetContent className="w-full sm:max-w-md flex flex-col p-0 border-l border-white/10 bg-background/95 backdrop-blur-xl">
-        <SheetHeader className="p-6 pb-4 border-b border-white/5">
+      <SheetContent className="w-full sm:max-w-md flex flex-col p-0 border-l border-border bg-background/95 backdrop-blur-xl">
+        <SheetHeader className="p-6 pb-4 border-b border-border/50">
           <SheetTitle className="flex items-center gap-2 text-2xl font-bold">
             <ShoppingBag className="h-6 w-6" />
             עגלת הזמנות
@@ -38,7 +38,7 @@ export function CartSheet() {
           ) : (
             items.map((item) => (
               <div key={item.product.id} className="flex gap-4 items-start group">
-                <div className="relative h-20 w-20 rounded-md bg-muted/30 border border-white/5 overflow-hidden flex-shrink-0">
+                <div className="relative h-20 w-20 rounded-md bg-muted/30 border border-border/50 overflow-hidden flex-shrink-0">
                   {item.product.imageUrl ? (
                     <Image
                       src={item.product.imageUrl}
@@ -60,7 +60,7 @@ export function CartSheet() {
                   </p>
                   
                   <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center bg-black/40 border border-white/10 rounded-md">
+                    <div className="flex items-center bg-muted/50 border border-border rounded-md">
                       <Button
                         variant="ghost"
                         size="icon"
@@ -99,12 +99,12 @@ export function CartSheet() {
         </div>
 
         {items.length > 0 && (
-          <SheetFooter className="p-6 border-t border-white/5 bg-card/30 flex-col gap-4 sm:flex-col">
+          <SheetFooter className="p-6 border-t border-border/50 bg-card/30 flex-col gap-4 sm:flex-col">
             <div className="flex justify-between items-center w-full">
               <span className="text-muted-foreground">סה״כ לתשלום</span>
               <span className="text-2xl font-bold font-mono tracking-tight">₪{getTotalPrice().toFixed(2)}</span>
             </div>
-            <Separator className="bg-white/5" />
+            <Separator className="bg-muted/20" />
             <Button size="lg" className="w-full text-lg font-semibold h-12 shadow-lg shadow-primary/20">
               המשך לקופה
             </Button>

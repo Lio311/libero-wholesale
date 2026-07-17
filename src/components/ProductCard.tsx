@@ -15,7 +15,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const addItem = useCartStore(state => state.addItem);
   
   return (
-    <Card className="flex flex-col h-full bg-card/50 backdrop-blur-sm border-white/10 hover:border-white/20 transition-all duration-300 shadow-xl overflow-hidden group">
+    <Card className="flex flex-col h-full bg-card/50 backdrop-blur-sm border-border hover:border-white/20 transition-all duration-300 shadow-xl overflow-hidden group">
       {/* Image Area */}
       <div className="relative aspect-square bg-muted/30 w-full overflow-hidden flex items-center justify-center p-4">
         {product.imageUrl ? (

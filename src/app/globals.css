@@ -49,26 +49,26 @@
 }
 
 :root {
-  --background: #09090b;
-  --foreground: #fafafa;
-  --card: #18181b;
-  --card-foreground: #fafafa;
-  --popover: #18181b;
-  --popover-foreground: #fafafa;
-  --primary: #0C5CAB;
+  --background: #fafafa;
+  --foreground: #111111;
+  --card: #ffffff;
+  --card-foreground: #111111;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  --primary: #000000;
   --primary-foreground: #ffffff;
-  --secondary: #0a4a8a;
-  --secondary-foreground: #ffffff;
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
-  --accent: #27272a;
-  --accent-foreground: #fafafa;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #111111;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #f4f4f5;
+  --accent-foreground: #111111;
   --destructive: #ef4444;
-  --destructive-foreground: #fafafa;
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #0C5CAB;
-  --radius: 0.5rem;
+  --destructive-foreground: #ffffff;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #000000;
+  --radius: 0.75rem;
 }
 
 .dark {
@@ -87,6 +87,7 @@
   --accent: #27272a;
   --accent-foreground: #fafafa;
   --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
   --border: #27272a;
   --input: #27272a;
   --ring: #0C5CAB;

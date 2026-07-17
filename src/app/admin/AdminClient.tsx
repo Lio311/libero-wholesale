@@ -21,7 +21,7 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
     <div className="space-y-8">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">הכנסות חודשיות</CardTitle>
             <div className="p-2 bg-primary/10 rounded-md text-primary">
@@ -37,7 +37,7 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">הזמנות פתוחות</CardTitle>
             <div className="p-2 bg-blue-500/10 rounded-md text-blue-400">
@@ -52,7 +52,7 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">לקוחות פעילים</CardTitle>
             <div className="p-2 bg-purple-500/10 rounded-md text-purple-400">
@@ -68,7 +68,7 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">מלאי נמוך</CardTitle>
             <div className="p-2 bg-destructive/10 rounded-md text-destructive">
@@ -87,7 +87,7 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Orders Table */}
-        <Card className="lg:col-span-2 bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="lg:col-span-2 bg-card border-border shadow-sm">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -98,8 +98,8 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
           </CardHeader>
           <CardContent>
             <Table>
-              <TableHeader className="bg-black/40">
-                <TableRow className="border-white/10">
+              <TableHeader className="bg-muted/50">
+                <TableRow className="border-border">
                   <TableHead className="text-right">מספר</TableHead>
                   <TableHead className="text-right">לקוח</TableHead>
                   <TableHead className="text-right">תאריך</TableHead>
@@ -109,12 +109,12 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
               </TableHeader>
               <TableBody>
                 {recentOrders.length === 0 ? (
-                  <TableRow className="border-white/10">
+                  <TableRow className="border-border">
                     <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">אין הזמנות חדשות</TableCell>
                   </TableRow>
                 ) : (
                   recentOrders.map((order) => (
-                    <TableRow key={order.id} className="border-white/10 hover:bg-white/5 cursor-pointer">
+                    <TableRow key={order.id} className="border-border hover:bg-muted/20 cursor-pointer">
                       <TableCell className="font-mono">#{order.orderNumber}</TableCell>
                       <TableCell className="font-medium">{order.store?.name || 'לא ידוע'}</TableCell>
                       <TableCell className="text-muted-foreground">{format(new Date(order.createdAt), "dd/MM/yyyy")}</TableCell>
@@ -135,13 +135,13 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
         </Card>
 
         {/* Quick Actions / Activity */}
-        <Card className="bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader>
             <CardTitle>פעילות מערכת</CardTitle>
             <CardDescription>עדכונים וסינכרון מלאי</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center gap-4 p-3 rounded-lg bg-black/40 border border-white/5">
+            <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 border border-border/50">
               <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
               <div className="flex-1">
                 <p className="text-sm font-medium">סינכרון מלאי מקומקס</p>
@@ -149,7 +149,7 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
               </div>
             </div>
             
-            <div className="flex items-center gap-4 p-3 rounded-lg bg-black/40 border border-white/5">
+            <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 border border-border/50">
               <div className="h-2 w-2 rounded-full bg-blue-500" />
               <div className="flex-1">
                 <p className="text-sm font-medium">עדכון קטלוג מוצרים</p>
@@ -157,7 +157,7 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 p-3 rounded-lg bg-black/40 border border-white/5">
+            <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 border border-border/50">
               <div className="h-2 w-2 rounded-full bg-orange-500" />
               <div className="flex-1">
                 <p className="text-sm font-medium">לקוח ממתין לאישור</p>

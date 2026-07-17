@@ -58,7 +58,7 @@ export function ExportExcelButton({ data, columns, filename = "export", sheetNam
       variant="outline" 
       onClick={exportToExcel} 
       disabled={isExporting || data.length === 0}
-      className="bg-card/50 border-white/10 hover:bg-card hover:border-white/20 transition-all"
+      className="bg-card/50 border-border hover:bg-card hover:border-white/20 transition-all"
     >
       {isExporting ? <Loader2 className="ml-2 h-4 w-4 animate-spin" /> : <Download className="ml-2 h-4 w-4" />}
       ייצוא ל-Excel

@@ -30,7 +30,7 @@ export function FinanceClient({ stores, totalReceivables, totalCreditExposure }:
     <div className="space-y-6">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">סך חובות פתוחים (אובליגו)</CardTitle>
           </CardHeader>
@@ -43,7 +43,7 @@ export function FinanceClient({ stores, totalReceivables, totalCreditExposure }:
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">סך מסגרות אשראי שהוקצו</CardTitle>
           </CardHeader>
@@ -56,7 +56,7 @@ export function FinanceClient({ stores, totalReceivables, totalCreditExposure }:
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">ניצול אשראי כולל</CardTitle>
           </CardHeader>
@@ -84,7 +84,7 @@ export function FinanceClient({ stores, totalReceivables, totalCreditExposure }:
           <CardContent>
             <div className="space-y-2 mt-2">
               {storesOverLimit.map(store => (
-                <div key={store.id} className="flex justify-between items-center bg-black/20 p-2 rounded-md">
+                <div key={store.id} className="flex justify-between items-center bg-muted/30 p-2 rounded-md">
                   <span className="font-medium">{store.name}</span>
                   <div className="font-mono text-sm flex gap-4">
                     <span>ניצול: ₪{Number(store.currentBalance).toLocaleString()}</span>
@@ -98,16 +98,16 @@ export function FinanceClient({ stores, totalReceivables, totalCreditExposure }:
       )}
 
       {/* Finance Table */}
-      <Card className="bg-card/40 backdrop-blur-md border-white/10">
+      <Card className="bg-card border-border shadow-sm">
         <CardHeader>
           <CardTitle>דוח אובליגו לקוחות</CardTitle>
           <CardDescription>מצב פיננסי ותנאי תשלום ברמת לקוח</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border border-white/10 overflow-hidden">
+          <div className="rounded-md border border-border overflow-hidden">
             <Table>
-              <TableHeader className="bg-black/40">
-                <TableRow className="border-white/10">
+              <TableHeader className="bg-muted/50">
+                <TableRow className="border-border">
                   <TableHead className="text-right">לקוח</TableHead>
                   <TableHead className="text-right">תנאי תשלום</TableHead>
                   <TableHead className="text-left">מסגרת אשראי</TableHead>
@@ -117,7 +117,7 @@ export function FinanceClient({ stores, totalReceivables, totalCreditExposure }:
               </TableHeader>
               <TableBody>
                 {stores.length === 0 ? (
-                  <TableRow className="border-white/10">
+                  <TableRow className="border-border">
                     <TableCell colSpan={5} className="text-center h-32 text-muted-foreground">אין נתונים פיננסיים</TableCell>
                   </TableRow>
                 ) : (
@@ -127,10 +127,10 @@ export function FinanceClient({ stores, totalReceivables, totalCreditExposure }:
                     const available = Math.max(0, limit - balance);
                     
                     return (
-                      <TableRow key={store.id} className="border-white/10 hover:bg-white/5 transition-colors">
+                      <TableRow key={store.id} className="border-border hover:bg-muted/20 transition-colors">
                         <TableCell className="font-medium">{store.name}</TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="border-white/10 bg-white/5 text-muted-foreground">
+                          <Badge variant="outline" className="border-border bg-muted/20 text-muted-foreground">
                             {store.paymentTerms}
                           </Badge>
                         </TableCell>

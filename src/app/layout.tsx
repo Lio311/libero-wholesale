@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans_Hebrew, IBM_Plex_Mono } from "next/font/google";
+import { Heebo, IBM_Plex_Mono } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs';
 import { heIL } from '@clerk/localizations';
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,9 +8,9 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { CartSheet } from "@/components/CartSheet";
 import "./globals.css";
 
-const ibmPlexHebrew = IBM_Plex_Sans_Hebrew({
-  weight: ['100', '200', '300', '400', '500', '600', '700'],
-  variable: "--font-ibm-plex-hebrew",
+const heebo = Heebo({
+  weight: ['300', '400', '500', '600', '700'],
+  variable: "--font-sans",
   subsets: ["hebrew", "latin"],
 });
 
@@ -53,12 +53,12 @@ export default function RootLayout({
       appearance={{
         elements: {
           formButtonPrimary: "bg-primary text-primary-foreground hover:bg-primary/90",
-          card: "bg-card border border-white/10 shadow-2xl",
+          card: "bg-card border border-border shadow-xl",
           headerTitle: "text-foreground font-bold",
           headerSubtitle: "text-muted-foreground",
           dividerText: "text-muted-foreground",
           formFieldLabel: "text-foreground",
-          formFieldInput: "bg-background border-white/10 text-foreground focus:ring-primary",
+          formFieldInput: "bg-background border-border text-foreground focus:ring-primary",
           footerActionText: "text-muted-foreground",
           footerActionLink: "text-primary hover:text-primary/90"
         }
@@ -67,7 +67,7 @@ export default function RootLayout({
       <html
         lang="he"
         dir="rtl"
-        className={`${ibmPlexHebrew.variable} ${ibmMono.variable} h-full antialiased dark`}
+        className={`${heebo.variable} ${ibmMono.variable} h-full antialiased`}
       >
         <body className="min-h-full flex flex-col font-sans bg-background text-foreground">
           <TooltipProvider>

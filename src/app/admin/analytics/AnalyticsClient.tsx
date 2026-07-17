@@ -37,7 +37,7 @@ export function AnalyticsClient({ logs }: AnalyticsClientProps) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">סה״כ חיפושים (30 ימים)</CardTitle>
           </CardHeader>
@@ -50,7 +50,7 @@ export function AnalyticsClient({ logs }: AnalyticsClientProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">חיפושים ללא תוצאות</CardTitle>
           </CardHeader>
@@ -63,7 +63,7 @@ export function AnalyticsClient({ logs }: AnalyticsClientProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">אחוז הצלחת חיפוש</CardTitle>
           </CardHeader>
@@ -78,27 +78,27 @@ export function AnalyticsClient({ logs }: AnalyticsClientProps) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader>
             <CardTitle>מונחים נפוצים ללא תוצאות</CardTitle>
             <CardDescription>כדאי להוסיף מונחים אלו למילון השגיאות</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
-              <TableHeader className="bg-black/40">
-                <TableRow className="border-white/10">
+              <TableHeader className="bg-muted/50">
+                <TableRow className="border-border">
                   <TableHead className="text-right">מונח שחיפשו</TableHead>
                   <TableHead className="text-right">כמות חיפושים</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {commonMissedTerms.length === 0 ? (
-                  <TableRow className="border-white/10">
+                  <TableRow className="border-border">
                     <TableCell colSpan={2} className="text-center text-muted-foreground py-8">אין חיפושים ללא תוצאות</TableCell>
                   </TableRow>
                 ) : (
                   commonMissedTerms.map(([term, count]) => (
-                    <TableRow key={term} className="border-white/10 hover:bg-white/5">
+                    <TableRow key={term} className="border-border hover:bg-muted/20">
                       <TableCell className="font-medium">{term}</TableCell>
                       <TableCell className="font-mono">{count}</TableCell>
                     </TableRow>
@@ -109,15 +109,15 @@ export function AnalyticsClient({ logs }: AnalyticsClientProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-md border-white/10">
+        <Card className="bg-card border-border shadow-sm">
           <CardHeader>
             <CardTitle>לוג חיפושים אחרונים</CardTitle>
             <CardDescription>בדיקת מנוע התרגום והשגיאות</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
-              <TableHeader className="bg-black/40">
-                <TableRow className="border-white/10">
+              <TableHeader className="bg-muted/50">
+                <TableRow className="border-border">
                   <TableHead className="text-right">חיפוש</TableHead>
                   <TableHead className="text-right">תרגום מנוע</TableHead>
                   <TableHead className="text-right">תוצאות</TableHead>
@@ -126,7 +126,7 @@ export function AnalyticsClient({ logs }: AnalyticsClientProps) {
               </TableHeader>
               <TableBody>
                 {logs.slice(0, 10).map((log) => (
-                  <TableRow key={log.id} className="border-white/10 hover:bg-white/5">
+                  <TableRow key={log.id} className="border-border hover:bg-muted/20">
                     <TableCell className="font-medium">{log.query}</TableCell>
                     <TableCell className="text-muted-foreground">{log.englishTerm || '-'}</TableCell>
                     <TableCell>

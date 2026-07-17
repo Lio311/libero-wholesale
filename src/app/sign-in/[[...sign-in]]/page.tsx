@@ -10,20 +10,20 @@ export default function Page() {
       
       {/* Login Box Container */}
       <div className="relative z-10 w-full max-w-md p-4 flex flex-col items-center">
-        <img src="/logo2.png" alt="Libero Logo" className="h-16 mb-8 drop-shadow-2xl brightness-200" />
+        <img src="/logo2.png" alt="Libero Logo" className="h-16 mb-8 drop-shadow-2xl drop-shadow-sm" />
         <SignIn 
           appearance={{
             elements: {
               rootBox: "mx-auto w-full",
-              card: "bg-card/80 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl w-full",
+              card: "bg-card/80 backdrop-blur-xl border border-border shadow-2xl rounded-2xl w-full",
               headerTitle: "text-foreground font-bold text-2xl text-center",
               headerSubtitle: "text-muted-foreground text-center",
-              socialButtonsBlockButton: "bg-white/5 border-white/10 hover:bg-white/10 text-foreground transition-all",
+              socialButtonsBlockButton: "bg-muted/20 border-border hover:bg-white/10 text-foreground transition-all",
               socialButtonsBlockButtonText: "text-foreground font-medium",
               dividerText: "text-muted-foreground",
               dividerLine: "bg-white/10",
               formFieldLabel: "text-foreground font-medium",
-              formFieldInput: "bg-black/50 border-white/10 text-foreground focus:border-primary focus:ring-1 focus:ring-primary h-11 transition-all",
+              formFieldInput: "bg-background border-border text-foreground focus:border-primary focus:ring-1 focus:ring-primary h-11 transition-all",
               formButtonPrimary: "bg-primary text-primary-foreground hover:bg-primary/90 h-11 font-bold text-base transition-all",
               footerActionText: "text-muted-foreground",
               footerActionLink: "text-primary hover:text-primary/90 font-medium"
