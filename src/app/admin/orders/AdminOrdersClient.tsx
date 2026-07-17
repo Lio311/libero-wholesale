@@ -124,7 +124,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                         מעדכן...
                       </div>
                     ) : (
-                      <Select value={order.status} onValueChange={(val) => handleStatusChange(order.id, val)}>
+                      <Select value={order.status} onValueChange={(val) => handleStatusChange(order.id, val as string)}>
                         <SelectTrigger className="w-[120px] h-8 text-xs border-border bg-background" dir="rtl">
                           <SelectValue />
                         </SelectTrigger>
@@ -176,7 +176,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground mb-1">עדכון סטטוס</div>
-                  <Select value={selectedOrder.status} onValueChange={(val) => handleStatusChange(selectedOrder.id, val)}>
+                  <Select value={selectedOrder.status} onValueChange={(val) => handleStatusChange(selectedOrder.id, val as string)}>
                     <SelectTrigger className="w-full h-8 text-xs border-border bg-background" dir="rtl">
                       <SelectValue />
                     </SelectTrigger>
