@@ -78,7 +78,7 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
                 <SelectTrigger className="w-full bg-background h-9">
                   <SelectValue placeholder="סינון לפי מותג" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent alignItemWithTrigger={false}>
                   <SelectItem value="הכל">הכל</SelectItem>
                   {brands.map(b => (
                     <SelectItem key={b} value={b}>{b}</SelectItem>
