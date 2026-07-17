@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,6 +45,11 @@ export function ProductDialog({ product, open, onOpenChange }: ProductDialogProp
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [base64Image, setBase64Image] = useState<string | null>(null);
+  const [isOnSale, setIsOnSale] = useState(product?.isOnSale || false);
+
+  useEffect(() => {
+    setIsOnSale(product?.isOnSale || false);
+  }, [product, open]);
 
   const isEditing = !!product;
 
@@ -136,8 +141,19 @@ export function ProductDialog({ product, open, onOpenChange }: ProductDialogProp
                 <Input id="barcode" name="barcode" defaultValue={product?.barcode || ""} className="col-span-3 rounded-xl border-border bg-background" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="imageUpload" className="text-right font-medium text-xs">העלאת תמונה</Label>
-                <Input id="imageUpload" type="file" accept="image/*" onChange={handleImageChange} className="col-span-3 rounded-xl border-border bg-background text-xs" />
+                <Label className="text-right font-medium text-xs">העלאת תמונה</Label>
+                <div className="col-span-3 flex items-center gap-3">
+                  <Input id="imageUpload" type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                  <Label 
+                    htmlFor="imageUpload" 
+                    className="cursor-pointer bg-black text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-black/80 transition-colors shadow-sm"
+                  >
+                    בחר תמונה
+                  </Label>
+                  <span className="text-xs text-muted-foreground truncate max-w-[150px]">
+                    {base64Image ? "תמונה נבחרה" : product?.imageUrl ? "תמונה קיימת" : "לא נבחרה תמונה"}
+                  </span>
+                </div>
               </div>
               {(base64Image || product?.imageUrl) && (
                 <div className="flex justify-center mt-2">
@@ -156,7 +172,21 @@ export function ProductDialog({ product, open, onOpenChange }: ProductDialogProp
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="priceDropPrice" className="text-right font-medium text-xs text-red-500">מחיר מבצע</Label>
-                <Input id="priceDropPrice" name="priceDropPrice" type="number" step="0.01" defaultValue={product?.priceDropPrice || ""} className="col-span-3 rounded-xl border-border bg-background" />
+                <Input 
+                  id="priceDropPrice" 
+                  name="priceDropPrice" 
+                  type="number" 
+                  step="0.01" 
+                  defaultValue={product?.priceDropPrice || ""} 
+                  onChange={(e) => {
+                    if (e.target.value && Number(e.target.value) > 0) {
+                      setIsOnSale(true);
+                    } else if (!e.target.value) {
+                      setIsOnSale(false);
+                    }
+                  }}
+                  className="col-span-3 rounded-xl border-border bg-background" 
+                />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="stockQuantity" className="text-right font-medium text-xs">מלאי זמין</Label>
@@ -171,7 +201,7 @@ export function ProductDialog({ product, open, onOpenChange }: ProductDialogProp
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between bg-muted/30 p-2 rounded-lg border border-border/50">
                   <Label htmlFor="isOnSale" className="font-medium">מוצר במבצע</Label>
-                  <Switch id="isOnSale" name="isOnSale" value="true" defaultChecked={product?.isOnSale} />
+                  <Switch id="isOnSale" name="isOnSale" value="true" checked={isOnSale} onCheckedChange={setIsOnSale} />
                 </div>
                 <div className="flex items-center justify-between bg-muted/30 p-2 rounded-lg border border-border/50">
                   <Label htmlFor="isBackToStock" className="font-medium">חזר למלאי</Label>
