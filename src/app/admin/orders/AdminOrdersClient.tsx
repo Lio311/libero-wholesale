@@ -253,7 +253,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
         const updatedOrder = { ...selectedOrder };
         
         if (!updatedOrder.orderItems) updatedOrder.orderItems = [];
-        const existingIndex = updatedOrder.orderItems.findIndex(i => i.id === data.item.id || i.productId === data.item.productId);
+        const existingIndex = updatedOrder.orderItems.findIndex(i => i.id === data.item.id || i.product?.id === data.item.productId);
         
         if (existingIndex >= 0) {
           updatedOrder.orderItems[existingIndex] = data.item;
