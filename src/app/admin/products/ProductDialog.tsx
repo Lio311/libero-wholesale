@@ -98,7 +98,7 @@ export function ProductDialog({ product, open, onOpenChange }: ProductDialogProp
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px] bg-card border-border rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[700px] bg-card border-border rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <DialogHeader>
           <DialogTitle>{isEditing ? "ערוך מוצר" : "הוסף מוצר חדש"}</DialogTitle>
           <DialogDescription>
