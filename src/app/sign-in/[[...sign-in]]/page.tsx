@@ -44,9 +44,6 @@ export default function Page() {
                 variables: {
                   colorPrimary: 'hsl(var(--primary))',
                   colorBackground: 'transparent',
-                  colorInputBackground: 'transparent',
-                  colorInputText: 'hsl(var(--foreground))',
-                  colorShimmer: 'hsl(var(--muted))',
                   borderRadius: '0.75rem',
                 },
                 elements: {
