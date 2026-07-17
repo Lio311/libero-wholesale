@@ -34,9 +34,6 @@ export default function RootLayout({
     <ClerkProvider 
       localization={heIL}
       appearance={{
-        layout: {
-          logoImageUrl: "/logo2.png",
-        },
         elements: {
           formButtonPrimary: "bg-primary text-primary-foreground hover:bg-primary/90",
           card: "bg-card border border-white/10 shadow-2xl",
