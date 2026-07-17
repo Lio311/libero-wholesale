@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { products } from "@/lib/db/schema";
+import { products, brands } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -9,7 +9,27 @@ export async function createProduct(formData: FormData) {
   try {
     const name = formData.get("name") as string;
     const barcode = formData.get("barcode") as string || null;
-    const brand = formData.get("brand") as string || null;
+    let brand = formData.get("brand") as string || null;
+    let brandHe = formData.get("brandHe") as string || null;
+    
+    // Check for inline new brand
+    const newBrandName = formData.get("newBrandName") as string;
+    const newBrandNameHe = formData.get("newBrandNameHe") as string;
+    
+    if (newBrandName) {
+      // Create new brand
+      try {
+        await db.insert(brands).values({
+          name: newBrandName,
+          nameHe: newBrandNameHe || null,
+        }).onConflictDoNothing({ target: brands.name });
+        brand = newBrandName;
+        brandHe = newBrandNameHe || null;
+      } catch (err) {
+        console.error("Failed to inline create brand:", err);
+      }
+    }
+    
     const model = formData.get("model") as string || null;
     const imageUrl = formData.get("imageUrl") as string || null;
     const price = parseFloat(formData.get("price") as string);
@@ -17,7 +37,7 @@ export async function createProduct(formData: FormData) {
     
     // New fields
     const nameHe = formData.get("nameHe") as string || null;
-    const brandHe = formData.get("brandHe") as string || null;
+    // brandHe is already handled above
     const modelHe = formData.get("modelHe") as string || null;
     const isBackToStock = formData.get("isBackToStock") === "true";
     const isOnSale = formData.get("isOnSale") === "true";
@@ -69,7 +89,27 @@ export async function updateProduct(id: string, formData: FormData) {
   try {
     const name = formData.get("name") as string;
     const barcode = formData.get("barcode") as string || null;
-    const brand = formData.get("brand") as string || null;
+    let brand = formData.get("brand") as string || null;
+    let brandHe = formData.get("brandHe") as string || null;
+    
+    // Check for inline new brand
+    const newBrandName = formData.get("newBrandName") as string;
+    const newBrandNameHe = formData.get("newBrandNameHe") as string;
+    
+    if (newBrandName) {
+      // Create new brand
+      try {
+        await db.insert(brands).values({
+          name: newBrandName,
+          nameHe: newBrandNameHe || null,
+        }).onConflictDoNothing({ target: brands.name });
+        brand = newBrandName;
+        brandHe = newBrandNameHe || null;
+      } catch (err) {
+        console.error("Failed to inline create brand:", err);
+      }
+    }
+
     const model = formData.get("model") as string || null;
     const imageUrl = formData.get("imageUrl") as string || null;
     const priceStr = formData.get("price") as string;
@@ -77,7 +117,7 @@ export async function updateProduct(id: string, formData: FormData) {
     
     // New fields
     const nameHe = formData.get("nameHe") as string || null;
-    const brandHe = formData.get("brandHe") as string || null;
+    // brandHe is already handled above
     const modelHe = formData.get("modelHe") as string || null;
     const isBackToStock = formData.get("isBackToStock") === "true";
     const isOnSale = formData.get("isOnSale") === "true";

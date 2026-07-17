@@ -132,6 +132,15 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton 
+                  render={<a href="/admin/orders" />}
+                  className={`group ${getButtonClass("/admin/orders")}`}
+                >
+                  <ShoppingCart className={getIconClass("/admin/orders")} />
+                  <span className={pathname === "/admin/orders" ? "font-semibold text-foreground" : ""}>ניהול הזמנות</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
                   render={<a href="/admin/products" />}
                   className={`group ${getButtonClass("/admin/products")}`}
                 >

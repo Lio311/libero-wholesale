@@ -11,6 +11,13 @@ export default async function OrdersPage() {
   const history = await db.query.orders.findMany({
     orderBy: [desc(orders.createdAt)],
     limit: 50,
+    with: {
+      orderItems: {
+        with: {
+          product: true
+        }
+      }
+    }
   });
 
   return (

@@ -132,9 +132,9 @@ export function ProductDialog({ product, open, onOpenChange, brands = [] }: Prod
                 <Label htmlFor="nameHe" className="text-right font-medium text-xs">שם (עברית)</Label>
                 <Input id="nameHe" name="nameHe" defaultValue={product?.nameHe || ""} className="col-span-3 rounded-xl border-border bg-background" />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="brandSelect" className="text-right font-medium text-xs">מותג</Label>
-                <div className="col-span-3">
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="brandSelect" className="text-right font-medium text-xs mt-3">מותג</Label>
+                <div className="col-span-3 space-y-2">
                   <Select value={selectedBrand} onValueChange={(val) => setSelectedBrand(val || "none")}>
                     <SelectTrigger className="w-full rounded-xl border-border bg-background" dir="rtl">
                       <SelectValue placeholder="בחר מותג..." />
@@ -146,10 +146,29 @@ export function ProductDialog({ product, open, onOpenChange, brands = [] }: Prod
                           {b.nameHe ? `${b.nameHe} (${b.name})` : b.name}
                         </SelectItem>
                       ))}
+                      <SelectItem value="_new_" className="text-primary font-medium">
+                        + הוסף מותג חדש...
+                      </SelectItem>
                     </SelectContent>
                   </Select>
-                  <input type="hidden" name="brand" value={selectedBrand === "none" ? "" : selectedBrand} />
-                  <input type="hidden" name="brandHe" value={selectedBrand === "none" ? "" : (brands.find(b => b.name === selectedBrand)?.nameHe || "")} />
+                  
+                  {selectedBrand === "_new_" ? (
+                    <div className="bg-muted/30 p-3 rounded-lg border border-border/50 space-y-3 mt-2">
+                      <div>
+                        <Label htmlFor="newBrandName" className="text-xs mb-1 block">שם מותג חדש (אנגלית) *</Label>
+                        <Input id="newBrandName" name="newBrandName" placeholder="לדוגמה: L'Oreal" required className="h-8 text-sm" />
+                      </div>
+                      <div>
+                        <Label htmlFor="newBrandNameHe" className="text-xs mb-1 block">שם מותג (עברית)</Label>
+                        <Input id="newBrandNameHe" name="newBrandNameHe" placeholder="לדוגמה: לוריאל" className="h-8 text-sm" />
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <input type="hidden" name="brand" value={selectedBrand === "none" ? "" : selectedBrand} />
+                      <input type="hidden" name="brandHe" value={selectedBrand === "none" ? "" : (brands.find(b => b.name === selectedBrand)?.nameHe || "")} />
+                    </>
+                  )}
                 </div>
               </div>
 

@@ -1,5 +1,5 @@
 import { pgTable, uuid, text, decimal, integer, boolean, timestamp, serial, pgEnum, AnyPgColumn, varchar } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm';
+import { sql, relations } from 'drizzle-orm';
 
 // Enums
 export const storeStatusEnum = pgEnum('store_status', ['active', 'pending', 'suspended']);
@@ -143,3 +143,23 @@ export const settings = pgTable('settings', {
   value: text('value').notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
+
+// Relations
+export const ordersRelations = relations(orders, ({ many, one }) => ({
+  store: one(stores, {
+    fields: [orders.storeId],
+    references: [stores.id],
+  }),
+  orderItems: many(orderItems),
+}));
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.orderId],
+    references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [orderItems.productId],
+    references: [products.id],
+  }),
+}));

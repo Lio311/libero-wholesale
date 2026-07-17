@@ -96,7 +96,7 @@ export function BrandsClient({ initialBrands }: { initialBrands: Brand[] }) {
                 <TableCell className="font-medium text-center">{brand.name}</TableCell>
                 <TableCell className="text-center">{brand.nameHe || "-"}</TableCell>
                 <TableCell className="text-center">
-                  <div className="flex items-center justify-center gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center justify-center gap-2 transition-opacity">
                     <Button
                       variant="ghost"
                       size="icon"

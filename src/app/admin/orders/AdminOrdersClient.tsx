@@ -1,26 +1,15 @@
 "use client";
 
-import { ExportExcelButton } from "@/components/ExportExcelButton";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { format } from "date-fns";
 import { useState } from "react";
+import { format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner"; // Assuming sonner is used, or fallback to alert. Using alert for safety.
+import { Loader2 } from "lucide-react";
 
-// Use partial type representing an Order joined with basic store data
-interface OrderRow {
+interface AdminOrderRow {
   id: string;
   orderNumber: number;
   status: string;
@@ -28,6 +17,10 @@ interface OrderRow {
   itemsCount: number;
   createdAt: Date;
   comaxRef?: string | null;
+  store?: {
+    name: string;
+    contactName: string;
+  } | null;
   orderItems?: {
     id: string;
     quantity: number;
@@ -45,38 +38,37 @@ interface OrderRow {
   }[];
 }
 
-interface OrdersClientProps {
-  orders: OrderRow[];
+interface AdminOrdersClientProps {
+  initialOrders: AdminOrderRow[];
 }
 
-export function OrdersClient({ orders }: OrdersClientProps) {
-  const [selectedOrder, setSelectedOrder] = useState<OrderRow | null>(null);
-  
-  // Format for Excel Export
-  const excelColumns = [
-    { header: "מספר הזמנה", key: "orderNumber", width: 15 },
-    { header: "תאריך", key: "date", width: 20 },
-    { header: "סטטוס", key: "status", width: 15 },
-    { header: "כמות פריטים", key: "itemsCount", width: 15 },
-    { header: "סכום כולל (₪)", key: "totalAmount", width: 20 },
-    { header: "מספר קומקס", key: "comaxRef", width: 20 },
-    { header: "פירוט פריטים", key: "itemsSummary", width: 60 },
-  ];
+export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
+  const [orders, setOrders] = useState<AdminOrderRow[]>(initialOrders);
+  const [selectedOrder, setSelectedOrder] = useState<AdminOrderRow | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  const excelData = orders.map(order => ({
-    orderNumber: order.orderNumber,
-    date: format(new Date(order.createdAt), "dd/MM/yyyy HH:mm"),
-    status: order.status === "pending" ? "ממתין" : 
-            order.status === "processing" ? "בטיפול" : 
-            order.status === "shipped" ? "נשלח" : 
-            order.status === "delivered" ? "נמסר" : "בוטל",
-    itemsCount: order.itemsCount,
-    totalAmount: Number(order.totalAmount).toFixed(2),
-    comaxRef: order.comaxRef || "לא קיים",
-    itemsSummary: order.orderItems?.map(item => 
-      `${item.quantity} x ${item.product.nameHe || item.product.name} (₪${Number(item.unitPrice).toFixed(2)})`
-    ).join("\n") || "אין פירוט",
-  }));
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
+    setUpdatingId(orderId);
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) {
+        setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+        if (selectedOrder?.id === orderId) {
+          setSelectedOrder({ ...selectedOrder, status: newStatus });
+        }
+      } else {
+        alert("שגיאה בעדכון הסטטוס");
+      }
+    } catch (e) {
+      alert("שגיאה בעדכון הסטטוס");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -91,27 +83,15 @@ export function OrdersClient({ orders }: OrdersClientProps) {
 
   return (
     <div className="w-full space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-muted-foreground font-mono">
-          נמצאו {orders.length} הזמנות
-        </div>
-        <ExportExcelButton 
-          data={excelData} 
-          columns={excelColumns} 
-          filename="Libero_Orders_History" 
-          sheetName="היסטוריית הזמנות"
-        />
-      </div>
-
       <div className="border border-border rounded-xl overflow-hidden bg-card/30 backdrop-blur-md">
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow className="border-border hover:bg-transparent">
               <TableHead className="w-[100px] text-right">מספר הזמנה</TableHead>
+              <TableHead className="text-right">לקוח / חנות</TableHead>
               <TableHead className="text-right">תאריך</TableHead>
               <TableHead className="text-right">סטטוס</TableHead>
               <TableHead className="text-right">פריטים</TableHead>
-              <TableHead className="text-right">מספר קומקס</TableHead>
               <TableHead className="text-left">סכום כולל</TableHead>
             </TableRow>
           </TableHeader>
@@ -124,15 +104,45 @@ export function OrdersClient({ orders }: OrdersClientProps) {
               </TableRow>
             ) : (
               orders.map((order) => (
-                <TableRow key={order.id} onClick={() => setSelectedOrder(order)} className="border-border hover:bg-muted/20 transition-colors cursor-pointer group">
-                  <TableCell className="font-mono font-medium">#{order.orderNumber}</TableCell>
-                  <TableCell className="text-muted-foreground">
+                <TableRow key={order.id} className="border-border hover:bg-muted/20 transition-colors group">
+                  <TableCell 
+                    className="font-mono font-medium cursor-pointer text-primary hover:underline"
+                    onClick={() => setSelectedOrder(order)}
+                  >
+                    #{order.orderNumber}
+                  </TableCell>
+                  <TableCell className="cursor-pointer" onClick={() => setSelectedOrder(order)}>
+                    <div className="font-medium">{order.store?.name || "לקוח מזדמן"}</div>
+                    {order.store?.contactName && <div className="text-xs text-muted-foreground">{order.store.contactName}</div>}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground cursor-pointer" onClick={() => setSelectedOrder(order)}>
                     {format(new Date(order.createdAt), "dd/MM/yyyy HH:mm")}
                   </TableCell>
-                  <TableCell>{getStatusBadge(order.status)}</TableCell>
-                  <TableCell>{order.itemsCount}</TableCell>
-                  <TableCell className="font-mono text-muted-foreground text-xs">{order.comaxRef || "-"}</TableCell>
-                  <TableCell className="text-left font-mono font-bold">₪{Number(order.totalAmount).toFixed(2)}</TableCell>
+                  <TableCell>
+                    {updatingId === order.id ? (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        מעדכן...
+                      </div>
+                    ) : (
+                      <Select value={order.status} onValueChange={(val) => handleStatusChange(order.id, val)}>
+                        <SelectTrigger className="w-[120px] h-8 text-xs border-border bg-background" dir="rtl">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">ממתין</SelectItem>
+                          <SelectItem value="processing">בטיפול</SelectItem>
+                          <SelectItem value="shipped">נשלח</SelectItem>
+                          <SelectItem value="delivered">נמסר</SelectItem>
+                          <SelectItem value="cancelled">בוטל</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </TableCell>
+                  <TableCell className="cursor-pointer" onClick={() => setSelectedOrder(order)}>{order.itemsCount}</TableCell>
+                  <TableCell className="text-left font-mono font-bold cursor-pointer" onClick={() => setSelectedOrder(order)}>
+                    ₪{Number(order.totalAmount).toFixed(2)}
+                  </TableCell>
                 </TableRow>
               ))
             )}
@@ -144,28 +154,41 @@ export function OrdersClient({ orders }: OrdersClientProps) {
         <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
           <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <DialogHeader>
-              <DialogTitle className="text-xl flex items-center gap-3">
-                <span>הזמנה #{selectedOrder.orderNumber}</span>
-                {getStatusBadge(selectedOrder.status)}
+              <DialogTitle className="text-xl flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span>הזמנה #{selectedOrder.orderNumber}</span>
+                  {getStatusBadge(selectedOrder.status)}
+                </div>
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-6 mt-4">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-muted/30 p-4 rounded-xl border border-border">
                 <div>
-                  <div className="text-xs text-muted-foreground mb-1">תאריך</div>
-                  <div className="font-medium">{format(new Date(selectedOrder.createdAt), "dd/MM/yyyy HH:mm")}</div>
+                  <div className="text-xs text-muted-foreground mb-1">לקוח</div>
+                  <div className="font-medium">{selectedOrder.store?.name || "לקוח מזדמן"}</div>
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground mb-1">סכום כולל</div>
-                  <div className="font-bold">₪{Number(selectedOrder.totalAmount).toFixed(2)}</div>
+                  <div className="font-bold text-primary">₪{Number(selectedOrder.totalAmount).toFixed(2)}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-muted-foreground mb-1">כמות פריטים</div>
-                  <div className="font-medium">{selectedOrder.itemsCount} פריטים</div>
+                  <div className="text-xs text-muted-foreground mb-1">תאריך והשעה</div>
+                  <div className="font-medium">{format(new Date(selectedOrder.createdAt), "dd/MM/yyyy HH:mm")}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-muted-foreground mb-1">מספר קומקס</div>
-                  <div className="font-medium">{selectedOrder.comaxRef || "לא קיים"}</div>
+                  <div className="text-xs text-muted-foreground mb-1">עדכון סטטוס</div>
+                  <Select value={selectedOrder.status} onValueChange={(val) => handleStatusChange(selectedOrder.id, val)}>
+                    <SelectTrigger className="w-full h-8 text-xs border-border bg-background" dir="rtl">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">ממתין</SelectItem>
+                      <SelectItem value="processing">בטיפול</SelectItem>
+                      <SelectItem value="shipped">נשלח</SelectItem>
+                      <SelectItem value="delivered">נמסר</SelectItem>
+                      <SelectItem value="cancelled">בוטל</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
