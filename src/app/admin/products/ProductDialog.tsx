@@ -24,6 +24,7 @@ interface ProductRow {
   barcode: string | null;
   price: string | number;
   stockQuantity: number;
+  imageUrl: string | null;
 }
 
 interface ProductDialogProps {
@@ -95,6 +96,10 @@ export function ProductDialog({ product, open, onOpenChange }: ProductDialogProp
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="stockQuantity" className="text-right font-medium">מלאי זמין</Label>
               <Input id="stockQuantity" name="stockQuantity" type="number" defaultValue={product?.stockQuantity || 0} className="col-span-3 rounded-xl border-border bg-background" required />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="imageUrl" className="text-right font-medium">תמונה (URL)</Label>
+              <Input id="imageUrl" name="imageUrl" type="url" defaultValue={product?.imageUrl || ""} className="col-span-3 rounded-xl border-border bg-background" placeholder="https://..." />
             </div>
           </div>
           {error && <p className="text-sm text-destructive font-medium mb-4">{error}</p>}

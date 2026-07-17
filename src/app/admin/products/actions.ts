@@ -11,6 +11,7 @@ export async function createProduct(formData: FormData) {
     const barcode = formData.get("barcode") as string || null;
     const brand = formData.get("brand") as string || null;
     const model = formData.get("model") as string || null;
+    const imageUrl = formData.get("imageUrl") as string || null;
     const price = parseFloat(formData.get("price") as string);
     const stockQuantity = parseInt(formData.get("stockQuantity") as string, 10);
 
@@ -23,6 +24,7 @@ export async function createProduct(formData: FormData) {
       barcode,
       brand,
       model,
+      imageUrl,
       price: price.toString(),
       stockQuantity: isNaN(stockQuantity) ? 0 : stockQuantity,
       status: "active",
@@ -43,6 +45,7 @@ export async function updateProduct(id: string, formData: FormData) {
     const barcode = formData.get("barcode") as string || null;
     const brand = formData.get("brand") as string || null;
     const model = formData.get("model") as string || null;
+    const imageUrl = formData.get("imageUrl") as string || null;
     const priceStr = formData.get("price") as string;
     const stockStr = formData.get("stockQuantity") as string;
     
@@ -53,6 +56,7 @@ export async function updateProduct(id: string, formData: FormData) {
       barcode,
       brand,
       model,
+      imageUrl,
       updatedAt: new Date(),
     };
 
