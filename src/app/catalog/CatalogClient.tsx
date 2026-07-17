@@ -348,7 +348,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
             size="sm" 
             onClick={() => {
               setCurrentPage(p => Math.max(1, p - 1));
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              document.getElementById('main-scroll-area')?.scrollTo({ top: 0, behavior: 'smooth' });
             }} 
             disabled={currentPage === 1}
           >
@@ -360,7 +360,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
             size="sm" 
             onClick={() => {
               setCurrentPage(p => Math.min(totalPages, p + 1));
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              document.getElementById('main-scroll-area')?.scrollTo({ top: 0, behavior: 'smooth' });
             }} 
             disabled={currentPage === totalPages}
           >

@@ -105,7 +105,7 @@ export default async function RootLayout({
               <AppSidebar isAdmin={isAdmin} />
               <main className="flex-1 w-full relative p-0 md:p-4 flex flex-col h-[100dvh]">
                 <MobileHeader />
-                <div className="bg-card w-full h-full md:rounded-[2.5rem] shadow-sm md:border border-border/40 overflow-y-auto relative flex-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <div id="main-scroll-area" className="bg-card w-full h-full md:rounded-[2.5rem] shadow-sm md:border border-border/40 overflow-y-auto relative flex-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                   <div className="h-full min-h-max">
                     {children}
                   </div>
