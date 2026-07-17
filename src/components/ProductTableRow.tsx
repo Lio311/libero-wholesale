@@ -46,8 +46,8 @@ export function ProductTableRow({ product }: ProductTableRowProps) {
       <TableCell className="hidden md:table-cell font-mono text-xs text-muted-foreground w-[120px] text-center">{product.barcode || "-"}</TableCell>
       <TableCell className="max-w-[150px] md:max-w-[200px] xl:max-w-[300px] text-center px-1 md:px-4">
         <div className="flex flex-col gap-1 items-center">
-          <span className="font-semibold text-[11px] md:text-sm truncate w-full" title={product.brand ? `${product.brand} - ${product.name}` : (product.nameHe || product.name)}>
-            {product.brand ? `${product.brand} - ${product.name}` : (product.nameHe || product.name)}
+          <span className="font-semibold text-[11px] md:text-sm truncate w-full" title={product.brand ? `${product.brandHe || product.brand} - ${product.nameHe || product.name}` : (product.nameHe || product.name)}>
+            {product.brand ? `${product.brandHe || product.brand} - ${product.nameHe || product.name}` : (product.nameHe || product.name)}
           </span>
           <div className="flex flex-wrap items-center justify-center gap-1">
             {product.isOfficialImporter && <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-[9px] px-1 h-4 shadow-none">יבואן רשמי</Badge>}

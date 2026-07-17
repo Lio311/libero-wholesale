@@ -176,7 +176,6 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
                             {product.name}
                             {product.isDraft && <Badge variant="secondary" className="h-5 px-1 text-[10px]">טיוטה</Badge>}
                           </span>
-                          {product.model && <span className="text-xs text-muted-foreground">{product.model}</span>}
                         </div>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm text-center">{product.size || '-'}</TableCell>

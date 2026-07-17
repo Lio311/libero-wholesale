@@ -130,14 +130,7 @@ export function ProductDialog({ product, open, onOpenChange }: ProductDialogProp
                 <Label htmlFor="brandHe" className="text-right font-medium text-xs">מותג (עברית)</Label>
                 <Input id="brandHe" name="brandHe" defaultValue={product?.brandHe || ""} className="col-span-3 rounded-xl border-border bg-background" />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="model" className="text-right font-medium text-xs">דגם (אנגלית)</Label>
-                <Input id="model" name="model" defaultValue={product?.model || ""} className="col-span-3 rounded-xl border-border bg-background" />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="modelHe" className="text-right font-medium text-xs">דגם (עברית)</Label>
-                <Input id="modelHe" name="modelHe" defaultValue={product?.modelHe || ""} className="col-span-3 rounded-xl border-border bg-background" />
-              </div>
+
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="size" className="text-right font-medium text-xs">גודל (Size)</Label>
                 <Input id="size" name="size" defaultValue={product?.size || ""} className="col-span-3 rounded-xl border-border bg-background" />
