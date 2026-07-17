@@ -66,10 +66,48 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
     <div className="w-full space-y-6">
       {/* Filters Bar */}
       <div className="bg-card border-b border-border/40 p-4 sticky top-0 z-20 shadow-sm">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex flex-col md:flex-row gap-4 items-start md:items-end justify-between">
           
+          {/* Search & Brand */}
+          <div className="flex flex-col sm:flex-row items-end gap-3 w-full md:w-auto">
+            
+            {/* Brand Filter */}
+            <div className="w-full sm:w-[200px] flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-muted-foreground px-1">סינון לפי מותג</label>
+              <Select value={selectedBrand} onValueChange={(val) => setSelectedBrand(val || "הכל")}>
+                <SelectTrigger className="w-full bg-background h-9">
+                  <SelectValue placeholder="סינון לפי מותג" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="הכל">הכל</SelectItem>
+                  {brands.map(b => (
+                    <SelectItem key={b} value={b}>{b}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Search Input */}
+            <div className="relative w-full sm:w-[200px]">
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="חיפוש חופשי..."
+                className="w-full pr-9 bg-background h-9"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
+            {/* Reset Button */}
+            <Button variant="outline" onClick={resetFilters} className="w-full sm:w-auto h-9">
+              <RotateCcw className="h-4 w-4 ml-2" />
+              איפוס
+            </Button>
+          </div>
+
           {/* Toggles */}
-          <div className="flex flex-wrap items-center gap-4 text-sm">
+          <div className="flex flex-wrap items-center gap-4 w-full md:w-auto pb-0.5">
             <div className="flex items-center gap-2">
               <Switch id="back-to-stock" checked={filterBackToStock} onCheckedChange={setFilterBackToStock} />
               <Label htmlFor="back-to-stock" className="whitespace-nowrap cursor-pointer">חזר למלאי</Label>
@@ -87,40 +125,7 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
               <Label htmlFor="price-drop" className="whitespace-nowrap cursor-pointer">ירד המחיר</Label>
             </div>
           </div>
-
-          {/* Search & Brand */}
-          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-            <Button variant="outline" size="sm" onClick={resetFilters} className="w-full sm:w-auto">
-              <RotateCcw className="h-4 w-4 ml-2" />
-              איפוס
-            </Button>
-            
-            <div className="relative w-full sm:w-[200px]">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="חיפוש חופשי..."
-                className="w-full pr-9 bg-background"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            <div className="w-full sm:w-[200px] flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-muted-foreground px-1">סינון לפי מותג</label>
-              <Select value={selectedBrand} onValueChange={(val) => setSelectedBrand(val || "הכל")}>
-                <SelectTrigger className="w-full bg-background">
-                  <SelectValue placeholder="סינון לפי מותג" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="הכל">הכל</SelectItem>
-                  {brands.map(b => (
-                    <SelectItem key={b} value={b}>{b}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          
         </div>
       </div>
 
