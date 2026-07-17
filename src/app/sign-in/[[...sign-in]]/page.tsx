@@ -43,8 +43,6 @@ export default function Page() {
               appearance={{
                 variables: {
                   colorPrimary: 'hsl(var(--primary))',
-                  colorText: 'hsl(var(--foreground))',
-                  colorTextSecondary: 'hsl(var(--muted-foreground))',
                   colorBackground: 'transparent',
                   colorInputBackground: 'transparent',
                   colorInputText: 'hsl(var(--foreground))',
