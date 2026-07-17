@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function AdminAnalyticsPage() {
   const logs = await db.query.searchLogs.findMany({
-    orderBy: [desc(searchLogs.timestamp)],
+    orderBy: [desc(searchLogs.createdAt)],
     limit: 500, // Look at last 500 searches
   });
 

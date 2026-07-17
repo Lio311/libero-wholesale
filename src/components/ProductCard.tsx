@@ -64,7 +64,7 @@ export function ProductCard({ product }: ProductCardProps) {
       
       <CardFooter className="p-4 pt-0">
         <Button 
-          className="w-full font-medium" 
+          className="w-full rounded-full font-medium" 
           variant={isOutOfStock ? "secondary" : "default"}
           disabled={isOutOfStock}
           onClick={() => addItem(product)}

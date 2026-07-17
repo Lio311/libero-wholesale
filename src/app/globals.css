@@ -46,16 +46,14 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-}
-
 :root {
-  --background: #fafafa;
+  --background: #f1f2f4;
   --foreground: #111111;
   --card: #ffffff;
   --card-foreground: #111111;
   --popover: #ffffff;
   --popover-foreground: #111111;
-  --primary: #000000;
+  --primary: #171717;
   --primary-foreground: #ffffff;
   --secondary: #f4f4f5;
   --secondary-foreground: #111111;
@@ -67,8 +65,8 @@
   --destructive-foreground: #ffffff;
   --border: #e4e4e7;
   --input: #e4e4e7;
-  --ring: #000000;
-  --radius: 0.75rem;
+  --ring: #171717;
+  --radius: 1.2rem;
 }
 
 .dark {
@@ -99,6 +97,8 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Optional subtle noise texture */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
   }
   html {
     @apply font-sans;

@@ -45,13 +45,13 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
   return (
     <div className="w-full space-y-6">
       {/* Top Bar with Search */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-card p-4 rounded-xl border border-border/50 backdrop-blur-md">
-        <div className="relative w-full sm:max-w-md">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-8 px-4 sm:px-8 max-w-4xl mx-auto w-full">
+        <div className="relative w-full">
+          <Search className="absolute right-6 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground/50" />
           <Input
             type="text"
-            placeholder="חפש מוצר (לדוגמה: שאנל, בושם גבר...)"
-            className="w-full pr-10 pl-10 bg-background/50 border-border text-lg py-6"
+            placeholder="חפש מותג, בושם או ברקוד..."
+            className="w-full pr-16 pl-12 bg-muted/30 hover:bg-muted/50 focus:bg-background border-transparent focus:border-border text-xl md:text-2xl py-8 rounded-full shadow-sm transition-all duration-300 font-medium placeholder:text-muted-foreground/50"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

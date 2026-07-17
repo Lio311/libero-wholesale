@@ -73,11 +73,13 @@ export default function RootLayout({
           <TooltipProvider>
             <SidebarProvider>
               <AppSidebar />
-              <main className="flex-1 w-full relative">
-                <div className="absolute top-4 right-4 md:hidden">
+              <main className="flex-1 w-full relative p-2 md:p-4">
+                <div className="absolute top-6 right-6 md:hidden z-50">
                   <SidebarTrigger />
                 </div>
-                {children}
+                <div className="bg-card w-full h-full rounded-[2.5rem] shadow-sm border border-border/40 overflow-hidden relative">
+                  {children}
+                </div>
               </main>
               <CartSheet />
             </SidebarProvider>
