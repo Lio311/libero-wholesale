@@ -76,7 +76,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
         <img src="/libero-w-white.png" alt="Libero Wholesale" className="w-[90%] h-auto object-contain drop-shadow-sm" />
       </SidebarHeader>
       <SidebarContent className="pb-4">
-        <Accordion type="single" collapsible defaultValue={isAdmin ? "admin" : "main"} className="w-full space-y-2">
+        <Accordion defaultValue={[isAdmin ? "admin" : "main"]} className="w-full space-y-2">
           <AccordionItem value="main" className="border-none">
             <SidebarGroup className="p-0">
               <AccordionTrigger className="px-6 hover:no-underline py-2 opacity-70 hover:opacity-100 transition-opacity [&>svg]:text-white">
