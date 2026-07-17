@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Heebo, IBM_Plex_Mono } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs';
+import { currentUser } from '@clerk/nextjs/server';
 import { heIL } from '@clerk/localizations';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -42,11 +43,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await currentUser();
+  const email = user?.emailAddresses[0]?.emailAddress?.toLowerCase();
+  const isAdmin = email === "lior31197@gmail.com";
   return (
     <ClerkProvider 
       localization={heIL}
@@ -72,7 +76,7 @@ export default function RootLayout({
         <body className="min-h-full flex flex-col font-sans bg-background text-foreground">
           <TooltipProvider>
             <SidebarProvider>
-              <AppSidebar />
+              <AppSidebar isAdmin={isAdmin} />
               <main className="flex-1 w-full relative p-2 md:p-4">
                 <div className="absolute top-6 right-6 md:hidden z-50">
                   <SidebarTrigger />

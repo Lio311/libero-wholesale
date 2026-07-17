@@ -6,7 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { Search, Plus, MoreHorizontal, Edit, Trash2, Loader2 } from "lucide-react";
+import { ProductDialog } from "./ProductDialog";
+import { deleteProduct } from "./actions";
 
 interface ProductRow {
   id: string;
@@ -25,12 +27,32 @@ interface ProductsClientProps {
 
 export function ProductsClient({ products: initialProducts }: ProductsClientProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<ProductRow | null>(null);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
   const filteredProducts = initialProducts.filter(p => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     (p.barcode && p.barcode.includes(searchTerm)) ||
     (p.brand && p.brand.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  const handleEdit = (product: ProductRow) => {
+    setEditingProduct(product);
+    setIsDialogOpen(true);
+  };
+
+  const handleAddNew = () => {
+    setEditingProduct(null);
+    setIsDialogOpen(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("האם אתה בטוח שברצונך למחוק מוצר זה?")) return;
+    setIsDeleting(id);
+    await deleteProduct(id);
+    setIsDeleting(null);
+  };
 
   return (
     <div className="space-y-6">
@@ -44,7 +66,7 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+        <Button onClick={handleAddNew} className="bg-primary hover:bg-primary/90 rounded-full text-primary-foreground font-semibold shadow-sm">
           <Plus className="mr-2 h-4 w-4" />
           הוספת מוצר חדש
         </Button>
@@ -97,11 +119,11 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
                       <TableCell className="text-left font-mono font-bold text-primary">₪{Number(product.price).toFixed(2)}</TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-2">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                          <Button onClick={() => handleEdit(product)} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
-                            <Trash2 className="h-4 w-4" />
+                          <Button onClick={() => handleDelete(product.id)} disabled={isDeleting === product.id} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                            {isDeleting === product.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                           </Button>
                         </div>
                       </TableCell>
@@ -113,6 +135,12 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
           </div>
         </CardContent>
       </Card>
+      
+      <ProductDialog 
+        product={editingProduct} 
+        open={isDialogOpen} 
+        onOpenChange={setIsDialogOpen} 
+      />
     </div>
   );
 }

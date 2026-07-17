@@ -38,14 +38,14 @@ const items = [
   },
 ]
 
-export function AppSidebar() {
+export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
   const setIsOpen = useCartStore((state) => state.setIsOpen)
   const totalItems = useCartStore((state) => state.getTotalItems())
 
   return (
     <Sidebar side="right">
-      <SidebarHeader className="p-4">
-        <h1 className="text-xl font-bold tracking-tight text-primary">Libero Wholesale</h1>
+      <SidebarHeader className="p-4 flex items-center justify-center">
+        <img src="/logo2.png" alt="Libero Wholesale" className="h-10 object-contain drop-shadow-sm" />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -82,16 +82,18 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="p-4">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton render={<a href="/admin" />}>
-              <Settings />
-              <span>ניהול מערכת</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+      {isAdmin && (
+        <SidebarFooter className="p-4">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton render={<a href="/admin" />}>
+                <Settings />
+                <span>ניהול מערכת</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      )}
     </Sidebar>
   )
 }

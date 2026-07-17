@@ -144,24 +144,8 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
             <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 border border-border/50">
               <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
               <div className="flex-1">
-                <p className="text-sm font-medium">סינכרון מלאי מקומקס</p>
-                <p className="text-xs text-muted-foreground mt-0.5">עודכן לאחרונה לפני 15 דקות</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 border border-border/50">
-              <div className="h-2 w-2 rounded-full bg-blue-500" />
-              <div className="flex-1">
-                <p className="text-sm font-medium">עדכון קטלוג מוצרים</p>
-                <p className="text-xs text-muted-foreground mt-0.5">14 מוצרים חדשים נוספו</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 border border-border/50">
-              <div className="h-2 w-2 rounded-full bg-orange-500" />
-              <div className="flex-1">
-                <p className="text-sm font-medium">לקוח ממתין לאישור</p>
-                <p className="text-xs text-muted-foreground mt-0.5">חנות תל אביב בע״מ</p>
+                <p className="text-sm font-medium">המערכת מחוברת ופועלת כשורה</p>
+                <p className="text-xs text-muted-foreground mt-0.5">כל הנתונים המוצגים בלוח הבקרה הינם נתוני אמת מהמסד נתונים</p>
               </div>
             </div>
           </CardContent>
