@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { CartSheet } from "@/components/CartSheet";
+import { Menu } from "lucide-react";
 import "./globals.css";
 
 const heebo = Heebo({
@@ -78,8 +79,10 @@ export default async function RootLayout({
             <SidebarProvider>
               <AppSidebar isAdmin={isAdmin} />
               <main className="flex-1 w-full relative p-0 md:p-4 flex flex-col h-[100dvh] md:h-auto">
-                <div className="relative flex items-center justify-between px-4 md:hidden border-b border-border/40 bg-card z-10 shrink-0 shadow-sm h-24">
-                  <SidebarTrigger className="h-10 w-10 [&_svg]:size-6" />
+                <div className="relative flex items-center justify-between px-4 md:hidden border-b border-border/40 bg-black/95 backdrop-blur-md z-10 shrink-0 shadow-sm h-16">
+                  <SidebarTrigger className="h-10 w-10 text-white hover:text-white/80 hover:bg-white/10">
+                    <Menu className="h-6 w-6" />
+                  </SidebarTrigger>
                   <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                     <img src="/libero-w.png" alt="Libero Logo" className="h-12 object-contain" />
                   </div>
