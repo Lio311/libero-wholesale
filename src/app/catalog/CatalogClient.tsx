@@ -48,9 +48,12 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
       // Text Search
       const matchesSearch = !term || 
         product.name.toLowerCase().includes(term) ||
+        (product.nameHe && product.nameHe.toLowerCase().includes(term)) ||
         (product.brand && product.brand.toLowerCase().includes(term)) ||
+        (product.brandHe && product.brandHe.toLowerCase().includes(term)) ||
         (product.barcode && product.barcode.includes(term)) ||
-        (product.model && product.model.toLowerCase().includes(term));
+        (product.model && product.model.toLowerCase().includes(term)) ||
+        (product.modelHe && product.modelHe.toLowerCase().includes(term));
         
       // Brand Search
       const matchesBrand = selectedBrand === "הכל" || (product.brandHe === selectedBrand || product.brand === selectedBrand);
