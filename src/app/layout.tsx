@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     siteName: "ליברו סיטונאות",
     images: [
       {
-        url: "/logo1.jpg",
+        url: "/libero-logo3.jpg",
         width: 800,
         height: 600,
       },
