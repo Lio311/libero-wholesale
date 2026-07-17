@@ -21,8 +21,25 @@ const ibmMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Libero Wholesale",
-  description: "B2B Wholesale Platform",
+  title: "ליברו סיטונאות - B2B Wholesale",
+  description: "מערכת הזמנות סיטונאית מתקדמת לרשתות וחנויות קוסמטיקה. קטלוג עשיר, חיבור בזמן אמת למלאי ומערכת קומקס.",
+  keywords: ["סיטונאות", "בשמים", "קוסמטיקה", "B2B", "ליברו", "הזמנות בסיטונאות"],
+  authors: [{ name: "Libero" }],
+  openGraph: {
+    title: "ליברו סיטונאות - B2B Wholesale",
+    description: "מערכת הזמנות סיטונאית לרשתות וחנויות.",
+    url: "https://libero-wholesale.vercel.app",
+    siteName: "ליברו סיטונאות",
+    images: [
+      {
+        url: "/logo1.jpg",
+        width: 800,
+        height: 600,
+      },
+    ],
+    locale: "he_IL",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
