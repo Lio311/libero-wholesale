@@ -48,7 +48,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
   const [filterBackToStock, setFilterBackToStock] = useState(false);
   const [filterOnSale, setFilterOnSale] = useState(false);
   const [filterOfficial, setFilterOfficial] = useState(false);
-  const [filterPriceDrop, setFilterPriceDrop] = useState(false);
+  const [filterOutOfStock, setFilterOutOfStock] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
   const [sortCol, setSortCol] = useState<SortColumn>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
@@ -100,7 +100,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
     setFilterBackToStock(false);
     setFilterOnSale(false);
     setFilterOfficial(false);
-    setFilterPriceDrop(false);
+    setFilterOutOfStock(false);
     setSortCol(null);
     setSortDir('asc');
     setCurrentPage(1);
@@ -139,9 +139,9 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
       const matchesBackToStock = !filterBackToStock || product.isBackToStock;
       const matchesOnSale = !filterOnSale || product.isOnSale;
       const matchesOfficial = !filterOfficial || product.isOfficialImporter;
-      const matchesPriceDrop = !filterPriceDrop || (product.priceDropPrice !== null);
+      const matchesOutOfStock = !filterOutOfStock || product.stockQuantity <= 0;
       
-      return matchesSearch && matchesBrand && matchesBackToStock && matchesOnSale && matchesOfficial && matchesPriceDrop;
+      return matchesSearch && matchesBrand && matchesBackToStock && matchesOnSale && matchesOfficial && matchesOutOfStock;
     });
 
     // Apply sorting
@@ -176,7 +176,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
     setProducts(filtered);
     setCurrentPage(1);
     setMobileVisibleCount(10);
-  }, [debouncedSearch, selectedBrand, filterBackToStock, filterOnSale, filterOfficial, filterPriceDrop, sortCol, sortDir, initialProducts]);
+  }, [debouncedSearch, selectedBrand, filterBackToStock, filterOnSale, filterOfficial, filterOutOfStock, sortCol, sortDir, initialProducts]);
 
   const displayedProducts = isMobile 
     ? products.slice(0, mobileVisibleCount) 
@@ -263,8 +263,8 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
               <Label htmlFor="official" className="whitespace-nowrap cursor-pointer">יבואן רשמי</Label>
             </div>
             <div className="flex items-center gap-2">
-              <Switch id="price-drop" checked={filterPriceDrop} onCheckedChange={setFilterPriceDrop} />
-              <Label htmlFor="price-drop" className="whitespace-nowrap cursor-pointer">ירד המחיר</Label>
+              <Switch id="out-of-stock" checked={filterOutOfStock} onCheckedChange={setFilterOutOfStock} />
+              <Label htmlFor="out-of-stock" className="whitespace-nowrap cursor-pointer">אזל במלאי</Label>
             </div>
           </div>
           
