@@ -46,7 +46,6 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
   const debouncedSearch = useDebounce(searchQuery, 400);
   const [selectedBrand, setSelectedBrand] = useState<string>("הכל");
   const [filterBackToStock, setFilterBackToStock] = useState(false);
-  const [filterOnSale, setFilterOnSale] = useState(false);
   const [filterOfficial, setFilterOfficial] = useState(false);
   const [filterOutOfStock, setFilterOutOfStock] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
@@ -98,7 +97,6 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
     setSearchQuery("");
     setSelectedBrand("הכל");
     setFilterBackToStock(false);
-    setFilterOnSale(false);
     setFilterOfficial(false);
     setFilterOutOfStock(false);
     setSortCol(null);
@@ -137,11 +135,10 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
       
       // Boolean toggles
       const matchesBackToStock = !filterBackToStock || product.isBackToStock;
-      const matchesOnSale = !filterOnSale || product.isOnSale;
       const matchesOfficial = !filterOfficial || product.isOfficialImporter;
       const matchesOutOfStock = !filterOutOfStock || product.stockQuantity <= 0;
       
-      return matchesSearch && matchesBrand && matchesBackToStock && matchesOnSale && matchesOfficial && matchesOutOfStock;
+      return matchesSearch && matchesBrand && matchesBackToStock && matchesOfficial && matchesOutOfStock;
     });
 
     // Apply sorting
@@ -176,7 +173,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
     setProducts(filtered);
     setCurrentPage(1);
     setMobileVisibleCount(10);
-  }, [debouncedSearch, selectedBrand, filterBackToStock, filterOnSale, filterOfficial, filterOutOfStock, sortCol, sortDir, initialProducts]);
+  }, [debouncedSearch, selectedBrand, filterBackToStock, filterOfficial, filterOutOfStock, sortCol, sortDir, initialProducts]);
 
   const displayedProducts = isMobile 
     ? products.slice(0, mobileVisibleCount) 
@@ -253,10 +250,6 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
             <div className="flex items-center gap-2">
               <Switch id="back-to-stock" checked={filterBackToStock} onCheckedChange={setFilterBackToStock} />
               <Label htmlFor="back-to-stock" className="whitespace-nowrap cursor-pointer">חזר למלאי</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <Switch id="on-sale" checked={filterOnSale} onCheckedChange={setFilterOnSale} />
-              <Label htmlFor="on-sale" className="whitespace-nowrap cursor-pointer">במבצע</Label>
             </div>
             <div className="flex items-center gap-2">
               <Switch id="official" checked={filterOfficial} onCheckedChange={setFilterOfficial} />
