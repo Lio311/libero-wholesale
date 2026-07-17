@@ -4,6 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Building2, User, Phone, Mail, MapPin, CreditCard, Wallet, FileSignature } from "lucide-react";
 import { UserButton, useUser } from "@clerk/nextjs";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
+import { createBusinessProfile } from "./actions";
 
 interface StoreData {
   id: string;
@@ -25,15 +31,64 @@ interface AccountClientProps {
 export function AccountClient({ store }: AccountClientProps) {
   const { user } = useUser();
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   if (!store) {
+    async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+      e.preventDefault();
+      setIsLoading(true);
+      setError(null);
+      const formData = new FormData(e.currentTarget);
+      const res = await createBusinessProfile(formData);
+      setIsLoading(false);
+      if (res?.error) {
+        setError(res.error);
+      }
+    }
+
     return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <Building2 className="h-16 w-16 text-muted-foreground opacity-50 mb-4" />
-        <h2 className="text-xl font-semibold mb-2">לא נמצא חשבון מקושר</h2>
-        <p className="text-muted-foreground text-center max-w-md">
-          המשתמש שלך עדיין לא מקושר לחנות סיטונאית במערכת. אנא פנה לשירות הלקוחות או להנהלה כדי לקשר את החשבון.
-        </p>
-      </div>
+      <Card className="max-w-2xl mx-auto bg-card border-border shadow-xl rounded-3xl overflow-hidden mt-10">
+        <CardHeader className="text-center bg-muted/30 pb-8 pt-10">
+          <Building2 className="h-16 w-16 text-primary mx-auto mb-4" />
+          <CardTitle className="text-2xl font-bold">הגדר את העסק שלך</CardTitle>
+          <CardDescription className="text-base max-w-sm mx-auto">
+            מלא את פרטי העסק כדי לפתוח חשבון סיטונאי ולהתחיל להזמין ישירות מהמערכת.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-8 px-8 pb-10">
+          <form onSubmit={onSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="name">שם העסק / החברה</Label>
+                <Input id="name" name="name" required className="bg-background border-border rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="contactName">שם איש קשר</Label>
+                <Input id="contactName" name="contactName" required className="bg-background border-border rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">אימייל (לקבלת חשבוניות)</Label>
+                <Input id="email" name="email" type="email" defaultValue={user?.primaryEmailAddress?.emailAddress || ""} required className="bg-background border-border rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">טלפון נייד</Label>
+                <Input id="phone" name="phone" required className="bg-background border-border rounded-xl" />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="address">כתובת מלאה למשלוחים</Label>
+                <Input id="address" name="address" required className="bg-background border-border rounded-xl" />
+              </div>
+            </div>
+            
+            {error && <p className="text-sm text-destructive font-medium">{error}</p>}
+            
+            <Button type="submit" disabled={isLoading} className="w-full rounded-full h-12 text-base font-bold shadow-sm">
+              {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "שלח בקשה לפתיחת חשבון"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     );
   }
 

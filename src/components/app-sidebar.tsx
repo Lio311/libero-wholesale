@@ -83,16 +83,31 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
         </SidebarGroup>
       </SidebarContent>
       {isAdmin && (
-        <SidebarFooter className="p-4">
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton render={<a href="/admin" />}>
-                <Settings />
-                <span>ניהול מערכת</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarFooter>
+        <SidebarGroup className="mt-auto border-t border-border/50 pt-4">
+          <SidebarGroupLabel>ניהול מערכת</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton render={<a href="/admin" />}>
+                  <Settings />
+                  <span>לוח בקרה</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton render={<a href="/admin/products" />}>
+                  <Box />
+                  <span>ניהול מוצרים</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton render={<a href="/admin/stores" />}>
+                  <User />
+                  <span>ניהול לקוחות</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       )}
     </Sidebar>
   )
