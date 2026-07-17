@@ -85,8 +85,14 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
     };
   }, [isMobile, products.length, mobileVisibleCount]);
 
+  // Helper to consistently resolve brand names
+  const getResolvedBrandName = (product: Product) => {
+    const matchingBrand = brands.find(b => b.name === product.brand || b.nameHe === product.brand || b.name === product.brandHe);
+    return matchingBrand?.nameHe || matchingBrand?.name || product.brandHe || product.brand || "";
+  };
+
   // Extract unique brands for filter
-  const filterBrands = Array.from(new Set(initialProducts.map(p => p.brandHe || p.brand || "").filter(Boolean))).sort();
+  const filterBrands = Array.from(new Set(initialProducts.map(getResolvedBrandName).filter(Boolean))).sort();
 
   const resetFilters = () => {
     setSearchQuery("");
@@ -126,7 +132,8 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
         (product.modelHe && product.modelHe.toLowerCase().includes(term));
         
       // Brand Search
-      const matchesBrand = selectedBrand === "הכל" || (product.brandHe === selectedBrand || product.brand === selectedBrand);
+      const resolvedBrandName = getResolvedBrandName(product);
+      const matchesBrand = selectedBrand === "הכל" || resolvedBrandName === selectedBrand;
       
       // Boolean toggles
       const matchesBackToStock = !filterBackToStock || product.isBackToStock;
@@ -147,8 +154,8 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
           valA = a.nameHe || a.name;
           valB = b.nameHe || b.name;
         } else if (sortCol === 'brand') {
-          valA = a.brandHe || a.brand;
-          valB = b.brandHe || b.brand;
+          valA = getResolvedBrandName(a as Product);
+          valB = getResolvedBrandName(b as Product);
         } else if (sortCol === 'price') {
           valA = Number(a.priceDropPrice || a.price);
           valB = Number(b.priceDropPrice || b.price);
