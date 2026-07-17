@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { CartSheet } from "@/components/CartSheet";
 import "./globals.css";
 
 const ibmPlexHebrew = IBM_Plex_Sans_Hebrew({
@@ -45,6 +46,7 @@ export default function RootLayout({
                 </div>
                 {children}
               </main>
+              <CartSheet />
             </SidebarProvider>
           </TooltipProvider>
         </body>

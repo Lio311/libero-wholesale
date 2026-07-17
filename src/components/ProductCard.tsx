@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
+import { useCartStore } from "@/store/cart";
 
 interface ProductCardProps {
   product: Product;
@@ -11,6 +12,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const isOutOfStock = product.stockQuantity <= 0;
+  const addItem = useCartStore(state => state.addItem);
   
   return (
     <Card className="flex flex-col h-full bg-card/50 backdrop-blur-sm border-white/10 hover:border-white/20 transition-all duration-300 shadow-xl overflow-hidden group">
@@ -65,6 +67,7 @@ export function ProductCard({ product }: ProductCardProps) {
           className="w-full font-medium" 
           variant={isOutOfStock ? "secondary" : "default"}
           disabled={isOutOfStock}
+          onClick={() => addItem(product)}
         >
           <ShoppingCart className="ml-2 h-4 w-4" />
           {isOutOfStock ? 'אזל המלאי' : 'הוסף לעגלה'}
