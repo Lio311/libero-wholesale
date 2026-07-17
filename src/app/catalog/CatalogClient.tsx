@@ -87,7 +87,13 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
   // Helper to consistently resolve brand names
   const getResolvedBrandName = (product: Product) => {
     const matchingBrand = brands.find(b => b.name === product.brand || b.nameHe === product.brand || b.name === product.brandHe);
-    return matchingBrand?.nameHe || matchingBrand?.name || product.brandHe || product.brand || "";
+    const nameHe = matchingBrand?.nameHe || product.brandHe;
+    const nameEn = matchingBrand?.name || product.brand;
+    
+    if (nameHe && nameEn && nameHe !== nameEn) {
+      return `${nameHe} - ${nameEn}`;
+    }
+    return nameHe || nameEn || "";
   };
 
   // Extract unique brands for filter
