@@ -66,14 +66,13 @@ function SheetContent({
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-4 left-4 h-8 w-8 rounded-full opacity-70 hover:opacity-100 bg-black/10 dark:bg-white/10"
-              />
+                className="absolute top-3 left-3 h-6 w-6 rounded-full opacity-70 hover:opacity-100 bg-transparent hover:bg-white/10 text-white flex items-center justify-center transition-opacity z-50"
+              >
+                <XIcon className="h-4 w-4" />
+                <span className="sr-only">Close</span>
+              </Button>
             }
-          >
-            <XIcon
-            />
-            <span className="sr-only">Close</span>
-          </SheetPrimitive.Close>
+          />
         )}
       </SheetPrimitive.Popup>
     </SheetPortal>
