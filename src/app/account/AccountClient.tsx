@@ -33,8 +33,14 @@ export function AccountClient({ store }: AccountClientProps) {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  
   const isMissingStore = !store;
+  const [showOnboarding, setShowOnboarding] = useState(isMissingStore);
+
+  useEffect(() => {
+    setShowOnboarding(isMissingStore);
+  }, [isMissingStore]);
+
   const displayStore = store || {
     id: "placeholder",
     name: "שם העסק",
@@ -155,7 +161,7 @@ export function AccountClient({ store }: AccountClientProps) {
         </Card>
       </div>
 
-      <OnboardingDialog open={isMissingStore} defaultEmail={user?.primaryEmailAddress?.emailAddress || ""} />
+      <OnboardingDialog open={showOnboarding} onOpenChange={setShowOnboarding} defaultEmail={user?.primaryEmailAddress?.emailAddress || ""} />
     </div>
   );
 }

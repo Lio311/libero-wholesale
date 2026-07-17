@@ -12,7 +12,7 @@ export const brands = pgTable('brands', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: varchar('name', { length: 255 }).notNull().unique(),
   nameHe: varchar('name_he', { length: 255 }),
-  logoUrl: varchar('logo_url', { length: 1024 }),
+  logoUrl: text('logo_url'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

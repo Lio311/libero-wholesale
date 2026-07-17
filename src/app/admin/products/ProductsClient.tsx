@@ -172,7 +172,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                     <TableRow key={product.id} className={`border-border hover:bg-muted/20 transition-colors ${product.isDraft ? "opacity-50 grayscale-[50%]" : ""}`}>
                       <TableCell className="p-1 px-2 text-center">
                         <div 
-                          className={`h-12 w-12 bg-white rounded-md flex items-center justify-center overflow-hidden border border-border/50 mx-auto ${product.imageUrl ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+                          className={`h-12 w-12 bg-white rounded-md flex items-center justify-center overflow-hidden border border-border/50 mx-auto relative ${product.imageUrl ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
                           onClick={() => {
                             if (product.imageUrl) setSelectedImage(product.imageUrl);
                           }}
