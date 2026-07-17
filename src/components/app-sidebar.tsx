@@ -101,15 +101,22 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
                 }
                 
                 return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton 
-                      render={<a href={item.url} />}
-                      className={`group ${getButtonClass(item.url)}`}
-                    >
-                      <item.icon className={getIconClass(item.url)} />
-                      <span className={isActive ? "font-semibold text-foreground" : ""}>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  <div key={item.title}>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton 
+                        render={<a href={item.url} />}
+                        className={`group ${getButtonClass(item.url)}`}
+                      >
+                        <item.icon className={getIconClass(item.url)} />
+                        <span className={isActive ? "font-semibold text-foreground" : ""}>{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    {item.title === "אזור אישי" && (
+                      <div className="flex justify-center items-center mt-6 mb-2 hidden md:flex">
+                        <UserButton showName />
+                      </div>
+                    )}
+                  </div>
                 )
               })}
             </SidebarMenu>
