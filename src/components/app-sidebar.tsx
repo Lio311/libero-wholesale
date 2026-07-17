@@ -12,6 +12,7 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar"
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 import { 
   Home, 
   Settings, 
@@ -75,117 +76,132 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
         <img src="/libero-w-white.png" alt="Libero Wholesale" className="w-[90%] h-auto object-contain drop-shadow-sm" />
       </SidebarHeader>
       <SidebarContent className="pb-4">
-        <SidebarGroup>
-          <SidebarGroupLabel>תפריט ראשי</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => {
-                const isActive = pathname === item.url || (item.url !== "/" && item.url !== "/admin" && pathname !== "/admin" && pathname?.startsWith(`${item.url}/`));
-                if (item.url === "/cart") {
-                  return (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton 
-                        onClick={() => setIsOpen(true)}
-                        className={`group ${getButtonClass(item.url)}`}
-                      >
-                        <item.icon className={getIconClass(item.url)} />
-                        <span className={isActive ? "font-semibold text-foreground" : ""}>{item.title}</span>
-                        {totalItems > 0 && (
-                          <span className="mr-auto bg-white text-black text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
-                            {totalItems}
-                          </span>
-                        )}
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )
-                }
-                
-                return (
-                  <div key={item.title}>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton 
-                        render={<a href={item.url} />}
-                        className={`group ${getButtonClass(item.url)}`}
-                      >
-                        <item.icon className={getIconClass(item.url)} />
-                        <span className={isActive ? "font-semibold text-foreground" : ""}>{item.title}</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  </div>
-                )
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <Accordion type="single" collapsible defaultValue={isAdmin ? "admin" : "main"} className="w-full space-y-2">
+          <AccordionItem value="main" className="border-none">
+            <SidebarGroup className="p-0">
+              <AccordionTrigger className="px-6 hover:no-underline py-2 opacity-70 hover:opacity-100 transition-opacity [&>svg]:text-white">
+                <span className="text-xs font-medium text-sidebar-foreground uppercase tracking-wider">תפריט ראשי</span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <SidebarGroupContent className="px-2 pt-1">
+                  <SidebarMenu>
+                    {items.map((item) => {
+                      const isActive = pathname === item.url || (item.url !== "/" && item.url !== "/admin" && pathname !== "/admin" && pathname?.startsWith(`${item.url}/`));
+                      if (item.url === "/cart") {
+                        return (
+                          <SidebarMenuItem key={item.title}>
+                            <SidebarMenuButton 
+                              onClick={() => setIsOpen(true)}
+                              className={`group ${getButtonClass(item.url)}`}
+                            >
+                              <item.icon className={getIconClass(item.url)} />
+                              <span className={isActive ? "font-semibold text-foreground" : ""}>{item.title}</span>
+                              {totalItems > 0 && (
+                                <span className="mr-auto bg-white text-black text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
+                                  {totalItems}
+                                </span>
+                              )}
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        )
+                      }
+                      
+                      return (
+                        <div key={item.title}>
+                          <SidebarMenuItem>
+                            <SidebarMenuButton 
+                              render={<a href={item.url} />}
+                              className={`group ${getButtonClass(item.url)}`}
+                            >
+                              <item.icon className={getIconClass(item.url)} />
+                              <span className={isActive ? "font-semibold text-foreground" : ""}>{item.title}</span>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        </div>
+                      )
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </AccordionContent>
+            </SidebarGroup>
+          </AccordionItem>
+
+          {isAdmin && (
+            <AccordionItem value="admin" className="border-none border-t border-border/50">
+              <SidebarGroup className="p-0 pt-2 mt-2">
+                <AccordionTrigger className="px-6 hover:no-underline py-2 opacity-70 hover:opacity-100 transition-opacity [&>svg]:text-white">
+                  <span className="text-xs font-medium text-sidebar-foreground uppercase tracking-wider">ניהול מערכת</span>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <SidebarGroupContent className="px-2 pt-1">
+                    <SidebarMenu>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton 
+                          render={<a href="/admin" />}
+                          className={`group ${getButtonClass("/admin")}`}
+                        >
+                          <Home className={getIconClass("/admin")} />
+                          <span className={pathname === "/admin" ? "font-semibold text-foreground" : ""}>לוח בקרה</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton 
+                          render={<a href="/admin/orders" />}
+                          className={`group ${getButtonClass("/admin/orders")}`}
+                        >
+                          <ShoppingCart className={getIconClass("/admin/orders")} />
+                          <span className={pathname === "/admin/orders" ? "font-semibold text-foreground" : ""}>ניהול הזמנות</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton 
+                          render={<a href="/admin/products" />}
+                          className={`group ${getButtonClass("/admin/products")}`}
+                        >
+                          <Box className={getIconClass("/admin/products")} />
+                          <span className={pathname === "/admin/products" ? "font-semibold text-foreground" : ""}>ניהול מוצרים</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton 
+                          render={<a href="/admin/brands" />}
+                          className={`group ${getButtonClass("/admin/brands")}`}
+                        >
+                          <ShoppingBag className={getIconClass("/admin/brands")} />
+                          <span className={pathname === "/admin/brands" ? "font-semibold text-foreground" : ""}>ניהול מותגים</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton 
+                          render={<a href="/admin/stores" />}
+                          className={`group ${getButtonClass("/admin/stores")}`}
+                        >
+                          <User className={getIconClass("/admin/stores")} />
+                          <span className={pathname === "/admin/stores" ? "font-semibold text-foreground" : ""}>ניהול לקוחות</span>
+                          {pendingStoresCount > 0 && (
+                            <span className="mr-auto bg-destructive text-destructive-foreground text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
+                              {pendingStoresCount}
+                            </span>
+                          )}
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton 
+                          render={<a href="/admin/settings" />}
+                          className={`group ${getButtonClass("/admin/settings")}`}
+                        >
+                          <Settings className={getIconClass("/admin/settings")} />
+                          <span className={pathname === "/admin/settings" ? "font-semibold text-foreground" : ""}>הגדרות עסק</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </AccordionContent>
+              </SidebarGroup>
+            </AccordionItem>
+          )}
+        </Accordion>
       </SidebarContent>
-      {isAdmin && (
-        <SidebarGroup className="mt-auto border-t border-border/50 pt-4">
-          <SidebarGroupLabel>ניהול מערכת</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton 
-                  render={<a href="/admin" />}
-                  className={`group ${getButtonClass("/admin")}`}
-                >
-                  <Home className={getIconClass("/admin")} />
-                  <span className={pathname === "/admin" ? "font-semibold text-foreground" : ""}>לוח בקרה</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton 
-                  render={<a href="/admin/orders" />}
-                  className={`group ${getButtonClass("/admin/orders")}`}
-                >
-                  <ShoppingCart className={getIconClass("/admin/orders")} />
-                  <span className={pathname === "/admin/orders" ? "font-semibold text-foreground" : ""}>ניהול הזמנות</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton 
-                  render={<a href="/admin/products" />}
-                  className={`group ${getButtonClass("/admin/products")}`}
-                >
-                  <Box className={getIconClass("/admin/products")} />
-                  <span className={pathname === "/admin/products" ? "font-semibold text-foreground" : ""}>ניהול מוצרים</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton 
-                  render={<a href="/admin/brands" />}
-                  className={`group ${getButtonClass("/admin/brands")}`}
-                >
-                  <ShoppingBag className={getIconClass("/admin/brands")} />
-                  <span className={pathname === "/admin/brands" ? "font-semibold text-foreground" : ""}>ניהול מותגים</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton 
-                  render={<a href="/admin/stores" />}
-                  className={`group ${getButtonClass("/admin/stores")}`}
-                >
-                  <User className={getIconClass("/admin/stores")} />
-                  <span className={pathname === "/admin/stores" ? "font-semibold text-foreground" : ""}>ניהול לקוחות</span>
-                  {pendingStoresCount > 0 && (
-                    <span className="mr-auto bg-destructive text-destructive-foreground text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
-                      {pendingStoresCount}
-                    </span>
-                  )}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton 
-                  render={<a href="/admin/settings" />}
-                  className={`group ${getButtonClass("/admin/settings")}`}
-                >
-                  <Settings className={getIconClass("/admin/settings")} />
-                  <span className={pathname === "/admin/settings" ? "font-semibold text-foreground" : ""}>הגדרות עסק</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      )}
       <SidebarFooter className="p-4 border-t border-white/10 mt-auto bg-black/20 [&_.cl-userButtonOuterIdentifier]:!text-white [&_.cl-userButtonOuterIdentifier]:font-medium [&_.cl-userButtonOuterIdentifier]:ml-2">
         <div className="flex items-center justify-center text-foreground px-2 py-2">
           <div className="flex items-center gap-3">
