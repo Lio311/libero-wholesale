@@ -164,8 +164,8 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                       <TableHead className="w-16 text-center">תמונה</TableHead>
                       <TableHead className="text-right">מוצר</TableHead>
                       <TableHead className="text-center">כמות</TableHead>
-                      <TableHead className="text-left">מחיר יחידה</TableHead>
-                      <TableHead className="text-left">סה״כ</TableHead>
+                      <TableHead className="text-center">מחיר יחידה</TableHead>
+                      <TableHead className="text-center">סה״כ</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -188,8 +188,8 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                           </div>
                         </TableCell>
                         <TableCell className="text-center font-bold text-lg">{item.quantity}</TableCell>
-                        <TableCell className="text-left font-mono">₪{Number(item.unitPrice).toFixed(2)}</TableCell>
-                        <TableCell className="text-left font-mono font-bold">₪{Number(item.totalPrice).toFixed(2)}</TableCell>
+                        <TableCell className="text-center font-mono" dir="ltr">₪{Number(item.unitPrice).toFixed(2)}</TableCell>
+                        <TableCell className="text-center font-mono font-bold" dir="ltr">₪{Number(item.totalPrice).toFixed(2)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
