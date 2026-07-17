@@ -37,23 +37,21 @@ export async function DELETE(
       where: eq(orderItems.orderId, id),
     });
 
-    // We should use a transaction
-    await db.transaction(async (tx) => {
-      // Restore stock for each item
-      for (const item of items) {
-        await tx.update(products)
-          .set({
-            stockQuantity: sql`${products.stockQuantity} + ${item.quantity}`
-          })
-          .where(eq(products.id, item.productId));
-      }
+    // We use sequential updates because Neon HTTP doesn't fully support interactive transactions out of the box
+    // Restore stock for each item
+    for (const item of items) {
+      await db.update(products)
+        .set({
+          stockQuantity: sql`${products.stockQuantity} + ${item.quantity}`
+        })
+        .where(eq(products.id, item.productId));
+    }
 
-      // Delete order items
-      await tx.delete(orderItems).where(eq(orderItems.orderId, id));
+    // Delete order items
+    await db.delete(orderItems).where(eq(orderItems.orderId, id));
 
-      // Delete order
-      await tx.delete(orders).where(eq(orders.id, id));
-    });
+    // Delete order
+    await db.delete(orders).where(eq(orders.id, id));
 
     return NextResponse.json({ success: true });
   } catch (error) {

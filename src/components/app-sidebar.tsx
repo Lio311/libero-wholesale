@@ -50,7 +50,7 @@ const items = [
   },
 ]
 
-export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
+export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmin?: boolean, pendingStoresCount?: number }) {
   const setIsOpen = useCartStore((state) => state.setIsOpen)
   const totalItems = useCartStore((state) => state.getTotalItems())
   const pathname = usePathname()
@@ -111,11 +111,6 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
                         <span className={isActive ? "font-semibold text-foreground" : ""}>{item.title}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                    {item.title === "אזור אישי" && (
-                      <div className="flex justify-center items-center mt-6 mb-2 hidden md:flex">
-                        <UserButton showName />
-                      </div>
-                    )}
                   </div>
                 )
               })}
@@ -171,6 +166,11 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
                 >
                   <User className={getIconClass("/admin/stores")} />
                   <span className={pathname === "/admin/stores" ? "font-semibold text-foreground" : ""}>ניהול לקוחות</span>
+                  {pendingStoresCount > 0 && (
+                    <span className="mr-auto bg-destructive text-destructive-foreground text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
+                      {pendingStoresCount}
+                    </span>
+                  )}
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -186,8 +186,8 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
           </SidebarGroupContent>
         </SidebarGroup>
       )}
-      <SidebarFooter className="p-4 border-t border-white/10 mt-auto md:hidden">
-        <div className="flex items-center justify-between text-foreground px-2 py-1">
+      <SidebarFooter className="p-4 border-t border-white/10 mt-auto bg-black/20 [&_.cl-userButtonOuterIdentifier]:!text-white [&_.cl-userButtonOuterIdentifier]:font-medium [&_.cl-userButtonOuterIdentifier]:ml-2">
+        <div className="flex items-center justify-start text-foreground px-2 py-2">
           <div className="flex items-center gap-3">
             <UserButton showName />
           </div>

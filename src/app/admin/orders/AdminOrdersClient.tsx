@@ -52,6 +52,11 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
   const [updatingItemIds, setUpdatingItemIds] = useState<Set<string>>(new Set());
   const [discountInput, setDiscountInput] = useState<string>("");
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+
   // Sync discount input when order is selected
   const handleOpenOrder = (order: AdminOrderRow) => {
     setSelectedOrder(order);
@@ -205,6 +210,69 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
       }
     } catch (e) {
       toast.error("שגיאה בעדכון הנחה");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleSearch = async (q: string) => {
+    setSearchQuery(q);
+    if (q.length < 2) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      return;
+    }
+    setIsSearching(true);
+    setShowDropdown(true);
+    try {
+      const res = await fetch(`/api/admin/products/search?q=${encodeURIComponent(q)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setSearchResults(data.products || []);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleAddProduct = async (product: any) => {
+    if (!selectedOrder) return;
+    setSearchQuery("");
+    setShowDropdown(false);
+    setUpdatingId("adding_item");
+    try {
+      const res = await fetch(`/api/admin/orders/${selectedOrder.id}/items`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id, quantity: 1 })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const updatedOrder = { ...selectedOrder };
+        
+        if (!updatedOrder.orderItems) updatedOrder.orderItems = [];
+        const existingIndex = updatedOrder.orderItems.findIndex(i => i.id === data.item.id || i.productId === data.item.productId);
+        
+        if (existingIndex >= 0) {
+          updatedOrder.orderItems[existingIndex] = data.item;
+        } else {
+          updatedOrder.orderItems.push(data.item);
+        }
+        
+        updatedOrder.totalAmount = data.orderTotalAmount;
+        updatedOrder.itemsCount = data.itemsCount;
+        
+        setOrders(orders.map(o => o.id === selectedOrder.id ? updatedOrder : o));
+        setSelectedOrder(updatedOrder);
+        toast.success("פריט נוסף בהצלחה!");
+      } else {
+        const err = await res.json();
+        toast.error(err.error || "שגיאה בהוספת הפריט");
+      }
+    } catch (e) {
+      toast.error("שגיאה בהוספת הפריט");
     } finally {
       setUpdatingId(null);
     }
@@ -366,7 +434,47 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                 </div>
               </div>
 
-              <div className="border border-border rounded-xl overflow-x-auto">
+              <div className="flex flex-col gap-2 relative z-50">
+                <div className="font-semibold text-sm">הוסף מוצר להזמנה</div>
+                <div className="flex items-center gap-2 relative">
+                  <div className="relative w-full md:w-1/2">
+                    <Input 
+                      placeholder="חפש מוצר לפי שם או ברקוד..." 
+                      value={searchQuery}
+                      onChange={(e) => handleSearch(e.target.value)}
+                      onFocus={() => { if(searchResults.length > 0) setShowDropdown(true); }}
+                      onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+                    />
+                    {isSearching && <Loader2 className="w-4 h-4 animate-spin absolute left-3 top-2.5 text-muted-foreground" />}
+                  </div>
+                </div>
+                {showDropdown && searchResults.length > 0 && (
+                  <div className="absolute top-16 right-0 w-full md:w-1/2 bg-popover border border-border rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
+                    {searchResults.map(p => (
+                      <div 
+                        key={p.id} 
+                        className="p-2 hover:bg-muted/50 cursor-pointer flex justify-between items-center border-b last:border-0"
+                        onClick={() => handleAddProduct(p)}
+                      >
+                        <div className="flex items-center gap-2">
+                          {p.imageUrl ? (
+                            <img src={p.imageUrl} alt={p.name} className="w-8 h-8 object-contain bg-white rounded border" />
+                          ) : (
+                            <div className="w-8 h-8 bg-muted rounded border flex items-center justify-center text-[8px]">N/A</div>
+                          )}
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium">{p.nameHe || p.name}</span>
+                            <span className="text-xs text-muted-foreground">{p.brandHe || p.brand} {p.barcode ? `| ${p.barcode}` : ''}</span>
+                          </div>
+                        </div>
+                        <div className="text-sm font-bold text-left ml-2" dir="ltr">₪{Number(p.isOnSale && p.priceDropPrice ? p.priceDropPrice : p.price).toFixed(2)}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="border border-border rounded-xl overflow-x-auto relative z-10">
                 <Table className="min-w-[800px]">
                   <TableHeader className="bg-muted/50">
                     <TableRow className="hover:bg-transparent">
@@ -446,7 +554,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                     <Input 
                       type="number" 
                       min="0"
-                      className="w-24 h-8 text-left" 
+                      className="w-24 h-8 text-center" 
                       value={discountInput}
                       onChange={(e) => setDiscountInput(e.target.value)}
                       placeholder="0.00"
