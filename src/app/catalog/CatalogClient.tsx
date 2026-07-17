@@ -295,7 +295,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
                     ברקוד <SortIcon activeDir={sortCol === 'barcode' ? sortDir : null} />
                   </TableHead>
                   <TableHead className="text-center cursor-pointer select-none px-1 md:px-4" onClick={() => handleSort('name')}>
-                    שם ומאפיינים <SortIcon activeDir={sortCol === 'name' ? sortDir : null} />
+                    שם המוצר <SortIcon activeDir={sortCol === 'name' ? sortDir : null} />
                   </TableHead>
                   <TableHead className="text-center px-1 md:px-4">
                     גודל
