@@ -72,6 +72,7 @@ export function BrandsClient({ initialBrands }: { initialBrands: Brand[] }) {
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
+            <TableRow className="hover:bg-transparent">
               <TableHead className="text-center whitespace-nowrap">לוגו</TableHead>
               <TableHead className="text-center whitespace-nowrap">שם (אנגלית)</TableHead>
               <TableHead className="text-center whitespace-nowrap">שם (עברית)</TableHead>
