@@ -80,6 +80,17 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
     }
   };
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "pending": return "ממתין";
+      case "processing": return "בטיפול";
+      case "shipped": return "נשלח";
+      case "delivered": return "נמסר";
+      case "cancelled": return "בוטל";
+      default: return status;
+    }
+  };
+
   return (
     <div className="w-full space-y-6">
       <div className="border border-border rounded-xl overflow-hidden bg-card/30 backdrop-blur-md">
@@ -90,14 +101,13 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
               <TableHead className="text-right">לקוח / חנות</TableHead>
               <TableHead className="text-right">תאריך</TableHead>
               <TableHead className="text-right">סטטוס</TableHead>
-              <TableHead className="text-right">פריטים</TableHead>
               <TableHead className="text-left">סכום כולל</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {orders.length === 0 ? (
               <TableRow className="border-border hover:bg-muted/20">
-                <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
                   אין הזמנות קודמות
                 </TableCell>
               </TableRow>
@@ -126,9 +136,9 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                     ) : (
                       <Select value={order.status} onValueChange={(val) => handleStatusChange(order.id, val as string)}>
                         <SelectTrigger className="w-[120px] h-8 text-xs border-border bg-background" dir="rtl">
-                          <SelectValue />
+                          <span className="flex-1 text-right">{getStatusLabel(order.status)}</span>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent side="bottom" sideOffset={4} align="end">
                           <SelectItem value="pending">ממתין</SelectItem>
                           <SelectItem value="processing">בטיפול</SelectItem>
                           <SelectItem value="shipped">נשלח</SelectItem>
@@ -138,7 +148,6 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                       </Select>
                     )}
                   </TableCell>
-                  <TableCell className="cursor-pointer" onClick={() => setSelectedOrder(order)}>{order.itemsCount}</TableCell>
                   <TableCell className="text-left font-mono font-bold cursor-pointer" onClick={() => setSelectedOrder(order)}>
                     ₪{Number(order.totalAmount).toFixed(2)}
                   </TableCell>
@@ -161,7 +170,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-6 mt-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-muted/30 p-4 rounded-xl border border-border">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-muted/30 p-4 rounded-xl border border-border">
                 <div>
                   <div className="text-xs text-muted-foreground mb-1">לקוח</div>
                   <div className="font-medium">{selectedOrder.store?.name || "לקוח מזדמן"}</div>
@@ -178,9 +187,9 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                   <div className="text-xs text-muted-foreground mb-1">עדכון סטטוס</div>
                   <Select value={selectedOrder.status} onValueChange={(val) => handleStatusChange(selectedOrder.id, val as string)}>
                     <SelectTrigger className="w-full h-8 text-xs border-border bg-background" dir="rtl">
-                      <SelectValue />
+                      <span className="flex-1 text-right">{getStatusLabel(selectedOrder.status)}</span>
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent side="bottom" sideOffset={4} align="end">
                       <SelectItem value="pending">ממתין</SelectItem>
                       <SelectItem value="processing">בטיפול</SelectItem>
                       <SelectItem value="shipped">נשלח</SelectItem>

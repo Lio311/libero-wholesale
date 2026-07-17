@@ -110,15 +110,13 @@ export function OrdersClient({ orders }: OrdersClientProps) {
               <TableHead className="w-[100px] text-right">מספר הזמנה</TableHead>
               <TableHead className="text-right">תאריך</TableHead>
               <TableHead className="text-right">סטטוס</TableHead>
-              <TableHead className="text-right">פריטים</TableHead>
-              <TableHead className="text-right">מספר קומקס</TableHead>
               <TableHead className="text-left">סכום כולל</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {orders.length === 0 ? (
               <TableRow className="border-border hover:bg-muted/20">
-                <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                <TableCell colSpan={4} className="h-32 text-center text-muted-foreground">
                   אין הזמנות קודמות
                 </TableCell>
               </TableRow>
@@ -130,8 +128,6 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                     {format(new Date(order.createdAt), "dd/MM/yyyy HH:mm")}
                   </TableCell>
                   <TableCell>{getStatusBadge(order.status)}</TableCell>
-                  <TableCell>{order.itemsCount}</TableCell>
-                  <TableCell className="font-mono text-muted-foreground text-xs">{order.comaxRef || "-"}</TableCell>
                   <TableCell className="text-left font-mono font-bold">₪{Number(order.totalAmount).toFixed(2)}</TableCell>
                 </TableRow>
               ))
@@ -150,7 +146,7 @@ export function OrdersClient({ orders }: OrdersClientProps) {
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-6 mt-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-muted/30 p-4 rounded-xl border border-border">
+              <div className="grid grid-cols-2 gap-4 bg-muted/30 p-4 rounded-xl border border-border">
                 <div>
                   <div className="text-xs text-muted-foreground mb-1">תאריך</div>
                   <div className="font-medium">{format(new Date(selectedOrder.createdAt), "dd/MM/yyyy HH:mm")}</div>
@@ -158,14 +154,6 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                 <div>
                   <div className="text-xs text-muted-foreground mb-1">סכום כולל</div>
                   <div className="font-bold">₪{Number(selectedOrder.totalAmount).toFixed(2)}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-muted-foreground mb-1">כמות פריטים</div>
-                  <div className="font-medium">{selectedOrder.itemsCount} פריטים</div>
-                </div>
-                <div>
-                  <div className="text-xs text-muted-foreground mb-1">מספר קומקס</div>
-                  <div className="font-medium">{selectedOrder.comaxRef || "לא קיים"}</div>
                 </div>
               </div>
 
