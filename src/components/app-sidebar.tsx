@@ -56,8 +56,11 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
                 if (item.url === "/cart") {
                   return (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton onClick={() => setIsOpen(true)}>
-                        <item.icon />
+                      <SidebarMenuButton 
+                        onClick={() => setIsOpen(true)}
+                        className="transition-all duration-300 ease-out hover:bg-gradient-to-l hover:from-primary/20 hover:to-primary/5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_10px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group rounded-xl my-1 h-12"
+                      >
+                        <item.icon className="text-primary/70 group-hover:text-primary transition-colors" />
                         <span>{item.title}</span>
                         {totalItems > 0 && (
                           <span className="ml-auto bg-primary text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
@@ -71,8 +74,11 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
                 
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton render={<a href={item.url} />}>
-                      <item.icon />
+                    <SidebarMenuButton 
+                      render={<a href={item.url} />}
+                      className="transition-all duration-300 ease-out hover:bg-gradient-to-l hover:from-primary/20 hover:to-primary/5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_10px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group rounded-xl my-1 h-12"
+                    >
+                      <item.icon className="text-muted-foreground group-hover:text-primary transition-colors" />
                       <span>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -88,21 +94,39 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<a href="/admin" />}>
-                  <Settings />
+                <SidebarMenuButton 
+                  render={<a href="/admin" />}
+                  className="transition-all duration-300 ease-out hover:bg-gradient-to-l hover:from-primary/20 hover:to-primary/5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_10px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group rounded-xl my-1 h-12"
+                >
+                  <Home className="text-muted-foreground group-hover:text-primary transition-colors" />
                   <span>לוח בקרה</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<a href="/admin/products" />}>
-                  <Box />
+                <SidebarMenuButton 
+                  render={<a href="/admin/products" />}
+                  className="transition-all duration-300 ease-out hover:bg-gradient-to-l hover:from-primary/20 hover:to-primary/5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_10px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group rounded-xl my-1 h-12"
+                >
+                  <Box className="text-muted-foreground group-hover:text-primary transition-colors" />
                   <span>ניהול מוצרים</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<a href="/admin/stores" />}>
-                  <User />
+                <SidebarMenuButton 
+                  render={<a href="/admin/stores" />}
+                  className="transition-all duration-300 ease-out hover:bg-gradient-to-l hover:from-primary/20 hover:to-primary/5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_10px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group rounded-xl my-1 h-12"
+                >
+                  <User className="text-muted-foreground group-hover:text-primary transition-colors" />
                   <span>ניהול לקוחות</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  render={<a href="/admin/settings" />}
+                  className="transition-all duration-300 ease-out hover:bg-gradient-to-l hover:from-primary/20 hover:to-primary/5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_10px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group rounded-xl my-1 h-12"
+                >
+                  <Settings className="text-muted-foreground group-hover:text-primary transition-colors" />
+                  <span>הגדרות עסק</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

@@ -111,3 +111,10 @@ export const searchLogs = pgTable('search_logs', {
   ipAddress: text('ip_address'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+// Settings Table
+export const settings = pgTable('settings', {
+  key: text('key').primaryKey(), // e.g. "business_name", "phone", "min_order"
+  value: text('value').notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
