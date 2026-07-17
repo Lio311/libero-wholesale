@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_Hebrew, IBM_Plex_Mono } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs';
+import { heIL } from '@clerk/localizations';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
@@ -30,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider localization={heIL}>
       <html
         lang="he"
         dir="rtl"
