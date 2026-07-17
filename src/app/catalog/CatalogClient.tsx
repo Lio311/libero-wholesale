@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { Product } from "@/lib/types";
 import { ProductCard } from "@/components/ProductCard";
-import { ProductListItem } from "@/components/ProductListItem";
+import { ProductTableRow } from "@/components/ProductTableRow";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Search, Loader2, RotateCcw, LayoutGrid, List } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -172,10 +173,27 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col gap-3 px-2 md:px-4">
-            {products.map((product) => (
-              <ProductListItem key={product.id} product={product} />
-            ))}
+          <div className="bg-card border border-border/50 rounded-lg overflow-x-auto mx-2 md:mx-4 shadow-sm">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50 hover:bg-muted/50">
+                  <TableHead className="w-[60px] text-center">תמונה</TableHead>
+                  <TableHead>ברקוד</TableHead>
+                  <TableHead>שם ומאפיינים</TableHead>
+                  <TableHead>מותג</TableHead>
+                  <TableHead className="text-center">מלאי</TableHead>
+                  <TableHead className="text-right">מחיר יחידה</TableHead>
+                  <TableHead className="text-center">כמות</TableHead>
+                  <TableHead className="text-center">סה"כ</TableHead>
+                  <TableHead className="text-left"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {products.map((product) => (
+                  <ProductTableRow key={product.id} product={product} />
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )
       ) : (

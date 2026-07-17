@@ -46,7 +46,7 @@ export function ProductCard({ product }: ProductCardProps) {
         
         {product.testerRatio && (
           <div className="text-[10px] text-pink-600 bg-pink-500/10 rounded px-1.5 py-0.5 font-medium mb-1.5 flex items-center gap-1 w-max border border-pink-500/20">
-            <span>🎁</span> 1 טסטר על כל {product.testerRatio} יח'
+            1 טסטר על כל {product.testerRatio} יח'
           </div>
         )}
         <div className="flex justify-between items-start gap-1">
