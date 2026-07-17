@@ -8,7 +8,10 @@ export const dynamic = 'force-dynamic'; // Prevent static building since we quer
 export default async function CatalogPage() {
   // Fetch initial top 20 products
   const initialProducts = await db.query.products.findMany({
-    where: (products, { eq }) => eq(products.status, 'active'),
+    where: (products, { and, eq }) => and(
+      eq(products.status, 'active'),
+      eq(products.isDraft, false)
+    ),
     orderBy: [desc(products.createdAt)],
     limit: 20,
   });

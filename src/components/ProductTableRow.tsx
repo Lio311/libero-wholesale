@@ -46,8 +46,8 @@ export function ProductTableRow({ product }: ProductTableRowProps) {
       <TableCell className="hidden md:table-cell font-mono text-xs text-muted-foreground w-[120px] text-center">{product.barcode || "-"}</TableCell>
       <TableCell className="max-w-[150px] md:max-w-[200px] xl:max-w-[300px] text-center px-1 md:px-4">
         <div className="flex flex-col gap-1 items-center">
-          <span className="font-semibold text-[11px] md:text-sm truncate w-full" title={product.nameHe || product.name}>
-            {product.nameHe || product.name}
+          <span className="font-semibold text-[11px] md:text-sm truncate w-full" title={product.brand ? `${product.brand} - ${product.name}` : (product.nameHe || product.name)}>
+            {product.brand ? `${product.brand} - ${product.name}` : (product.nameHe || product.name)}
           </span>
           <div className="flex flex-wrap items-center justify-center gap-1">
             {product.isOfficialImporter && <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-[9px] px-1 h-4 shadow-none">יבואן רשמי</Badge>}
@@ -66,6 +66,7 @@ export function ProductTableRow({ product }: ProductTableRowProps) {
           </div>
         </div>
       </TableCell>
+      <TableCell className="text-center font-mono text-xs w-[60px] md:w-[80px]">{product.size || "-"}</TableCell>
       <TableCell className="hidden md:table-cell text-xs text-muted-foreground w-[120px] text-center">{product.brandHe || product.brand || "-"}</TableCell>
       <TableCell className="text-center font-medium w-[60px] md:w-[80px] text-xs md:text-sm">{product.stockQuantity}</TableCell>
       <TableCell className="text-center w-[80px] md:w-[100px]">
@@ -110,7 +111,7 @@ export function ProductTableRow({ product }: ProductTableRowProps) {
     
     {isExpanded && (
       <TableRow className="md:hidden bg-muted/20 border-b border-border">
-        <TableCell colSpan={4} className="p-0">
+        <TableCell colSpan={5} className="p-0">
           <div className="flex flex-col divide-y divide-border/50 text-sm">
             <div className="flex justify-between py-2 px-4">
               <span className="font-semibold">מותג</span>

@@ -31,7 +31,7 @@ export async function GET(request: Request) {
           similarity(name_he, ${translatedQuery})
         ) as sim_score
       FROM ${products}
-      WHERE status = 'active'
+      WHERE status = 'active' AND is_draft = false
       AND (
           name ILIKE ${exactPattern}
           OR brand ILIKE ${exactPattern}

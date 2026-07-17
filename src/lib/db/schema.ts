@@ -41,6 +41,7 @@ export const products = pgTable('products', {
   barcode: text('barcode').unique(),
   brand: text('brand'),
   model: text('model'),
+  size: text('size'),
   description: text('description'),
   categoryId: uuid('category_id').references(() => categories.id),
   price: decimal('price', { precision: 10, scale: 2 }).notNull(),
@@ -58,6 +59,7 @@ export const products = pgTable('products', {
   priceDropExpiresAt: timestamp('price_drop_expires_at'),
   testerRatio: integer('tester_ratio'),
   status: productStatusEnum('status').default('active').notNull(),
+  isDraft: boolean('is_draft').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

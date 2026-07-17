@@ -66,9 +66,9 @@ function SheetContent({
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-3 left-3 h-6 w-6 rounded-full opacity-70 hover:opacity-100 bg-transparent hover:bg-white/10 text-white flex items-center justify-center transition-opacity z-50"
+                className="absolute top-2 left-2 h-5 w-5 rounded-full opacity-70 hover:opacity-100 bg-transparent hover:bg-white/10 text-white flex items-center justify-center transition-opacity z-50"
               >
-                <XIcon className="h-4 w-4" />
+                <XIcon className="h-3 w-3" />
                 <span className="sr-only">Close</span>
               </Button>
             }

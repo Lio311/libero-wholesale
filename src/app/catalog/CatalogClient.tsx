@@ -240,6 +240,9 @@ export function CatalogClient({ initialProducts }: CatalogClientProps) {
                   <TableHead className="text-center cursor-pointer select-none px-1 md:px-4" onClick={() => handleSort('name')}>
                     שם ומאפיינים <SortIcon activeDir={sortCol === 'name' ? sortDir : null} />
                   </TableHead>
+                  <TableHead className="text-center px-1 md:px-4">
+                    גודל
+                  </TableHead>
                   <TableHead className="hidden md:table-cell text-center cursor-pointer select-none" onClick={() => handleSort('brand')}>
                     מותג <SortIcon activeDir={sortCol === 'brand' ? sortDir : null} />
                   </TableHead>

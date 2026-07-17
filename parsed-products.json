@@ -1,638 +1,860 @@
 [
   {
-    "name": "Wet Cherry Liquor",
+    "brand": "Bohoboco",
+    "model": "Wet Cherry Liquor",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Vanilla Black Pepper",
+    "brand": "Bohoboco",
+    "model": "Vanilla Black Pepper",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Sea Salt Caramel",
+    "brand": "Bohoboco",
+    "model": "Sea Salt Caramel",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Sandalwood Neroli",
+    "brand": "Bohoboco",
+    "model": "Sandalwood Neroli",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Red Wine Brown Sugar",
+    "brand": "Bohoboco",
+    "model": "Red Wine Brown Sugar",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Plum Spray Paint",
+    "brand": "Bohoboco",
+    "model": "Plum Spray Paint",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Oriental Saffron",
+    "brand": "Bohoboco",
+    "model": "Oriental Saffron",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Olibanum Gardenia",
+    "brand": "Bohoboco",
+    "model": "Olibanum Gardenia",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Mango Yuzu Gasoline",
+    "brand": "Bohoboco",
+    "model": "Mango Yuzu Gasoline",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Magic Mushrooms",
+    "brand": "Bohoboco",
+    "model": "Magic Mushrooms",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Jasmine White Leather",
+    "brand": "Bohoboco",
+    "model": "Jasmine White Leather",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Geranium Balsamic Note",
+    "brand": "Bohoboco",
+    "model": "Geranium Balsamic Note",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Whisky nobile - 50ml",
+    "brand": "Bohoboco",
+    "model": "Whisky nobile",
+    "size": "50ml",
     "stock": 20
   },
   {
-    "name": "Eucalyptus Patchouli",
+    "brand": "Bohoboco",
+    "model": "Eucalyptus Patchouli",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Whisky nobile - 100ml",
+    "brand": "Bohoboco",
+    "model": "Whisky nobile",
+    "size": "100ml",
     "stock": 75
   },
   {
-    "name": "Eternal Lily Amber",
+    "brand": "Bohoboco",
+    "model": "Eternal Lily Amber",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Sweet carousel - 50ml",
+    "brand": "Bohoboco",
+    "model": "Sweet carousel",
+    "size": "50ml",
     "stock": 30
   },
   {
-    "name": "Dark Vinyl Musk",
+    "brand": "Bohoboco",
+    "model": "Dark Vinyl Musk",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Sweet carousel - 100ml",
+    "brand": "Bohoboco",
+    "model": "Sweet carousel",
+    "size": "100ml",
     "stock": 110
   },
   {
-    "name": "Coffee White Flowers",
+    "brand": "Bohoboco",
+    "model": "Coffee White Flowers",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Spleen Fever - 50ml",
+    "brand": "Bohoboco",
+    "model": "Spleen Fever",
+    "size": "50ml",
     "stock": 5
   },
   {
-    "name": "Spleen Fever - 100ml",
+    "brand": "Bohoboco",
+    "model": "Spleen Fever",
+    "size": "100ml",
     "stock": 10
   },
   {
-    "name": "Bohoboco",
+    "brand": "Bohoboco",
+    "model": "Bohoboco",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Sparkling notturno - 50ml",
+    "brand": "Bohoboco",
+    "model": "Sparkling notturno",
+    "size": "50ml",
     "stock": 10
   },
   {
-    "name": "Sparkling notturno - 100ml",
+    "brand": "Bohoboco",
+    "model": "Sparkling notturno",
+    "size": "100ml",
     "stock": 30
   },
   {
-    "name": "Royal Anbar - 50ml",
+    "brand": "Bohoboco",
+    "model": "Royal Anbar",
+    "size": "50ml",
     "stock": 5
   },
   {
-    "name": "Royal Anbar - 100ml",
+    "brand": "Bohoboco",
+    "model": "Royal Anbar",
+    "size": "100ml",
     "stock": 20
   },
   {
-    "name": "Reunion vanilla - 50ml",
+    "brand": "Bohoboco",
+    "model": "Reunion vanilla",
+    "size": "50ml",
     "stock": 7
   },
   {
-    "name": "Vanille des Rois",
-    "stock": 0
+    "brand": "Bohoboco",
+    "model": "Vanille des Rois",
+    "size": "",
+    "stock": 64
   },
   {
-    "name": "Reunion vanilla - 100ml",
+    "brand": "Bohoboco",
+    "model": "Reunion vanilla",
+    "size": "100ml",
     "stock": 15
   },
   {
-    "name": "Red Keela Split",
-    "stock": 0
+    "brand": "Bohoboco",
+    "model": "Red Keela Split",
+    "size": "",
+    "stock": 40
   },
   {
-    "name": "Fiore di cotone - 50ml",
+    "brand": "Bohoboco",
+    "model": "Fiore di cotone",
+    "size": "50ml",
     "stock": 20
   },
   {
-    "name": "Pannaco Tahaa",
-    "stock": 0
+    "brand": "Bohoboco",
+    "model": "Pannaco Tahaa",
+    "size": "",
+    "stock": 96
   },
   {
-    "name": "Fiore di cotone - 100ml",
+    "brand": "Bohoboco",
+    "model": "Fiore di cotone",
+    "size": "100ml",
     "stock": 55
   },
   {
-    "name": "Moonwalk SeaCoco",
-    "stock": 0
+    "brand": "Bohoboco",
+    "model": "Moonwalk SeaCoco",
+    "size": "",
+    "stock": 96
   },
   {
-    "name": "Citrus Paradisi - 50ml",
+    "brand": "Bohoboco",
+    "model": "Citrus Paradisi",
+    "size": "50ml",
     "stock": 5
   },
   {
-    "name": "Akatsuki Melba",
-    "stock": 0
+    "brand": "Bohoboco",
+    "model": "Akatsuki Melba",
+    "size": "",
+    "stock": 96
   },
   {
-    "name": "Citrus Paradisi - 100ml",
+    "brand": "Bohoboco",
+    "model": "Citrus Paradisi",
+    "size": "100ml",
     "stock": 10
   },
   {
-    "name": "Bergamundi - 50ml",
+    "brand": "Bohoboco",
+    "model": "Bergamundi",
+    "size": "50ml",
     "stock": 10
   },
   {
-    "name": "Fomowa",
+    "brand": "Fomowa",
+    "model": "Fomowa",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Bergamundi - 100ml",
+    "brand": "Fomowa",
+    "model": "Bergamundi",
+    "size": "100ml",
     "stock": 35
   },
   {
-    "name": "Anniversary - 50ml",
+    "brand": "Fomowa",
+    "model": "Anniversary",
+    "size": "50ml",
     "stock": 20
   },
   {
-    "name": "Anniversary - 100ml",
+    "brand": "Fomowa",
+    "model": "Anniversary",
+    "size": "100ml",
     "stock": 50
   },
   {
-    "name": "Annunziata -",
+    "brand": "Farmacia SS. Annunziata",
+    "model": "Muscat",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Muscat",
+    "brand": "Farmacia SS. Annunziata",
+    "model": "Doha",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Doha",
+    "brand": "Farmacia SS. Annunziata",
+    "model": "Abu Dhabi",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "V",
+    "brand": "Farmacia SS. Annunziata",
+    "model": "Tokyo",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Abu Dhabi",
+    "brand": "Farmacia SS. Annunziata",
+    "model": "New York",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Tokyo",
+    "brand": "Farmacia SS. Annunziata",
+    "model": "Mango Sticky Rice",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "New York",
+    "brand": "Farmacia SS. Annunziata",
+    "model": "London",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Mango Sticky Rice",
+    "brand": "Farmacia SS. Annunziata",
+    "model": "Let's make love on Christmas",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "V",
+    "brand": "Farmacia SS. Annunziata",
+    "model": "Riyadh",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "London",
-    "stock": 0
-  },
-  {
-    "name": "Let's make love on Christmas",
-    "stock": 0
-  },
-  {
-    "name": "Riyadh",
-    "stock": 0
-  },
-  {
-    "name": "Nettarina Frizzante",
+    "brand": "Farmacia SS. Annunziata",
+    "model": "Nettarina Frizzante",
+    "size": "",
     "stock": 80
   },
   {
-    "name": "Cherry Lane",
+    "brand": "Farmacia SS. Annunziata",
+    "model": "Cherry Lane",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Vanilla Skies",
+    "brand": "Farmacia SS. Annunziata",
+    "model": "Vanilla Skies",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Chapter | Miel",
+    "brand": "Bergamoss",
+    "model": "Chapter | Miel",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Bergamoss",
+    "brand": "Bergamoss",
+    "model": "Colada",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Colada",
+    "brand": "Bergamoss",
+    "model": "Golden Hour",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Golden Hour",
+    "brand": "Bergamoss",
+    "model": "Belgravia Iris",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Belgravia Iris",
+    "brand": "Bergamoss",
+    "model": "Midnight Rio",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Midnight Rio",
+    "brand": "Bergamoss",
+    "model": "California Love",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "California Love",
-    "stock": 0
-  },
-  {
-    "name": "Trouble In Paradise",
+    "brand": "Bergamoss",
+    "model": "Trouble In Paradise",
+    "size": "",
     "stock": 16
   },
   {
-    "name": "Tales From Zanzibar",
+    "brand": "Bergamoss",
+    "model": "Tales From Zanzibar",
+    "size": "",
     "stock": 24
   },
   {
-    "name": "V",
-    "stock": 0
-  },
-  {
-    "name": "Pacific Grapefruit",
+    "brand": "Bergamoss",
+    "model": "Pacific Grapefruit",
+    "size": "",
     "stock": 8
   },
   {
-    "name": "V",
-    "stock": 0
-  },
-  {
-    "name": "Origins Of The Collector",
+    "brand": "Bergamoss",
+    "model": "Origins Of The Collector",
+    "size": "",
     "stock": 8
   },
   {
-    "name": "Mango Colada",
+    "brand": "Bergamoss",
+    "model": "Mango Colada",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "X",
-    "stock": 0
-  },
-  {
-    "name": "Musk Mantra",
+    "brand": "Bergamoss",
+    "model": "Musk Mantra",
+    "size": "",
     "stock": 8
   },
   {
-    "name": "Granita Neroli",
+    "brand": "Bergamoss",
+    "model": "Granita Neroli",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "X",
-    "stock": 0
-  },
-  {
-    "name": "Meet Me Where The Sky Touches The Sea",
+    "brand": "Bergamoss",
+    "model": "Meet Me Where The Sky Touches The Sea",
+    "size": "",
     "stock": 8
   },
   {
-    "name": "Banne De Coco",
+    "brand": "Bergamoss",
+    "model": "Banne De Coco",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "V",
-    "stock": 0
-  },
-  {
-    "name": "Indian Vetiver",
+    "brand": "Bergamoss",
+    "model": "Indian Vetiver",
+    "size": "",
     "stock": 8
   },
   {
-    "name": "Velvet Chocolate",
+    "brand": "Bergamoss",
+    "model": "Velvet Chocolate",
+    "size": "",
     "stock": 10
   },
   {
-    "name": "X",
-    "stock": 0
-  },
-  {
-    "name": "Chai Desert",
+    "brand": "Bergamoss",
+    "model": "Chai Desert",
+    "size": "",
     "stock": 8
   },
   {
-    "name": "Vanilla",
+    "brand": "Bergamoss",
+    "model": "Vanilla",
+    "size": "",
     "stock": 10
   },
   {
-    "name": "X",
-    "stock": 0
-  },
-  {
-    "name": "Bond Street Leather",
+    "brand": "Bergamoss",
+    "model": "Bond Street Leather",
+    "size": "",
     "stock": 8
   },
   {
-    "name": "Tobacco Maniac",
+    "brand": "Bergamoss",
+    "model": "Tobacco Maniac",
+    "size": "",
     "stock": 50
   },
   {
-    "name": "V",
-    "stock": 0
-  },
-  {
-    "name": "Beyond The Pashtun Summit",
+    "brand": "Bergamoss",
+    "model": "Beyond The Pashtun Summit",
+    "size": "",
     "stock": 8
   },
   {
-    "name": "Tiramisu",
+    "brand": "Bergamoss",
+    "model": "Tiramisu",
+    "size": "",
     "stock": 29
   },
   {
-    "name": "V",
-    "stock": 0
-  },
-  {
-    "name": "Atlantic Fig",
+    "brand": "Bergamoss",
+    "model": "Atlantic Fig",
+    "size": "",
     "stock": 8
   },
   {
-    "name": "Symposium",
+    "brand": "Bergamoss",
+    "model": "Symposium",
+    "size": "",
     "stock": 300
   },
   {
-    "name": "A Night In Marrakesh",
+    "brand": "Bergamoss",
+    "model": "A Night In Marrakesh",
+    "size": "",
     "stock": 8
   },
   {
-    "name": "Sexiest Fougere",
+    "brand": "Bergamoss",
+    "model": "Sexiest Fougere",
+    "size": "",
     "stock": 100
   },
   {
-    "name": "Sea God",
+    "brand": "Bergamoss",
+    "model": "Sea God",
+    "size": "",
     "stock": 66
   },
   {
-    "name": "Memoirs Of A Perfume Collector -",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Of A Perfume Collector",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Santal Wood",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Santal Wood",
+    "size": "",
     "stock": 50
   },
   {
-    "name": "Royal Orchid",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Royal Orchid",
+    "size": "",
     "stock": 12
   },
   {
-    "name": "Pistachio Latte",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Pistachio Latte",
+    "size": "",
     "stock": 20
   },
   {
-    "name": "Pear Gelato",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Pear Gelato",
+    "size": "",
     "stock": 25
   },
   {
-    "name": "Peach Macaron",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Peach Macaron",
+    "size": "",
     "stock": 300
   },
   {
-    "name": "Vodkaviar",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Vodkaviar",
+    "size": "",
     "stock": 6
   },
   {
-    "name": "Musky Rose",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Musky Rose",
+    "size": "",
     "stock": 50
   },
   {
-    "name": "Vani' Caviar",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Vani' Caviar",
+    "size": "",
     "stock": 6
   },
   {
-    "name": "Matcha Ice Cream",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Matcha Ice Cream",
+    "size": "",
     "stock": 36
   },
   {
-    "name": "Tabaco",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Tabaco",
+    "size": "",
     "stock": 42
   },
   {
-    "name": "Marzipan Gourmand",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Marzipan Gourmand",
+    "size": "",
     "stock": 50
   },
   {
-    "name": "Pinada",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Pinada",
+    "size": "",
     "stock": 42
   },
   {
-    "name": "Lily",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Lily",
+    "size": "",
     "stock": 1
   },
   {
-    "name": "Peccatorum",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Peccatorum",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Lemon Tart",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Lemon Tart",
+    "size": "",
     "stock": 15
   },
   {
-    "name": "Not A Cake",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Not A Cake",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Leather Iris",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Leather Iris",
+    "size": "",
     "stock": 5
   },
   {
-    "name": "Neros",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Neros",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Jasmine Of Athens",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Jasmine Of Athens",
+    "size": "",
     "stock": 20
   },
   {
-    "name": "Litchi Daiquiri",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Litchi Daiquiri",
+    "size": "",
     "stock": 42
   },
   {
-    "name": "I Am Beautiful",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "I Am Beautiful",
+    "size": "",
     "stock": 50
   },
   {
-    "name": "Happy Apple",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Happy Apple",
+    "size": "",
     "stock": 24
   },
   {
-    "name": "Hazelnut Praline",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Hazelnut Praline",
+    "size": "",
     "stock": 14
   },
   {
-    "name": "Deliziosa",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Deliziosa",
+    "size": "",
     "stock": 18
   },
   {
-    "name": "Gingerbread Dough",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Gingerbread Dough",
+    "size": "",
     "stock": 14
   },
   {
-    "name": "Crystal Sea",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Crystal Sea",
+    "size": "",
     "stock": 18
   },
   {
-    "name": "Gardenia",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Gardenia",
+    "size": "",
     "stock": 6
   },
   {
-    "name": "Coco Island",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Coco Island",
+    "size": "",
     "stock": 18
   },
   {
-    "name": "Creme Brule",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Creme Brule",
+    "size": "",
     "stock": 357
   },
   {
-    "name": "Coffee Addict",
+    "brand": "Memoirs Of A Perfume Collector",
+    "model": "Coffee Addict",
+    "size": "",
     "stock": 50
   },
   {
-    "name": "Dudar Milano -",
+    "brand": "Dudar Milano",
+    "model": "Milano",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Cinnamon Rolls",
+    "brand": "Dudar Milano",
+    "model": "Cinnamon Rolls",
+    "size": "",
     "stock": 10
   },
   {
-    "name": "Cherry Powder",
+    "brand": "Dudar Milano",
+    "model": "Cherry Powder",
+    "size": "",
     "stock": 26
   },
   {
-    "name": "Caramel Oud",
+    "brand": "Dudar Milano",
+    "model": "Caramel Oud",
+    "size": "",
     "stock": 16
   },
   {
-    "name": "Bubble Gum Factory",
+    "brand": "Dudar Milano",
+    "model": "Bubble Gum Factory",
+    "size": "",
     "stock": 39
   },
   {
-    "name": "Apple Pie",
+    "brand": "Dudar Milano",
+    "model": "Apple Pie",
+    "size": "",
     "stock": 7
   },
   {
-    "name": "Desired 30ml",
+    "brand": "Dudar Milano",
+    "model": "Desired",
+    "size": "30ml",
     "stock": 6
   },
   {
-    "name": "Alluring Fig",
+    "brand": "Dudar Milano",
+    "model": "Alluring Fig",
+    "size": "",
     "stock": 20
   },
   {
-    "name": "In Fabula 30ml",
+    "brand": "Dudar Milano",
+    "model": "In Fabula",
+    "size": "30ml",
     "stock": 6
   },
   {
-    "name": "Citrus",
+    "brand": "Dudar Milano",
+    "model": "Citrus",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Eau Papaguena 30ml",
+    "brand": "Dudar Milano",
+    "model": "Eau Papaguena",
+    "size": "30ml",
     "stock": 12
   },
   {
-    "name": "Oderose",
+    "brand": "Dudar Milano",
+    "model": "Oderose",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Hautbois",
+    "brand": "Theodoros Kalotinis",
+    "model": "Hautbois",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Theodoros Kalotinis -",
-    "stock": 0
-  },
-  {
-    "name": "Extrait Noir 85ml",
+    "brand": "Theodoros Kalotinis",
+    "model": "Extrait Noir",
+    "size": "85ml",
     "stock": 6
   },
   {
-    "name": "Extrait Blanc 30ml",
+    "brand": "Theodoros Kalotinis",
+    "model": "Extrait Blanc",
+    "size": "30ml",
     "stock": 6
   },
   {
-    "name": "ml",
-    "stock": 0
-  },
-  {
-    "name": "Desired 85ml",
+    "brand": "Theodoros Kalotinis",
+    "model": "Desired",
+    "size": "85ml",
     "stock": 6
   },
   {
-    "name": "Aliksir",
+    "brand": "Theodoros Kalotinis",
+    "model": "Aliksir",
+    "size": "",
     "stock": 0
   },
   {
-    "name": "Rossa Latte",
+    "brand": "Theodoros Kalotinis",
+    "model": "Rossa Latte",
+    "size": "",
     "stock": 30
   },
   {
-    "name": "Poudre Desir 30ml",
+    "brand": "Theodoros Kalotinis",
+    "model": "Poudre Desir",
+    "size": "30ml",
     "stock": 6
   },
   {
-    "name": "Shocking Bull",
+    "brand": "Theodoros Kalotinis",
+    "model": "Shocking Bull",
+    "size": "",
     "stock": 100
   },
   {
-    "name": "Jasmin Paradis 30ml",
+    "brand": "Theodoros Kalotinis",
+    "model": "Jasmin Paradis",
+    "size": "30ml",
     "stock": 6
   },
   {
-    "name": "Marechiaro",
+    "brand": "Theodoros Kalotinis",
+    "model": "Marechiaro",
+    "size": "",
     "stock": 150
   },
   {
-    "name": "Elixir Absolu 30ml",
+    "brand": "Theodoros Kalotinis",
+    "model": "Elixir Absolu",
+    "size": "30ml",
     "stock": 6
   },
   {
-    "name": "Mandarino Malandrino",
+    "brand": "Theodoros Kalotinis",
+    "model": "Mandarino Malandrino",
+    "size": "",
     "stock": 400
   },
   {
-    "name": "Eau Papaguena 85ml",
+    "brand": "Theodoros Kalotinis",
+    "model": "Eau Papaguena",
+    "size": "85ml",
     "stock": 18
   },
   {
-    "name": "Jasmilk",
+    "brand": "Theodoros Kalotinis",
+    "model": "Jasmilk",
+    "size": "",
     "stock": 150
   },
   {
-    "name": "Ambre Nomade 85ml",
+    "brand": "Theodoros Kalotinis",
+    "model": "Ambre Nomade",
+    "size": "85ml",
     "stock": 6
   },
   {
-    "name": "Dune",
+    "brand": "Theodoros Kalotinis",
+    "model": "Dune",
+    "size": "",
     "stock": 30
   },
   {
-    "name": "Cocobay",
+    "brand": "Theodoros Kalotinis",
+    "model": "Cocobay",
+    "size": "",
     "stock": 150
-  },
-  {
-    "name": "Piccirilli",
-    "stock": 0
   }
 ]
