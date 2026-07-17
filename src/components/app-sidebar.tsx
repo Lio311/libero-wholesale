@@ -44,8 +44,8 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
 
   return (
     <Sidebar side="right">
-      <SidebarHeader className="p-6 flex items-center justify-center">
-        <img src="/libero-w.png" alt="Libero Wholesale" className="h-10 object-contain drop-shadow-sm" />
+      <SidebarHeader className="p-4 flex items-center justify-center">
+        <img src="/libero-w.png" alt="Libero Wholesale" className="w-[90%] h-auto object-contain drop-shadow-sm" />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
