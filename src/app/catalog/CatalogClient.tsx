@@ -86,7 +86,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
   }, [isMobile, products.length, mobileVisibleCount]);
 
   // Extract unique brands for filter
-  const brands = Array.from(new Set(initialProducts.map(p => p.brandHe || p.brand || "").filter(Boolean))).sort();
+  const filterBrands = Array.from(new Set(initialProducts.map(p => p.brandHe || p.brand || "").filter(Boolean))).sort();
 
   const resetFilters = () => {
     setSearchQuery("");
@@ -195,7 +195,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
                 </SelectTrigger>
                 <SelectContent alignItemWithTrigger={false}>
                   <SelectItem value="הכל">הכל</SelectItem>
-                  {brands.map(b => (
+                  {filterBrands.map(b => (
                     <SelectItem key={b} value={b}>{b}</SelectItem>
                   ))}
                 </SelectContent>
