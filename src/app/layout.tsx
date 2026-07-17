@@ -31,7 +31,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider localization={heIL}>
+    <ClerkProvider 
+      localization={heIL}
+      appearance={{
+        layout: {
+          logoImageUrl: "/logo2.png",
+        },
+        elements: {
+          formButtonPrimary: "bg-primary text-primary-foreground hover:bg-primary/90",
+          card: "bg-card border border-white/10 shadow-2xl",
+          headerTitle: "text-foreground font-bold",
+          headerSubtitle: "text-muted-foreground",
+          dividerText: "text-muted-foreground",
+          formFieldLabel: "text-foreground",
+          formFieldInput: "bg-background border-white/10 text-foreground focus:ring-primary",
+          footerActionText: "text-muted-foreground",
+          footerActionLink: "text-primary hover:text-primary/90"
+        }
+      }}
+    >
       <html
         lang="he"
         dir="rtl"
