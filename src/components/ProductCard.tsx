@@ -81,8 +81,8 @@ export function ProductCard({ product }: ProductCardProps) {
             addItem(product, qty);
           }}
         >
-          <ShoppingCart className="md:ml-1 h-3 w-3 hidden md:inline-block" />
           {isOutOfStock ? 'אזל' : 'הוסף'}
+          <ShoppingCart className="md:mr-1 h-3 w-3 hidden md:inline-block" />
         </Button>
       </CardFooter>
     </Card>
