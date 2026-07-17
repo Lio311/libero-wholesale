@@ -130,23 +130,23 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
               <Table>
               <TableHeader className="bg-muted/50">
                 <TableRow className="border-border">
-                  <TableHead className="text-right w-[60px] px-2">תמונה</TableHead>
-                  <TableHead className="text-right cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("barcode")}>
+                  <TableHead className="text-center w-[60px] px-2">תמונה</TableHead>
+                  <TableHead className="text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("barcode")}>
                     מק״ט / ברקוד <SortIcon columnKey="barcode" />
                   </TableHead>
-                  <TableHead className="text-right cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("name")}>
+                  <TableHead className="text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("name")}>
                     שם <SortIcon columnKey="name" />
                   </TableHead>
-                  <TableHead className="text-right cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("size")}>
+                  <TableHead className="text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("size")}>
                     גודל <SortIcon columnKey="size" />
                   </TableHead>
-                  <TableHead className="text-right cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("brand")}>
+                  <TableHead className="text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("brand")}>
                     מותג <SortIcon columnKey="brand" />
                   </TableHead>
-                  <TableHead className="text-right cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("stockQuantity")}>
+                  <TableHead className="text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("stockQuantity")}>
                     מלאי <SortIcon columnKey="stockQuantity" />
                   </TableHead>
-                  <TableHead className="text-left cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("price")}>
+                  <TableHead className="text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("price")}>
                     מחיר סיטונאי <SortIcon columnKey="price" />
                   </TableHead>
                   <TableHead className="text-center w-[100px]">פעולות</TableHead>
@@ -160,8 +160,8 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
                 ) : (
                   sortedProducts.map((product) => (
                     <TableRow key={product.id} className={`border-border hover:bg-muted/20 transition-colors ${product.isDraft ? "opacity-50 grayscale-[50%]" : ""}`}>
-                      <TableCell className="p-1 px-2">
-                        <div className="relative h-10 w-10 bg-white rounded flex items-center justify-center overflow-hidden border border-border/50">
+                      <TableCell className="p-1 px-2 text-center">
+                        <div className="relative h-10 w-10 bg-white rounded flex items-center justify-center overflow-hidden border border-border/50 mx-auto">
                           {product.imageUrl ? (
                             <Image src={product.imageUrl} alt={product.name} fill className="object-contain p-0.5" />
                           ) : (
@@ -169,25 +169,25 @@ export function ProductsClient({ products: initialProducts }: ProductsClientProp
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="font-mono text-xs">{product.barcode || '-'}</TableCell>
-                      <TableCell className="font-medium">
-                        <div className="flex flex-col">
-                          <span className="flex items-center gap-2">
+                      <TableCell className="font-mono text-xs text-center">{product.barcode || '-'}</TableCell>
+                      <TableCell className="font-medium text-center">
+                        <div className="flex flex-col items-center">
+                          <span className="flex items-center gap-2 justify-center">
                             {product.name}
                             {product.isDraft && <Badge variant="secondary" className="h-5 px-1 text-[10px]">טיוטה</Badge>}
                           </span>
                           {product.model && <span className="text-xs text-muted-foreground">{product.model}</span>}
                         </div>
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">{product.size || '-'}</TableCell>
-                      <TableCell>{product.brand || '-'}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
+                      <TableCell className="text-muted-foreground text-sm text-center">{product.size || '-'}</TableCell>
+                      <TableCell className="text-center">{product.brand || '-'}</TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-2">
                           {product.stockQuantity}
                           {product.stockQuantity < 10 && <Badge variant="destructive" className="h-5 px-1 text-[10px]">מלאי נמוך</Badge>}
                         </div>
                       </TableCell>
-                      <TableCell className="text-left font-mono font-bold text-primary">₪{Number(product.price).toFixed(2)}</TableCell>
+                      <TableCell className="text-center font-mono font-bold text-primary">₪{Number(product.price).toFixed(2)}</TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-2">
                           <Button onClick={() => handleEdit(product)} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
