@@ -16,9 +16,9 @@ interface ProductRow {
   brand: string | null;
   model: string | null;
   barcode: string | null;
-  price: string | number;
   stockQuantity: number;
   status: string;
+  imageUrl: string | null;
 }
 
 interface ProductsClientProps {

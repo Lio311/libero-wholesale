@@ -69,6 +69,14 @@
   --input: #e4e4e7;
   --ring: #171717;
   --radius: 1.2rem;
+  --sidebar: #f1f2f4;
+  --sidebar-foreground: #111111;
+  --sidebar-primary: #171717;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e4e4e7;
+  --sidebar-accent-foreground: #111111;
+  --sidebar-border: #e4e4e7;
+  --sidebar-ring: #171717;
 }
 
 .dark {
@@ -91,6 +99,14 @@
   --border: #27272a;
   --input: #27272a;
   --ring: #0C5CAB;
+  --sidebar: #09090b;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #0C5CAB;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #27272a;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: #27272a;
+  --sidebar-ring: #0C5CAB;
 }
 
 @layer base {
