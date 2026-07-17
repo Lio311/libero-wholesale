@@ -72,31 +72,30 @@ export function BrandsClient({ initialBrands }: { initialBrands: Brand[] }) {
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="text-right whitespace-nowrap">לוגו</TableHead>
-              <TableHead className="text-right whitespace-nowrap">שם (אנגלית)</TableHead>
-              <TableHead className="text-right whitespace-nowrap">שם (עברית)</TableHead>
-              <TableHead className="text-left whitespace-nowrap">פעולות</TableHead>
+              <TableHead className="text-center whitespace-nowrap">לוגו</TableHead>
+              <TableHead className="text-center whitespace-nowrap">שם (אנגלית)</TableHead>
+              <TableHead className="text-center whitespace-nowrap">שם (עברית)</TableHead>
+              <TableHead className="text-center whitespace-nowrap">פעולות</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredBrands.map((brand) => (
               <TableRow key={brand.id} className="hover:bg-muted/30 transition-colors group">
-                <TableCell>
+                <TableCell className="text-center">
                   {brand.logoUrl ? (
-                    <div className="h-10 w-10 md:h-12 md:w-12 bg-white rounded-lg border border-border/50 flex items-center justify-center p-1 shadow-sm">
+                    <div className="h-10 w-10 md:h-12 md:w-12 bg-white rounded-lg border border-border/50 flex items-center justify-center p-1 shadow-sm mx-auto">
                       <img src={brand.logoUrl} alt={brand.name} className="max-h-full max-w-full object-contain" />
                     </div>
                   ) : (
-                    <div className="h-10 w-10 md:h-12 md:w-12 bg-muted rounded-lg flex items-center justify-center text-xs text-muted-foreground">
+                    <div className="h-10 w-10 md:h-12 md:w-12 bg-muted rounded-lg flex items-center justify-center text-xs text-muted-foreground mx-auto">
                       אין
                     </div>
                   )}
                 </TableCell>
-                <TableCell className="font-medium">{brand.name}</TableCell>
-                <TableCell>{brand.nameHe || "-"}</TableCell>
-                <TableCell className="text-left">
-                  <div className="flex items-center justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                <TableCell className="font-medium text-center">{brand.name}</TableCell>
+                <TableCell className="text-center">{brand.nameHe || "-"}</TableCell>
+                <TableCell className="text-center">
+                  <div className="flex items-center justify-center gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                     <Button
                       variant="ghost"
                       size="icon"
