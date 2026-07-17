@@ -78,6 +78,7 @@ export function CartSheet() {
                         size="icon"
                         className="h-7 w-7 rounded-none"
                         onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                        disabled={item.quantity >= item.product.stockQuantity}
                       >
                         <Plus className="h-3 w-3" />
                       </Button>

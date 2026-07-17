@@ -102,19 +102,24 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
       </TableCell>
       <TableCell className="hidden md:table-cell w-[120px] text-center">
         <div className="flex items-center justify-center gap-1">
-          <Button variant="outline" size="icon" className="h-8 w-8 shrink-0" onClick={(e) => { e.stopPropagation(); setQty(Math.max(1, qty - 1)); }} disabled={isOutOfStock}>
+          <Button variant="outline" size="icon" className="h-8 w-8 shrink-0" onClick={(e) => { e.stopPropagation(); setQty(Math.max(1, qty - 1)); }} disabled={isOutOfStock || qty <= 1}>
             <Minus className="h-3 w-3" />
           </Button>
           <Input 
             type="number" 
             min={1} 
+            max={product.stockQuantity}
             value={qty}
-            onChange={(e) => setQty(parseInt(e.target.value) || 1)}
+            onChange={(e) => {
+              let val = parseInt(e.target.value) || 1;
+              if (val > product.stockQuantity) val = product.stockQuantity;
+              setQty(val);
+            }}
             onClick={(e) => e.stopPropagation()}
             className="w-14 h-8 px-1 text-center text-sm font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             disabled={isOutOfStock}
           />
-          <Button variant="outline" size="icon" className="h-8 w-8 shrink-0" onClick={(e) => { e.stopPropagation(); setQty(qty + 1); }} disabled={isOutOfStock}>
+          <Button variant="outline" size="icon" className="h-8 w-8 shrink-0" onClick={(e) => { e.stopPropagation(); setQty(Math.min(product.stockQuantity, qty + 1)); }} disabled={isOutOfStock || qty >= product.stockQuantity}>
             <Plus className="h-3 w-3" />
           </Button>
         </div>
@@ -143,18 +148,23 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
             <div className="flex justify-between items-center py-2 px-4">
               <span className="font-semibold">כמות</span>
               <div className="flex items-center gap-1 bg-background rounded-md border border-border p-0.5">
-                <Button variant="ghost" size="icon" className="h-7 w-7 rounded-sm shrink-0" onClick={(e) => { e.stopPropagation(); setQty(Math.max(1, qty - 1)); }} disabled={isOutOfStock}>
+                <Button variant="ghost" size="icon" className="h-7 w-7 rounded-sm shrink-0" onClick={(e) => { e.stopPropagation(); setQty(Math.max(1, qty - 1)); }} disabled={isOutOfStock || qty <= 1}>
                   <Minus className="h-3 w-3" />
                 </Button>
                 <Input 
                   type="number" 
                   min={1} 
+                  max={product.stockQuantity}
                   value={qty}
-                  onChange={(e) => setQty(parseInt(e.target.value) || 1)}
+                  onChange={(e) => {
+                    let val = parseInt(e.target.value) || 1;
+                    if (val > product.stockQuantity) val = product.stockQuantity;
+                    setQty(val);
+                  }}
                   className="w-10 h-7 border-0 px-1 text-center text-xs font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   disabled={isOutOfStock}
                 />
-                <Button variant="ghost" size="icon" className="h-7 w-7 rounded-sm shrink-0" onClick={(e) => { e.stopPropagation(); setQty(qty + 1); }} disabled={isOutOfStock}>
+                <Button variant="ghost" size="icon" className="h-7 w-7 rounded-sm shrink-0" onClick={(e) => { e.stopPropagation(); setQty(Math.min(product.stockQuantity, qty + 1)); }} disabled={isOutOfStock || qty >= product.stockQuantity}>
                   <Plus className="h-3 w-3" />
                 </Button>
               </div>
