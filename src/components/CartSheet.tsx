@@ -55,8 +55,8 @@ export function CartSheet() {
                   <h4 className="text-sm font-semibold line-clamp-2 leading-tight">
                     {item.product.nameHe || item.product.name}
                   </h4>
-                  <p className="text-xs text-muted-foreground font-mono">
-                    {item.product.barcode || item.product.modelHe || item.product.model}
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {item.product.barcode && <span className="font-mono">{item.product.barcode}</span>}
                   </p>
                   
                   <div className="flex items-center justify-between mt-2">
