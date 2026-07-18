@@ -190,7 +190,7 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
   return (
     <div className="w-full space-y-6">
       {/* Filters Bar */}
-      <div className="bg-card border-b border-border/40 p-4 sticky top-0 z-20 shadow-sm">
+      <div className="bg-card border-b border-border/40 p-4 md:sticky md:top-0 md:z-20 shadow-sm">
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-end justify-between">
           
           {/* Search & Brand */}
@@ -252,18 +252,18 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
           </div>
 
           {/* Toggles */}
-          <div className="flex flex-wrap items-center gap-4 w-full md:w-auto pb-0.5">
-            <div className="flex items-center gap-2">
-              <Switch id="back-to-stock" checked={filterBackToStock} onCheckedChange={setFilterBackToStock} />
-              <Label htmlFor="back-to-stock" className="whitespace-nowrap cursor-pointer">חזר למלאי</Label>
+          <div className="flex items-center justify-between md:justify-start gap-2 md:gap-4 w-full md:w-auto pb-0.5 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <div className="flex items-center gap-1.5 md:gap-2">
+              <Switch id="back-to-stock" checked={filterBackToStock} onCheckedChange={setFilterBackToStock} className="scale-90 md:scale-100" />
+              <Label htmlFor="back-to-stock" className="whitespace-nowrap cursor-pointer text-xs md:text-sm">חזר למלאי</Label>
             </div>
-            <div className="flex items-center gap-2">
-              <Switch id="official" checked={filterOfficial} onCheckedChange={setFilterOfficial} />
-              <Label htmlFor="official" className="whitespace-nowrap cursor-pointer">יבואן רשמי</Label>
+            <div className="flex items-center gap-1.5 md:gap-2">
+              <Switch id="official" checked={filterOfficial} onCheckedChange={setFilterOfficial} className="scale-90 md:scale-100" />
+              <Label htmlFor="official" className="whitespace-nowrap cursor-pointer text-xs md:text-sm">יבואן רשמי</Label>
             </div>
-            <div className="flex items-center gap-2">
-              <Switch id="out-of-stock" checked={filterOutOfStock} onCheckedChange={setFilterOutOfStock} />
-              <Label htmlFor="out-of-stock" className="whitespace-nowrap cursor-pointer">אזל במלאי</Label>
+            <div className="flex items-center gap-1.5 md:gap-2">
+              <Switch id="out-of-stock" checked={filterOutOfStock} onCheckedChange={setFilterOutOfStock} className="scale-90 md:scale-100" />
+              <Label htmlFor="out-of-stock" className="whitespace-nowrap cursor-pointer text-xs md:text-sm">אזל במלאי</Label>
             </div>
           </div>
           
