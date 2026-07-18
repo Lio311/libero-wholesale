@@ -2,8 +2,24 @@ import { db } from "@/lib/db";
 import { settings } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { cache } from "react";
+import { currentUser } from "@clerk/nextjs/server";
 
-export const checkIsAdmin = cache(async (email: string | undefined | null) => {
+export const checkIsAdmin = cache(async (email?: string | undefined | null) => {
+  try {
+    const user = await currentUser();
+    // If no email was passed, check the current user's clerk metadata directly
+    if (!email && user?.publicMetadata?.role === "admin") {
+      return true;
+    }
+    // If an email was passed, check if it matches the current user's email before relying on current user's metadata
+    const userEmail = user?.emailAddresses[0]?.emailAddress?.toLowerCase();
+    if (email && userEmail === email.toLowerCase() && user?.publicMetadata?.role === "admin") {
+      return true;
+    }
+  } catch (error) {
+    // Silently ignore if currentUser() throws (e.g. not in a valid context)
+  }
+
   if (!email) return false;
   
   const normalizedEmail = email.toLowerCase().trim();

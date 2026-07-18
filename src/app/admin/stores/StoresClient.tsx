@@ -6,9 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ShieldAlert, ShieldCheck, User } from "lucide-react";
+import { Search, ShieldAlert, ShieldCheck, User, Store, CheckCircle2 } from "lucide-react";
 import { format } from "date-fns";
-import { toggleUserRole } from "./actions";
+import { toggleUserRole, approveStore } from "./actions";
 import { toast } from "sonner";
 import Image from "next/image";
 
@@ -22,11 +22,20 @@ interface UserRow {
   imageUrl: string;
 }
 
-interface StoresClientProps {
-  users: UserRow[];
+interface StoreRow {
+  id: string;
+  clerkUserId: string;
+  name: string;
+  contactName: string;
+  status: string;
 }
 
-export function StoresClient({ users: initialUsers }: StoresClientProps) {
+interface StoresClientProps {
+  users: UserRow[];
+  stores: StoreRow[];
+}
+
+export function StoresClient({ users: initialUsers, stores }: StoresClientProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isPending, startTransition] = useTransition();
 
@@ -43,6 +52,17 @@ export function StoresClient({ users: initialUsers }: StoresClientProps) {
         toast.success(`הרשאת המשתמש שונתה ל-${result.newRole === 'admin' ? 'מנהל' : 'לקוח'}`);
       } else {
         toast.error("אירעה שגיאה בעדכון הרשאת המשתמש");
+      }
+    });
+  };
+
+  const handleApproveStore = (storeId: string) => {
+    startTransition(async () => {
+      const result = await approveStore(storeId);
+      if (result.success) {
+        toast.success("בקשת פתיחת העסק אושרה בהצלחה!");
+      } else {
+        toast.error("אירעה שגיאה באישור העסק");
       }
     });
   };
@@ -75,17 +95,19 @@ export function StoresClient({ users: initialUsers }: StoresClientProps) {
                   <TableHead className="text-right">אימייל</TableHead>
                   <TableHead className="text-right">תאריך הרשמה</TableHead>
                   <TableHead className="text-right">הרשאה (Role)</TableHead>
-                  <TableHead className="text-center w-[150px]">פעולות</TableHead>
+                  <TableHead className="text-right">בקשת עסק</TableHead>
+                  <TableHead className="text-center w-[200px]">פעולות</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredUsers.length === 0 ? (
                   <TableRow className="border-border">
-                    <TableCell colSpan={5} className="text-center h-32 text-muted-foreground">לא נמצאו משתמשים</TableCell>
+                    <TableCell colSpan={6} className="text-center h-32 text-muted-foreground">לא נמצאו משתמשים</TableCell>
                   </TableRow>
                 ) : (
                   filteredUsers.map((user) => {
                     const isAdmin = user.role === "admin";
+                    const userStore = stores.find(s => s.clerkUserId === user.id);
                     
                     return (
                       <TableRow key={user.id} className="border-border hover:bg-muted/20 transition-colors">
@@ -116,26 +138,55 @@ export function StoresClient({ users: initialUsers }: StoresClientProps) {
                             <Badge variant="secondary">לקוח</Badge>
                           )}
                         </TableCell>
-                        <TableCell className="text-center">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className={`w-full ${isAdmin ? 'text-orange-400 hover:text-orange-500 hover:bg-orange-500/10 border-orange-500/20' : 'text-blue-400 hover:text-blue-500 hover:bg-blue-500/10 border-blue-500/20'}`}
-                            onClick={() => handleToggleRole(user.id, user.role)}
-                            disabled={isPending}
-                          >
-                            {isAdmin ? (
-                              <>
-                                <ShieldAlert className="h-4 w-4 ml-2" />
-                                הסר ניהול
-                              </>
+                        <TableCell>
+                          {userStore ? (
+                            userStore.status === 'active' ? (
+                              <Badge className="bg-green-500/20 text-green-400 border-green-500/50 flex w-max items-center gap-1">
+                                <Store className="h-3 w-3" /> עסק מאושר
+                              </Badge>
                             ) : (
-                              <>
-                                <ShieldCheck className="h-4 w-4 ml-2" />
-                                הפוך למנהל
-                              </>
+                              <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/50 flex w-max items-center gap-1">
+                                <Store className="h-3 w-3" /> ממתין לאישור
+                              </Badge>
+                            )
+                          ) : (
+                            <span className="text-muted-foreground text-sm">-</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center gap-2">
+                            {userStore && userStore.status === 'pending' && (
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="w-full text-green-400 hover:text-green-500 hover:bg-green-500/10 border-green-500/20"
+                                onClick={() => handleApproveStore(userStore.id)}
+                                disabled={isPending}
+                              >
+                                <CheckCircle2 className="h-4 w-4 ml-2" />
+                                אשר עסק
+                              </Button>
                             )}
-                          </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className={`w-full ${isAdmin ? 'text-orange-400 hover:text-orange-500 hover:bg-orange-500/10 border-orange-500/20' : 'text-blue-400 hover:text-blue-500 hover:bg-blue-500/10 border-blue-500/20'}`}
+                              onClick={() => handleToggleRole(user.id, user.role)}
+                              disabled={isPending}
+                            >
+                              {isAdmin ? (
+                                <>
+                                  <ShieldAlert className="h-4 w-4 ml-2" />
+                                  הסר ניהול
+                                </>
+                              ) : (
+                                <>
+                                  <ShieldCheck className="h-4 w-4 ml-2" />
+                                  הפוך למנהל
+                                </>
+                              )}
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
