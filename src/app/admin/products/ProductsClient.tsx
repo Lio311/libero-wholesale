@@ -167,7 +167,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                     מלאי <SortIcon columnKey="stockQuantity" />
                   </TableHead>
                   <TableHead className="text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("price")}>
-                    מחיר סיטונאי <SortIcon columnKey="price" />
+                    <span className="hidden md:inline">מחיר סיטונאי</span><span className="md:hidden">מחיר</span> <SortIcon columnKey="price" />
                   </TableHead>
                   <TableHead className="text-center w-[100px]">פעולות</TableHead>
                 </TableRow>
@@ -220,7 +220,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-2">
                           {product.stockQuantity}
-                          {product.stockQuantity < 10 && <Badge variant="destructive" className="h-5 px-1 text-[10px]">מלאי נמוך</Badge>}
+                          {product.stockQuantity < 10 && <Badge variant="destructive" className="hidden md:inline-flex h-5 px-1 text-[10px]">מלאי נמוך</Badge>}
                         </div>
                       </TableCell>
                       <TableCell className="text-center font-mono font-bold text-primary">₪{Number(product.price).toFixed(2)}</TableCell>
