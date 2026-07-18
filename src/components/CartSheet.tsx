@@ -39,8 +39,8 @@ export function CartSheet() {
             </div>
           ) : (
             items.map((item) => (
-              <div key={item.product.id} className="flex gap-4 items-start group">
-                <div className="relative h-20 w-20 rounded-md bg-white border border-border/50 overflow-hidden flex-shrink-0">
+              <div key={item.product.id} className="flex gap-2 sm:gap-4 items-start group">
+                <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-md bg-white border border-border/50 overflow-hidden flex-shrink-0">
                   {item.product.imageUrl ? (
                     <Image
                       src={item.product.imageUrl}
@@ -61,7 +61,7 @@ export function CartSheet() {
                     {item.product.barcode && <span className="font-mono">{item.product.barcode}</span>}
                   </p>
                   
-                  <div className="flex items-center justify-between gap-3 mt-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mt-2">
                     <div className="flex items-center bg-muted/50 border border-border rounded-md">
                       <Button
                         variant="ghost"
@@ -91,7 +91,7 @@ export function CartSheet() {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors shrink-0"
+                  className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors shrink-0 -mr-1 sm:mr-0"
                   onClick={() => removeItem(item.product.id)}
                 >
                   <Trash2 className="h-4 w-4" />
