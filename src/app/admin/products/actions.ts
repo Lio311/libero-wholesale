@@ -43,7 +43,14 @@ export async function createProduct(formData: FormData) {
     const isOnSale = formData.get("isOnSale") === "true";
     const isOfficialImporter = formData.get("isOfficialImporter") === "true";
     const isDraft = formData.get("isDraft") === "true";
-    const size = formData.get("size") as string || null;
+    const rawSize = formData.get("size") as string || null;
+    let size = rawSize;
+    if (size) {
+      const numericMatch = size.match(/(\d+(\.\d+)?)/);
+      if (numericMatch) {
+        size = `${numericMatch[0]}ml`;
+      }
+    }
     
     const priceDropPriceStr = formData.get("priceDropPrice") as string;
     const priceDropPrice = priceDropPriceStr ? parseFloat(priceDropPriceStr).toString() : null;
@@ -123,7 +130,14 @@ export async function updateProduct(id: string, formData: FormData) {
     const isOnSale = formData.get("isOnSale") === "true";
     const isOfficialImporter = formData.get("isOfficialImporter") === "true";
     const isDraft = formData.get("isDraft") === "true";
-    const size = formData.get("size") as string || null;
+    const rawSize = formData.get("size") as string || null;
+    let size = rawSize;
+    if (size) {
+      const numericMatch = size.match(/(\d+(\.\d+)?)/);
+      if (numericMatch) {
+        size = `${numericMatch[0]}ml`;
+      }
+    }
     
     const priceDropPriceStr = formData.get("priceDropPrice") as string;
     const priceDropPrice = priceDropPriceStr ? parseFloat(priceDropPriceStr).toString() : null;

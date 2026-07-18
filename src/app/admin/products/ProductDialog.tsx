@@ -176,7 +176,7 @@ export function ProductDialog({ product, open, onOpenChange, brands = [] }: Prod
 
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="size" className="text-right font-medium text-xs">גודל (Size)</Label>
-                <Input id="size" name="size" defaultValue={product?.size || ""} className="col-span-3 rounded-xl border-border bg-background" />
+                <Input id="size" name="size" type="number" step="any" defaultValue={product?.size?.replace(/[^0-9.]/g, '') || ""} className="col-span-3 rounded-xl border-border bg-background" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="barcode" className="text-right font-medium text-xs">מק״ט/ברקוד</Label>
