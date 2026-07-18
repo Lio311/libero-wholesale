@@ -29,12 +29,18 @@ export default async function CatalogPage() {
   let lastUpdateStr = "";
   if (latestUpdatedProduct && latestUpdatedProduct.updatedAt) {
     const d = new Date(latestUpdatedProduct.updatedAt);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    const hours = String(d.getHours()).padStart(2, '0');
-    const minutes = String(d.getMinutes()).padStart(2, '0');
-    lastUpdateStr = `${day}/${month}/${year} ${hours}:${minutes}`;
+    const options: Intl.DateTimeFormatOptions = {
+      timeZone: 'Asia/Jerusalem',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    };
+    const formatter = new Intl.DateTimeFormat('en-GB', options);
+    // en-GB outputs: "DD/MM/YYYY, HH:mm", we remove the comma
+    lastUpdateStr = formatter.format(d).replace(',', '');
   }
 
   return (
