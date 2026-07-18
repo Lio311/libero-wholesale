@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 
-type SortColumn = 'barcode' | 'name' | 'brand' | 'stock' | 'price' | null;
+type SortColumn = 'barcode' | 'name' | 'brand' | 'size' | 'stock' | 'price' | null;
 
 const SortIcon = ({ activeDir }: { activeDir?: 'asc' | 'desc' | null }) => (
   <div className="inline-flex flex-col ml-1.5 align-middle opacity-60 hover:opacity-100 transition-opacity translate-y-[1px]">
@@ -168,6 +168,9 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
         } else if (sortCol === 'barcode') {
           valA = a.barcode || "";
           valB = b.barcode || "";
+        } else if (sortCol === 'size') {
+          valA = a.size || "";
+          valB = b.size || "";
         }
 
         if (valA < valB) return sortDir === 'asc' ? -1 : 1;
@@ -296,8 +299,8 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
                   <TableHead className="text-center text-[10px] md:text-sm cursor-pointer select-none px-1 md:px-4" onClick={() => handleSort('name')}>
                     שם <SortIcon activeDir={sortCol === 'name' ? sortDir : null} />
                   </TableHead>
-                  <TableHead className="w-[40px] md:w-[80px] text-[10px] md:text-sm text-center px-0.5 md:px-4">
-                    גודל
+                  <TableHead className="w-[40px] md:w-[80px] text-[10px] md:text-sm text-center cursor-pointer select-none px-0.5 md:px-4" onClick={() => handleSort('size')}>
+                    גודל <SortIcon activeDir={sortCol === 'size' ? sortDir : null} />
                   </TableHead>
                   <TableHead className="hidden md:table-cell text-center cursor-pointer select-none" onClick={() => handleSort('brand')}>
                     מותג <SortIcon activeDir={sortCol === 'brand' ? sortDir : null} />

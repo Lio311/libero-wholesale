@@ -97,7 +97,7 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                   <TableHead className="text-right hidden md:table-cell">תאריך</TableHead>
                   <TableHead className="text-right">הרשאה</TableHead>
                   <TableHead className="text-right">בקשת עסק</TableHead>
-                  <TableHead className="text-center w-[150px]">פעולות</TableHead>
+                  <TableHead className="text-center w-auto md:w-[150px]">פעולות</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -160,41 +160,41 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                               <Button 
                                 variant="outline" 
                                 size="sm" 
-                                className="text-green-400 hover:text-green-500 hover:bg-green-500/10 border-green-500/20 whitespace-nowrap"
+                                className="text-green-400 hover:text-green-500 hover:bg-green-500/10 border-green-500/20 md:whitespace-nowrap px-2 md:px-3"
                                 onClick={() => handleApproveStore(userStore.id)}
                                 disabled={isPending}
                               >
-                                <CheckCircle2 className="h-4 w-4 ml-2" />
-                                אשר עסק
+                                <CheckCircle2 className="h-4 w-4 md:ml-2" />
+                                <span className="hidden md:inline">אשר עסק</span>
                               </Button>
                             )}
                             {user.isSuperAdmin ? (
                               <Button 
                                 variant="outline" 
                                 size="sm" 
-                                className="whitespace-nowrap text-muted-foreground border-border cursor-not-allowed opacity-70"
+                                className="md:whitespace-nowrap px-2 md:px-3 text-muted-foreground border-border cursor-not-allowed opacity-70"
                                 disabled
                               >
-                                <ShieldAlert className="h-4 w-4 ml-2" />
-                                מנהל על
+                                <ShieldAlert className="h-4 w-4 md:ml-2" />
+                                <span className="hidden md:inline">מנהל על</span>
                               </Button>
                             ) : (
                               <Button 
                                 variant="outline" 
                                 size="sm" 
-                                className={`whitespace-nowrap ${isAdmin ? 'text-orange-400 hover:text-orange-500 hover:bg-orange-500/10 border-orange-500/20' : 'text-blue-400 hover:text-blue-500 hover:bg-blue-500/10 border-blue-500/20'}`}
+                                className={`md:whitespace-nowrap px-2 md:px-3 ${isAdmin ? 'text-orange-400 hover:text-orange-500 hover:bg-orange-500/10 border-orange-500/20' : 'text-blue-400 hover:text-blue-500 hover:bg-blue-500/10 border-blue-500/20'}`}
                                 onClick={() => handleToggleRole(user.id, user.role)}
                                 disabled={isPending}
                               >
                                 {isAdmin ? (
                                   <>
-                                    <ShieldAlert className="h-4 w-4 ml-2" />
-                                    הסר ניהול
+                                    <ShieldAlert className="h-4 w-4 md:ml-2" />
+                                    <span className="hidden md:inline">הסר ניהול</span>
                                   </>
                                 ) : (
                                   <>
-                                    <ShieldCheck className="h-4 w-4 ml-2" />
-                                    הפוך למנהל
+                                    <ShieldCheck className="h-4 w-4 md:ml-2" />
+                                    <span className="hidden md:inline">הפוך למנהל</span>
                                   </>
                                 )}
                               </Button>

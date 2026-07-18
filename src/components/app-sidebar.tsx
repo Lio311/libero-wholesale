@@ -62,12 +62,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
 
   useEffect(() => {
     const targetValue = pathname?.startsWith("/admin") ? "admin" : "main";
-    setOpenItems((prev) => {
-      if (prev.includes(targetValue)) {
-        return prev;
-      }
-      return [...prev, targetValue];
-    });
+    setOpenItems([targetValue]);
   }, [pathname]);
 
   const getButtonClass = (url: string) => {
@@ -135,7 +130,13 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
         {isAdmin ? (
           <Accordion 
             value={openItems} 
-            onValueChange={(val) => setOpenItems(val)} 
+            onValueChange={(val) => {
+              if (val && val.length > 0) {
+                setOpenItems([val[val.length - 1]]);
+              } else {
+                setOpenItems([]);
+              }
+            }} 
             className="w-full space-y-2" 
             dir="rtl"
           >
