@@ -95,8 +95,8 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                   <TableHead className="text-right px-1 md:px-4 text-[10px] md:text-sm">משתמש</TableHead>
                   <TableHead className="text-right hidden md:table-cell">אימייל</TableHead>
                   <TableHead className="text-right hidden md:table-cell">תאריך</TableHead>
-                  <TableHead className="text-right px-1 md:px-4 text-[10px] md:text-sm">הרשאה</TableHead>
-                  <TableHead className="text-right px-1 md:px-4 text-[10px] md:text-sm">עסק</TableHead>
+                  <TableHead className="text-center px-1 md:px-4 text-[10px] md:text-sm">הרשאה</TableHead>
+                  <TableHead className="text-center px-1 md:px-4 text-[10px] md:text-sm">עסק</TableHead>
                   <TableHead className="text-center w-auto md:w-[150px] px-1 md:px-4 text-[10px] md:text-sm">פעולות</TableHead>
                 </TableRow>
               </TableHeader>
@@ -133,26 +133,30 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                           {format(new Date(user.createdAt), "dd/MM/yyyy")}
                         </TableCell>
                         <TableCell className="px-1 md:px-4">
-                          {isAdmin ? (
-                            <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/50 px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">מנהל</Badge>
-                          ) : (
-                            <Badge variant="secondary" className="px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">לקוח</Badge>
-                          )}
+                          <div className="flex justify-center">
+                            {isAdmin ? (
+                              <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/50 px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">מנהל</Badge>
+                            ) : (
+                              <Badge variant="secondary" className="px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">לקוח</Badge>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell className="px-1 md:px-4">
-                          {userStore ? (
-                            userStore.status === 'active' ? (
-                              <Badge className="bg-green-500/20 text-green-400 border-green-500/50 flex w-max items-center gap-0.5 md:gap-1 px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">
-                                <Store className="h-2 w-2 md:h-3 md:w-3" /> <span className="hidden md:inline">עסק מאושר</span><span className="md:hidden">מאושר</span>
-                              </Badge>
+                          <div className="flex justify-center">
+                            {userStore ? (
+                              userStore.status === 'active' ? (
+                                <Badge className="bg-green-500/20 text-green-400 border-green-500/50 inline-flex w-max items-center gap-0.5 md:gap-1 px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">
+                                  <Store className="h-2 w-2 md:h-3 md:w-3" /> <span className="hidden md:inline">עסק מאושר</span><span className="md:hidden">מאושר</span>
+                                </Badge>
+                              ) : (
+                                <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/50 inline-flex w-max items-center gap-0.5 md:gap-1 px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">
+                                  <Store className="h-2 w-2 md:h-3 md:w-3" /> <span className="hidden md:inline">ממתין לאישור</span><span className="md:hidden">ממתין</span>
+                                </Badge>
+                              )
                             ) : (
-                              <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/50 flex w-max items-center gap-0.5 md:gap-1 px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">
-                                <Store className="h-2 w-2 md:h-3 md:w-3" /> <span className="hidden md:inline">ממתין לאישור</span><span className="md:hidden">ממתין</span>
-                              </Badge>
-                            )
-                          ) : (
-                            <span className="text-muted-foreground text-sm">-</span>
-                          )}
+                              <span className="text-muted-foreground text-sm">-</span>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell className="text-center px-1 md:px-4">
                           <div className="flex flex-wrap items-center justify-center gap-1 md:gap-2">
