@@ -125,7 +125,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
             <AccordionItem value="main" className="border-none">
               <SidebarGroup className="p-0">
                 <AccordionTrigger className="px-6 hover:no-underline py-2 opacity-70 hover:opacity-100 transition-opacity [&>svg]:text-white">
-                  <span className="text-xs font-medium text-sidebar-foreground uppercase tracking-wider">תפריט ראשי</span>
+                  <span className="text-xs font-medium text-white uppercase tracking-wider">תפריט ראשי</span>
                 </AccordionTrigger>
                 <AccordionContent>
                   {mainMenuContent}
@@ -136,7 +136,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
             <AccordionItem value="admin" className="border-none border-t border-border/50">
               <SidebarGroup className="p-0 pt-2 mt-2">
                 <AccordionTrigger className="px-6 hover:no-underline py-2 opacity-70 hover:opacity-100 transition-opacity [&>svg]:text-white">
-                  <span className="text-xs font-medium text-sidebar-foreground uppercase tracking-wider">ניהול מערכת</span>
+                  <span className="text-xs font-medium text-white uppercase tracking-wider">ניהול מערכת</span>
                 </AccordionTrigger>
                 <AccordionContent>
                   <SidebarGroupContent className="px-2 pt-1">
@@ -208,7 +208,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
           </Accordion>
         ) : (
           <SidebarGroup className="p-0">
-            <span className="px-6 py-2 text-xs font-medium text-sidebar-foreground uppercase tracking-wider block opacity-70">תפריט ראשי</span>
+            <span className="px-6 py-2 text-xs font-medium text-white uppercase tracking-wider block opacity-70">תפריט ראשי</span>
             {mainMenuContent}
           </SidebarGroup>
         )}
