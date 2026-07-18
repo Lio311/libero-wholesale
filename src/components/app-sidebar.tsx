@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -56,6 +57,16 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
   const totalItems = useCartStore((state) => state.getTotalItems())
   const pathname = usePathname()
 
+  const [openItems, setOpenItems] = useState<string[]>(["main"]);
+
+  useEffect(() => {
+    if (pathname?.startsWith("/admin")) {
+      setOpenItems(["admin"]);
+    } else {
+      setOpenItems(["main"]);
+    }
+  }, [pathname]);
+
   const getButtonClass = (url: string) => {
     const isActive = pathname === url || (url !== "/" && url !== "/admin" && pathname !== "/admin" && pathname?.startsWith(`${url}/`));
     return `w-full justify-start text-right gap-3 px-4 py-2.5 rounded-xl transition-all ${
@@ -85,7 +96,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                   className={`group ${getButtonClass(item.url)}`}
                 >
                   <item.icon className={getIconClass(item.url)} />
-                  <span className={isActive ? "font-semibold text-white" : ""}>{item.title}</span>
+                  <span className={isActive ? "font-semibold text-white" : "group-hover:text-white transition-colors"}>{item.title}</span>
                   {totalItems > 0 && (
                     <span className="mr-auto bg-white text-black text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
                       {totalItems}
@@ -104,7 +115,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                   className={`group ${getButtonClass(item.url)}`}
                 >
                   <item.icon className={getIconClass(item.url)} />
-                  <span className={isActive ? "font-semibold text-white" : ""}>{item.title}</span>
+                  <span className={isActive ? "font-semibold text-white" : "group-hover:text-white transition-colors"}>{item.title}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </div>
@@ -121,7 +132,12 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
       </SidebarHeader>
       <SidebarContent className="pb-4" dir="rtl">
         {isAdmin ? (
-          <Accordion defaultValue={["admin"]} className="w-full space-y-2" dir="rtl">
+          <Accordion 
+            value={openItems} 
+            onValueChange={(val) => setOpenItems(val)} 
+            className="w-full space-y-2" 
+            dir="rtl"
+          >
             <AccordionItem value="main" className="border-none">
               <SidebarGroup className="p-0">
                 <AccordionTrigger className="px-6 hover:no-underline py-2 opacity-70 hover:opacity-100 transition-opacity [&>svg]:text-white">
@@ -147,7 +163,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                           className={`group ${getButtonClass("/admin")}`}
                         >
                           <Home className={getIconClass("/admin")} />
-                          <span className={pathname === "/admin" ? "font-semibold text-white" : ""}>לוח בקרה</span>
+                          <span className={pathname === "/admin" ? "font-semibold text-white" : "group-hover:text-white transition-colors"}>לוח בקרה</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
@@ -156,7 +172,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                           className={`group ${getButtonClass("/admin/orders")}`}
                         >
                           <ShoppingCart className={getIconClass("/admin/orders")} />
-                          <span className={pathname === "/admin/orders" ? "font-semibold text-white" : ""}>ניהול הזמנות</span>
+                          <span className={pathname === "/admin/orders" ? "font-semibold text-white" : "group-hover:text-white transition-colors"}>ניהול הזמנות</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
@@ -165,7 +181,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                           className={`group ${getButtonClass("/admin/products")}`}
                         >
                           <Box className={getIconClass("/admin/products")} />
-                          <span className={pathname === "/admin/products" ? "font-semibold text-white" : ""}>ניהול מוצרים</span>
+                          <span className={pathname === "/admin/products" ? "font-semibold text-white" : "group-hover:text-white transition-colors"}>ניהול מוצרים</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
@@ -174,7 +190,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                           className={`group ${getButtonClass("/admin/brands")}`}
                         >
                           <ShoppingBag className={getIconClass("/admin/brands")} />
-                          <span className={pathname === "/admin/brands" ? "font-semibold text-white" : ""}>ניהול מותגים</span>
+                          <span className={pathname === "/admin/brands" ? "font-semibold text-white" : "group-hover:text-white transition-colors"}>ניהול מותגים</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
@@ -183,7 +199,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                           className={`group ${getButtonClass("/admin/stores")}`}
                         >
                           <User className={getIconClass("/admin/stores")} />
-                          <span className={pathname === "/admin/stores" ? "font-semibold text-white" : ""}>ניהול לקוחות</span>
+                          <span className={pathname === "/admin/stores" ? "font-semibold text-white" : "group-hover:text-white transition-colors"}>ניהול לקוחות</span>
                           {pendingStoresCount > 0 && (
                             <span className="mr-auto bg-destructive text-destructive-foreground text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
                               {pendingStoresCount}
@@ -197,7 +213,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                           className={`group ${getButtonClass("/admin/settings")}`}
                         >
                           <Settings className={getIconClass("/admin/settings")} />
-                          <span className={pathname === "/admin/settings" ? "font-semibold text-white" : ""}>הגדרות עסק</span>
+                          <span className={pathname === "/admin/settings" ? "font-semibold text-white" : "group-hover:text-white transition-colors"}>הגדרות עסק</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     </SidebarMenu>
