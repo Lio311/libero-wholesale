@@ -18,6 +18,7 @@ interface UserRow {
   lastName: string;
   email: string;
   role: string;
+  isSuperAdmin?: boolean;
   createdAt: Date;
   imageUrl: string;
 }
@@ -154,12 +155,12 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                           )}
                         </TableCell>
                         <TableCell className="text-center">
-                          <div className="flex items-center gap-2">
+                          <div className="flex flex-wrap items-center justify-center gap-2">
                             {userStore && userStore.status === 'pending' && (
                               <Button 
                                 variant="outline" 
                                 size="sm" 
-                                className="w-full text-green-400 hover:text-green-500 hover:bg-green-500/10 border-green-500/20"
+                                className="text-green-400 hover:text-green-500 hover:bg-green-500/10 border-green-500/20 whitespace-nowrap"
                                 onClick={() => handleApproveStore(userStore.id)}
                                 disabled={isPending}
                               >
@@ -167,25 +168,37 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                                 אשר עסק
                               </Button>
                             )}
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className={`w-full ${isAdmin ? 'text-orange-400 hover:text-orange-500 hover:bg-orange-500/10 border-orange-500/20' : 'text-blue-400 hover:text-blue-500 hover:bg-blue-500/10 border-blue-500/20'}`}
-                              onClick={() => handleToggleRole(user.id, user.role)}
-                              disabled={isPending}
-                            >
-                              {isAdmin ? (
-                                <>
-                                  <ShieldAlert className="h-4 w-4 ml-2" />
-                                  הסר ניהול
-                                </>
-                              ) : (
-                                <>
-                                  <ShieldCheck className="h-4 w-4 ml-2" />
-                                  הפוך למנהל
-                                </>
-                              )}
-                            </Button>
+                            {user.isSuperAdmin ? (
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="whitespace-nowrap text-muted-foreground border-border cursor-not-allowed opacity-70"
+                                disabled
+                              >
+                                <ShieldAlert className="h-4 w-4 ml-2" />
+                                מנהל על
+                              </Button>
+                            ) : (
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className={`whitespace-nowrap ${isAdmin ? 'text-orange-400 hover:text-orange-500 hover:bg-orange-500/10 border-orange-500/20' : 'text-blue-400 hover:text-blue-500 hover:bg-blue-500/10 border-blue-500/20'}`}
+                                onClick={() => handleToggleRole(user.id, user.role)}
+                                disabled={isPending}
+                              >
+                                {isAdmin ? (
+                                  <>
+                                    <ShieldAlert className="h-4 w-4 ml-2" />
+                                    הסר ניהול
+                                  </>
+                                ) : (
+                                  <>
+                                    <ShieldCheck className="h-4 w-4 ml-2" />
+                                    הפוך למנהל
+                                  </>
+                                )}
+                              </Button>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>

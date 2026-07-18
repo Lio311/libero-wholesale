@@ -18,6 +18,7 @@ export default async function AdminStoresPage() {
     // checkIsAdmin internally checks current user, but also checks the email against hardcoded list and DB
     // To avoid current user side-effects masking other users, we use the fallback logic in checkIsAdmin which checks email
     const isActuallyAdmin = (user.publicMetadata.role === "admin") || await checkIsAdmin(email);
+    const isSuperAdmin = email.toLowerCase() === "lior31197@gmail.com";
     
     return {
       id: user.id,
@@ -25,6 +26,7 @@ export default async function AdminStoresPage() {
       lastName: user.lastName || "",
       email,
       role: isActuallyAdmin ? "admin" : "customer",
+      isSuperAdmin,
       createdAt: new Date(user.createdAt),
       imageUrl: user.imageUrl,
     };
