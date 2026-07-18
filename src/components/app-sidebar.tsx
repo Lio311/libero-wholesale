@@ -60,11 +60,13 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
   const [openItems, setOpenItems] = useState<string[]>(["main"]);
 
   useEffect(() => {
-    if (pathname?.startsWith("/admin")) {
-      setOpenItems(["admin"]);
-    } else {
-      setOpenItems(["main"]);
-    }
+    const targetValue = pathname?.startsWith("/admin") ? "admin" : "main";
+    setOpenItems((prev) => {
+      if (prev.length === 1 && prev[0] === targetValue) {
+        return prev;
+      }
+      return [targetValue];
+    });
   }, [pathname]);
 
   const getButtonClass = (url: string) => {
