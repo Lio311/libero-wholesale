@@ -61,22 +61,22 @@ export function CartSheet() {
                     {item.product.barcode && <span className="font-mono">{item.product.barcode}</span>}
                   </p>
                   
-                  <div className="flex items-center justify-between mt-2">
+                  <div className="flex items-center justify-between gap-3 mt-2">
                     <div className="flex items-center bg-muted/50 border border-border rounded-md">
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 rounded-none"
+                        className="h-6 w-6 sm:h-7 sm:w-7 rounded-none"
                         onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                         disabled={item.quantity <= (item.product.minOrderQty || 1)}
                       >
                         <Minus className="h-3 w-3" />
                       </Button>
-                      <span className="text-sm w-8 text-center font-mono">{item.quantity}</span>
+                      <span className="text-xs sm:text-sm w-6 sm:w-8 text-center font-mono">{item.quantity}</span>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 rounded-none"
+                        className="h-6 w-6 sm:h-7 sm:w-7 rounded-none"
                         onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
                         disabled={item.quantity >= item.product.stockQuantity}
                       >
@@ -91,7 +91,7 @@ export function CartSheet() {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-8 w-8 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors shrink-0"
                   onClick={() => removeItem(item.product.id)}
                 >
                   <Trash2 className="h-4 w-4" />
