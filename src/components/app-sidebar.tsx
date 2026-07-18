@@ -208,15 +208,6 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                           )}
                         </SidebarMenuButton>
                       </SidebarMenuItem>
-                      <SidebarMenuItem>
-                        <SidebarMenuButton 
-                          render={<Link href="/admin/settings" />}
-                          className={`group ${getButtonClass("/admin/settings")} !no-underline`}
-                        >
-                          <Settings className={getIconClass("/admin/settings")} />
-                          <span className={pathname === "/admin/settings" ? "font-semibold text-white" : ""}>הגדרות עסק</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
                     </SidebarMenu>
                   </SidebarGroupContent>
                 </AccordionContent>
