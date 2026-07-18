@@ -289,23 +289,23 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
             <Table className="w-full">
               <TableHeader>
                 <TableRow className="bg-muted/50 hover:bg-muted/50">
-                  <TableHead className="w-[60px] text-center px-1 md:px-4">תמונה</TableHead>
+                  <TableHead className="w-[45px] md:w-[80px] text-[10px] md:text-sm text-center px-0.5 md:px-4">תמונה</TableHead>
                   <TableHead className="hidden md:table-cell text-center cursor-pointer select-none" onClick={() => handleSort('barcode')}>
                     ברקוד <SortIcon activeDir={sortCol === 'barcode' ? sortDir : null} />
                   </TableHead>
-                  <TableHead className="text-center cursor-pointer select-none px-1 md:px-4" onClick={() => handleSort('name')}>
-                    שם המוצר <SortIcon activeDir={sortCol === 'name' ? sortDir : null} />
+                  <TableHead className="text-center text-[10px] md:text-sm cursor-pointer select-none px-1 md:px-4" onClick={() => handleSort('name')}>
+                    שם <SortIcon activeDir={sortCol === 'name' ? sortDir : null} />
                   </TableHead>
-                  <TableHead className="text-center px-1 md:px-4">
+                  <TableHead className="w-[40px] md:w-[80px] text-[10px] md:text-sm text-center px-0.5 md:px-4">
                     גודל
                   </TableHead>
                   <TableHead className="hidden md:table-cell text-center cursor-pointer select-none" onClick={() => handleSort('brand')}>
                     מותג <SortIcon activeDir={sortCol === 'brand' ? sortDir : null} />
                   </TableHead>
-                  <TableHead className="text-center cursor-pointer select-none px-1 md:px-4" onClick={() => handleSort('stock')}>
+                  <TableHead className="w-[40px] md:w-[80px] text-[10px] md:text-sm text-center cursor-pointer select-none px-0.5 md:px-4" onClick={() => handleSort('stock')}>
                     מלאי <SortIcon activeDir={sortCol === 'stock' ? sortDir : null} />
                   </TableHead>
-                  <TableHead className="text-center cursor-pointer select-none px-1 md:px-4" onClick={() => handleSort('price')}>
+                  <TableHead className="w-[60px] md:w-[100px] text-[10px] md:text-sm text-center cursor-pointer select-none px-0.5 md:px-4" onClick={() => handleSort('price')}>
                     מחיר <SortIcon activeDir={sortCol === 'price' ? sortDir : null} />
                   </TableHead>
                   <TableHead className="hidden md:table-cell text-center">כמות</TableHead>

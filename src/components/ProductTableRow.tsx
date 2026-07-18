@@ -36,9 +36,9 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
   return (
     <>
     <TableRow className="hover:bg-muted/50 group cursor-pointer md:cursor-default" onClick={toggleExpand}>
-      <TableCell className="p-1 md:p-2 text-center w-[60px] md:w-[80px]">
+      <TableCell className="p-0.5 md:p-2 text-center w-[45px] md:w-[80px]">
         <div 
-          className={`relative h-12 w-12 md:h-16 md:w-16 bg-white rounded-lg flex items-center justify-center overflow-hidden border border-border/50 mx-auto transition-transform hover:scale-105 ${onImageClick && product.imageUrl ? "cursor-pointer" : ""}`}
+          className={`relative h-10 w-10 md:h-16 md:w-16 bg-white rounded-lg flex items-center justify-center overflow-hidden border border-border/50 mx-auto transition-transform hover:scale-105 ${onImageClick && product.imageUrl ? "cursor-pointer" : ""}`}
           onClick={(e) => {
             e.stopPropagation();
             if (onImageClick && product.imageUrl) onImageClick(product.imageUrl);
@@ -52,12 +52,12 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
         </div>
       </TableCell>
       <TableCell className="hidden md:table-cell font-mono text-xs text-muted-foreground w-[120px] text-center">{product.barcode || "-"}</TableCell>
-      <TableCell className="max-w-[150px] md:max-w-[200px] xl:max-w-[300px] text-center px-1 md:px-4">
-        <div className="flex flex-col truncate pr-2 w-full max-w-[150px] sm:max-w-[200px] md:max-w-none">
+      <TableCell className="max-w-[130px] md:max-w-[200px] xl:max-w-[300px] text-center p-1 md:px-4">
+        <div className="flex flex-col truncate pr-0 md:pr-2 w-full">
           <span className="text-[10px] text-muted-foreground truncate w-full text-center" title={product.brandHe || product.brand || ""}>
             {product.brandHe || product.brand || "לא צוין מותג"}
           </span>
-          <span className="font-semibold text-[11px] md:text-sm truncate w-full" title={product.nameHe || product.name}>
+          <span className="font-semibold text-[11px] md:text-sm truncate w-full whitespace-normal line-clamp-2 md:line-clamp-none leading-tight" title={product.nameHe || product.name}>
             {product.nameHe || product.name}
           </span>
           <div className="flex flex-wrap items-center justify-center gap-1">
@@ -77,7 +77,7 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
           </div>
         </div>
       </TableCell>
-      <TableCell className="text-center font-mono text-xs w-[60px] md:w-[80px]">{product.size || "-"}</TableCell>
+      <TableCell className="text-center font-mono text-[10px] md:text-xs w-[40px] md:w-[80px] px-0.5 md:px-4">{product.size || "-"}</TableCell>
       <TableCell className="hidden md:table-cell px-1 md:px-4 text-center">
         {brandLogo ? (
           <div className="h-12 w-24 mx-auto relative flex items-center justify-center">
@@ -87,16 +87,16 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
           <span className="text-sm truncate max-w-[120px] inline-block">{product.brandHe || product.brand || '-'}</span>
         )}
       </TableCell>
-      <TableCell className="text-center font-medium w-[60px] md:w-[80px] text-xs md:text-sm">{product.stockQuantity}</TableCell>
-      <TableCell className="text-center w-[80px] md:w-[100px]">
+      <TableCell className="text-center font-medium w-[40px] md:w-[80px] text-[11px] md:text-sm px-0.5 md:px-4">{product.stockQuantity}</TableCell>
+      <TableCell className="text-center w-[60px] md:w-[100px] px-0.5 md:px-4">
         <div className="flex flex-col items-center">
           {product.priceDropPrice ? (
             <>
-              <span className="font-bold text-red-500 text-xs md:text-base">₪{Number(product.priceDropPrice).toFixed(2)}</span>
+              <span className="font-bold text-[11px] md:text-base text-red-500">₪{Number(product.priceDropPrice).toFixed(2)}</span>
               <span className="text-[9px] md:text-[10px] text-muted-foreground line-through">₪{Number(product.price).toFixed(2)}</span>
             </>
           ) : (
-            <span className="font-bold text-xs md:text-base">₪{Number(product.price).toFixed(2)}</span>
+            <span className="font-bold text-[11px] md:text-base">₪{Number(product.price).toFixed(2)}</span>
           )}
         </div>
       </TableCell>

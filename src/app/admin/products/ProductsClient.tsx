@@ -151,16 +151,16 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
               <TableHeader className="bg-muted/50">
                 <TableRow className="border-border">
                   <TableHead className="text-center w-[60px] px-2">תמונה</TableHead>
-                  <TableHead className="text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("barcode")}>
+                  <TableHead className="hidden md:table-cell text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("barcode")}>
                     מק״ט / ברקוד <SortIcon columnKey="barcode" />
                   </TableHead>
                   <TableHead className="text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("name")}>
                     שם <SortIcon columnKey="name" />
                   </TableHead>
-                  <TableHead className="text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("size")}>
+                  <TableHead className="hidden md:table-cell text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("size")}>
                     גודל <SortIcon columnKey="size" />
                   </TableHead>
-                  <TableHead className="text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("brand")}>
+                  <TableHead className="hidden md:table-cell text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("brand")}>
                     מותג <SortIcon columnKey="brand" />
                   </TableHead>
                   <TableHead className="text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("stockQuantity")}>
@@ -194,7 +194,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="font-mono text-xs text-center">{product.barcode || '-'}</TableCell>
+                      <TableCell className="hidden md:table-cell font-mono text-xs text-center">{product.barcode || '-'}</TableCell>
                       <TableCell className="font-medium text-center">
                         <div className="flex flex-col items-center">
                           <span className="flex items-center gap-2 justify-center">
@@ -203,8 +203,8 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-sm text-center">{product.size || '-'}</TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="hidden md:table-cell text-muted-foreground text-sm text-center">{product.size || '-'}</TableCell>
+                      <TableCell className="hidden md:table-cell text-center">
                         {(() => {
                           const matchingBrand = brands.find(b => b.name === product.brand || b.nameHe === product.brand);
                           if (matchingBrand?.logoUrl) {

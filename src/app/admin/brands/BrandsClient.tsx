@@ -84,7 +84,7 @@ export function BrandsClient({ initialBrands }: { initialBrands: Brand[] }) {
             <TableRow className="hover:bg-transparent">
               <TableHead className="text-center whitespace-nowrap">לוגו</TableHead>
               <TableHead className="text-center whitespace-nowrap">שם (אנגלית)</TableHead>
-              <TableHead className="text-center whitespace-nowrap">שם (עברית)</TableHead>
+              <TableHead className="hidden md:table-cell text-center whitespace-nowrap">שם (עברית)</TableHead>
               <TableHead className="text-center whitespace-nowrap">פעולות</TableHead>
             </TableRow>
           </TableHeader>
@@ -103,7 +103,7 @@ export function BrandsClient({ initialBrands }: { initialBrands: Brand[] }) {
                   )}
                 </TableCell>
                 <TableCell className="font-medium text-center">{brand.name}</TableCell>
-                <TableCell className="text-center">{brand.nameHe || "-"}</TableCell>
+                <TableCell className="hidden md:table-cell text-center">{brand.nameHe || "-"}</TableCell>
                 <TableCell className="text-center">
                   <div className="flex items-center justify-center gap-2 transition-opacity">
                     <Button
