@@ -88,16 +88,16 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
           <CardDescription>סה״כ {filteredUsers.length} משתמשים במערכת</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border border-border overflow-hidden">
-            <Table>
+          <div className="rounded-md border border-border overflow-x-auto">
+            <Table className="w-full">
               <TableHeader className="bg-muted/50">
                 <TableRow className="border-border">
                   <TableHead className="text-right">משתמש</TableHead>
-                  <TableHead className="text-right">אימייל</TableHead>
-                  <TableHead className="text-right">תאריך הרשמה</TableHead>
-                  <TableHead className="text-right">הרשאה (Role)</TableHead>
+                  <TableHead className="text-right hidden md:table-cell">אימייל</TableHead>
+                  <TableHead className="text-right hidden md:table-cell">תאריך</TableHead>
+                  <TableHead className="text-right">הרשאה</TableHead>
                   <TableHead className="text-right">בקשת עסק</TableHead>
-                  <TableHead className="text-center w-[200px]">פעולות</TableHead>
+                  <TableHead className="text-center w-[150px]">פעולות</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -126,10 +126,10 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="hidden md:table-cell">
                           <span className="text-muted-foreground">{user.email}</span>
                         </TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
+                        <TableCell className="text-muted-foreground text-sm hidden md:table-cell">
                           {format(new Date(user.createdAt), "dd/MM/yyyy")}
                         </TableCell>
                         <TableCell>

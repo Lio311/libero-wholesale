@@ -302,14 +302,14 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
 
   return (
     <div className="w-full space-y-6">
-      <div className="border border-border rounded-xl overflow-hidden bg-card/30 backdrop-blur-md">
-        <Table>
+      <div className="border border-border rounded-xl overflow-x-auto bg-card/30 backdrop-blur-md">
+        <Table className="w-full">
           <TableHeader className="bg-muted/50">
             <TableRow className="border-border hover:bg-transparent">
               <TableHead className="w-[100px] text-right">מספר הזמנה</TableHead>
               <TableHead className="text-right">לקוח / חנות</TableHead>
-              <TableHead className="text-right">תאריך</TableHead>
-              <TableHead className="text-center">פריטים</TableHead>
+              <TableHead className="text-right hidden md:table-cell">תאריך</TableHead>
+              <TableHead className="text-center hidden md:table-cell">פריטים</TableHead>
               <TableHead className="text-right">סטטוס</TableHead>
               <TableHead className="text-left">סכום כולל</TableHead>
               <TableHead className="w-[100px] text-center">פעולות</TableHead>
@@ -335,10 +335,10 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                     <div className="font-medium">{order.store?.name || "לקוח מזדמן"}</div>
                     {order.store?.contactName && <div className="text-xs text-muted-foreground">{order.store.contactName}</div>}
                   </TableCell>
-                  <TableCell className="text-muted-foreground cursor-pointer" onClick={() => handleOpenOrder(order)}>
+                  <TableCell className="text-muted-foreground cursor-pointer hidden md:table-cell" onClick={() => handleOpenOrder(order)}>
                     {format(new Date(order.createdAt), "dd/MM/yyyy HH:mm")}
                   </TableCell>
-                  <TableCell className="text-center text-muted-foreground cursor-pointer" onClick={() => handleOpenOrder(order)}>
+                  <TableCell className="text-center text-muted-foreground cursor-pointer hidden md:table-cell" onClick={() => handleOpenOrder(order)}>
                     {order.itemsCount}
                   </TableCell>
                   <TableCell>
@@ -475,7 +475,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
               </div>
 
               <div className="border border-border rounded-xl overflow-x-auto relative z-10">
-                <Table className="min-w-[800px]">
+                <Table className="w-full min-w-[500px] md:min-w-full">
                   <TableHeader className="bg-muted/50">
                     <TableRow className="hover:bg-transparent">
                       <TableHead className="w-16 text-center">תמונה</TableHead>

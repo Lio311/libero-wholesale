@@ -146,8 +146,8 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
         </CardHeader>
         <CardContent className="p-0 sm:p-6 overflow-hidden">
           <div className="overflow-x-auto w-full">
-            <div className="rounded-md border border-border min-w-[800px]">
-              <Table>
+            <div className="rounded-md border border-border">
+              <Table className="w-full">
               <TableHeader className="bg-muted/50">
                 <TableRow className="border-border">
                   <TableHead className="text-center w-[60px] px-2">תמונה</TableHead>
