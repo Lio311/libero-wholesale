@@ -57,76 +57,82 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
   const pathname = usePathname()
 
   const getButtonClass = (url: string) => {
-    const isActive = pathname === url || (url !== "/" && url !== "/admin" && pathname !== "/admin" && pathname?.startsWith(`${url}/`))
-    return `transition-all duration-300 ease-out rounded-xl my-1 h-12 flex items-center px-4 w-full text-right ${
+    const isActive = pathname === url || (url !== "/" && url !== "/admin" && pathname !== "/admin" && pathname?.startsWith(`${url}/`));
+    return `w-full justify-start text-right gap-3 px-4 py-2.5 rounded-xl transition-all ${
       isActive 
-        ? "bg-black/5 dark:bg-white/10 font-medium text-foreground shadow-sm" 
-        : "hover:bg-black/5 dark:hover:bg-white/10 text-muted-foreground hover:text-foreground"
-    }`
-  }
+        ? "bg-white/10 text-white shadow-md font-semibold" 
+        : "text-zinc-400 hover:text-white hover:bg-white/5"
+    }`;
+  };
 
   const getIconClass = (url: string) => {
-    const isActive = pathname === url || (url !== "/" && url !== "/admin" && pathname !== "/admin" && pathname?.startsWith(`${url}/`))
-    return `transition-colors ${isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"}`
-  }
+    const isActive = pathname === url || (url !== "/" && url !== "/admin" && pathname !== "/admin" && pathname?.startsWith(`${url}/`));
+    return `w-5 h-5 transition-transform group-hover:scale-110 ${
+      isActive ? "text-white" : "text-zinc-400 group-hover:text-white"
+    }`;
+  };
+
+  const mainMenuContent = (
+    <SidebarGroupContent className="px-2 pt-1">
+      <SidebarMenu>
+        {items.map((item) => {
+          const isActive = pathname === item.url || (item.url !== "/" && item.url !== "/admin" && pathname !== "/admin" && pathname?.startsWith(`${item.url}/`));
+          if (item.url === "/cart") {
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton 
+                  onClick={() => setIsOpen(true)}
+                  className={`group ${getButtonClass(item.url)}`}
+                >
+                  <item.icon className={getIconClass(item.url)} />
+                  <span className={isActive ? "font-semibold text-foreground" : ""}>{item.title}</span>
+                  {totalItems > 0 && (
+                    <span className="mr-auto bg-white text-black text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
+                      {totalItems}
+                    </span>
+                  )}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )
+          }
+          
+          return (
+            <div key={item.title}>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  render={<a href={item.url} />}
+                  className={`group ${getButtonClass(item.url)}`}
+                >
+                  <item.icon className={getIconClass(item.url)} />
+                  <span className={isActive ? "font-semibold text-foreground" : ""}>{item.title}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </div>
+          )
+        })}
+      </SidebarMenu>
+    </SidebarGroupContent>
+  );
 
   return (
-    <Sidebar side="right" className="dark border-l-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-      <SidebarHeader className="p-4 hidden md:flex items-center justify-center">
+    <Sidebar className="border-l border-white/10 bg-zinc-950 text-white" side="right">
+      <SidebarHeader className="p-4 flex items-center justify-center border-b border-white/10 bg-black/10">
         <img src="/libero-w-white.png" alt="Libero Wholesale" className="w-[90%] h-auto object-contain drop-shadow-sm" />
       </SidebarHeader>
-      <SidebarContent className="pb-4">
-        <Accordion defaultValue={[isAdmin ? "admin" : "main"]} className="w-full space-y-2">
-          <AccordionItem value="main" className="border-none">
-            <SidebarGroup className="p-0">
-              <AccordionTrigger className="px-6 hover:no-underline py-2 opacity-70 hover:opacity-100 transition-opacity [&>svg]:text-white">
-                <span className="text-xs font-medium text-sidebar-foreground uppercase tracking-wider">תפריט ראשי</span>
-              </AccordionTrigger>
-              <AccordionContent>
-                <SidebarGroupContent className="px-2 pt-1">
-                  <SidebarMenu>
-                    {items.map((item) => {
-                      const isActive = pathname === item.url || (item.url !== "/" && item.url !== "/admin" && pathname !== "/admin" && pathname?.startsWith(`${item.url}/`));
-                      if (item.url === "/cart") {
-                        return (
-                          <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton 
-                              onClick={() => setIsOpen(true)}
-                              className={`group ${getButtonClass(item.url)}`}
-                            >
-                              <item.icon className={getIconClass(item.url)} />
-                              <span className={isActive ? "font-semibold text-foreground" : ""}>{item.title}</span>
-                              {totalItems > 0 && (
-                                <span className="mr-auto bg-white text-black text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
-                                  {totalItems}
-                                </span>
-                              )}
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        )
-                      }
-                      
-                      return (
-                        <div key={item.title}>
-                          <SidebarMenuItem>
-                            <SidebarMenuButton 
-                              render={<a href={item.url} />}
-                              className={`group ${getButtonClass(item.url)}`}
-                            >
-                              <item.icon className={getIconClass(item.url)} />
-                              <span className={isActive ? "font-semibold text-foreground" : ""}>{item.title}</span>
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        </div>
-                      )
-                    })}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </AccordionContent>
-            </SidebarGroup>
-          </AccordionItem>
+      <SidebarContent className="pb-4" dir="rtl">
+        {isAdmin ? (
+          <Accordion defaultValue={["admin"]} className="w-full space-y-2" dir="rtl">
+            <AccordionItem value="main" className="border-none">
+              <SidebarGroup className="p-0">
+                <AccordionTrigger className="px-6 hover:no-underline py-2 opacity-70 hover:opacity-100 transition-opacity [&>svg]:text-white">
+                  <span className="text-xs font-medium text-sidebar-foreground uppercase tracking-wider">תפריט ראשי</span>
+                </AccordionTrigger>
+                <AccordionContent>
+                  {mainMenuContent}
+                </AccordionContent>
+              </SidebarGroup>
+            </AccordionItem>
 
-          {isAdmin && (
             <AccordionItem value="admin" className="border-none border-t border-border/50">
               <SidebarGroup className="p-0 pt-2 mt-2">
                 <AccordionTrigger className="px-6 hover:no-underline py-2 opacity-70 hover:opacity-100 transition-opacity [&>svg]:text-white">
@@ -199,8 +205,13 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                 </AccordionContent>
               </SidebarGroup>
             </AccordionItem>
-          )}
-        </Accordion>
+          </Accordion>
+        ) : (
+          <SidebarGroup className="p-0">
+            <span className="px-6 py-2 text-xs font-medium text-sidebar-foreground uppercase tracking-wider block opacity-70">תפריט ראשי</span>
+            {mainMenuContent}
+          </SidebarGroup>
+        )}
       </SidebarContent>
       <SidebarFooter className="p-4 border-t border-white/10 mt-auto bg-black/20 [&_.cl-userButtonOuterIdentifier]:!text-white [&_.cl-userButtonOuterIdentifier]:font-medium [&_.cl-userButtonOuterIdentifier]:ml-2">
         <div className="flex items-center justify-center text-foreground px-2 py-2">
