@@ -169,8 +169,8 @@ export function CatalogClient({ initialProducts, brands = [] }: CatalogClientPro
           valA = a.barcode || "";
           valB = b.barcode || "";
         } else if (sortCol === 'size') {
-          valA = a.size || "";
-          valB = b.size || "";
+          valA = parseFloat(a.size || "") || 0;
+          valB = parseFloat(b.size || "") || 0;
         }
 
         if (valA < valB) return sortDir === 'asc' ? -1 : 1;

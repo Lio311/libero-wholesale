@@ -57,16 +57,21 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (!sortConfig) return 0;
     
-    const aValue = a[sortConfig.key];
-    const bValue = b[sortConfig.key];
+    let valA: any = a[sortConfig.key];
+    let valB: any = b[sortConfig.key];
 
-    if (aValue === null || aValue === undefined) return sortConfig.direction === "asc" ? 1 : -1;
-    if (bValue === null || bValue === undefined) return sortConfig.direction === "asc" ? -1 : 1;
+    if (sortConfig.key === "size") {
+      valA = parseFloat(valA as string) || 0;
+      valB = parseFloat(valB as string) || 0;
+    }
 
-    if (aValue < bValue) {
+    if (valA === null || valA === undefined) return sortConfig.direction === "asc" ? 1 : -1;
+    if (valB === null || valB === undefined) return sortConfig.direction === "asc" ? -1 : 1;
+
+    if (valA < valB) {
       return sortConfig.direction === "asc" ? -1 : 1;
     }
-    if (aValue > bValue) {
+    if (valA > valB) {
       return sortConfig.direction === "asc" ? 1 : -1;
     }
     return 0;
@@ -150,7 +155,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
               <Table className="w-full">
               <TableHeader className="bg-muted/50">
                 <TableRow className="border-border">
-                  <TableHead className="text-center w-[60px] px-2">תמונה</TableHead>
+                  <TableHead className="text-center w-[50px] md:w-[60px] px-1 md:px-2">תמונה</TableHead>
                   <TableHead className="hidden md:table-cell text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("barcode")}>
                     מק״ט / ברקוד <SortIcon columnKey="barcode" />
                   </TableHead>
@@ -163,13 +168,13 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                   <TableHead className="hidden md:table-cell text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("brand")}>
                     מותג <SortIcon columnKey="brand" />
                   </TableHead>
-                  <TableHead className="text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("stockQuantity")}>
+                  <TableHead className="hidden md:table-cell text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("stockQuantity")}>
                     מלאי <SortIcon columnKey="stockQuantity" />
                   </TableHead>
-                  <TableHead className="text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("price")}>
+                  <TableHead className="hidden md:table-cell text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("price")}>
                     <span className="hidden md:inline">מחיר סיטונאי</span><span className="md:hidden">מחיר</span> <SortIcon columnKey="price" />
                   </TableHead>
-                  <TableHead className="text-center w-[100px]">פעולות</TableHead>
+                  <TableHead className="text-center w-[70px] md:w-[100px] px-0 md:px-2">פעולות</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -180,9 +185,9 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                 ) : (
                   sortedProducts.map((product) => (
                     <TableRow key={product.id} className={`border-border hover:bg-muted/20 transition-colors ${product.isDraft ? "opacity-50 grayscale-[50%]" : ""}`}>
-                      <TableCell className="p-1 px-2 text-center">
+                      <TableCell className="p-1 md:px-2 text-center">
                         <div 
-                          className={`h-12 w-12 bg-white rounded-md flex items-center justify-center overflow-hidden border border-border/50 mx-auto relative ${product.imageUrl ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+                          className={`h-10 w-10 md:h-12 md:w-12 bg-white rounded-md flex items-center justify-center overflow-hidden border border-border/50 mx-auto relative ${product.imageUrl ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
                           onClick={() => {
                             if (product.imageUrl) setSelectedImage(product.imageUrl);
                           }}
@@ -195,12 +200,16 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                         </div>
                       </TableCell>
                       <TableCell className="hidden md:table-cell font-mono text-xs text-center">{product.barcode || '-'}</TableCell>
-                      <TableCell className="font-medium text-center">
+                      <TableCell className="font-medium text-center p-1 md:p-2">
                         <div className="flex flex-col items-center">
-                          <span className="flex items-center gap-2 justify-center">
+                          <span className="flex items-center gap-2 justify-center text-sm md:text-base">
                             {product.name}
                             {product.isDraft && <Badge variant="secondary" className="h-5 px-1 text-[10px]">טיוטה</Badge>}
                           </span>
+                          <div className="md:hidden flex flex-col items-center mt-1 text-xs text-muted-foreground space-y-0.5">
+                            <span className="font-bold text-primary">₪{Number(product.price).toFixed(2)}</span>
+                            <span>מלאי: {product.stockQuantity}</span>
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell className="hidden md:table-cell text-muted-foreground text-sm text-center">{product.size || '-'}</TableCell>
@@ -217,20 +226,20 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                           return product.brand || '-';
                         })()}
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="hidden md:table-cell text-center">
                         <div className="flex items-center justify-center gap-2">
                           {product.stockQuantity}
                           {product.stockQuantity < 10 && <Badge variant="destructive" className="hidden md:inline-flex h-5 px-1 text-[10px]">מלאי נמוך</Badge>}
                         </div>
                       </TableCell>
-                      <TableCell className="text-center font-mono font-bold text-primary">₪{Number(product.price).toFixed(2)}</TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <Button onClick={() => handleEdit(product)} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                            <Edit className="h-4 w-4" />
+                      <TableCell className="hidden md:table-cell text-center font-mono font-bold text-primary">₪{Number(product.price).toFixed(2)}</TableCell>
+                      <TableCell className="text-center p-1 md:p-2">
+                        <div className="flex items-center justify-center gap-1 md:gap-2">
+                          <Button onClick={() => handleEdit(product)} variant="ghost" size="icon" className="h-7 w-7 md:h-8 md:w-8 text-muted-foreground hover:text-foreground">
+                            <Edit className="h-3 w-3 md:h-4 md:w-4" />
                           </Button>
-                          <Button onClick={() => handleDelete(product.id)} disabled={isDeleting === product.id} variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
-                            {isDeleting === product.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                          <Button onClick={() => handleDelete(product.id)} disabled={isDeleting === product.id} variant="ghost" size="icon" className="h-7 w-7 md:h-8 md:w-8 text-muted-foreground hover:text-destructive">
+                            {isDeleting === product.id ? <Loader2 className="h-3 w-3 md:h-4 md:w-4 animate-spin" /> : <Trash2 className="h-3 w-3 md:h-4 md:w-4" />}
                           </Button>
                         </div>
                       </TableCell>
