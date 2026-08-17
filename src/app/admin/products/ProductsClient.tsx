@@ -293,7 +293,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                           <div className="md:hidden flex flex-col items-center mt-1 text-xs text-muted-foreground space-y-0.5">
                             <span className="font-bold text-primary">₪{Number(product.price).toFixed(2)}</span>
                             <span className="flex items-center justify-center gap-1">
-                              מלאי: {product.stockQuantity}
+                              מלאי: <span dir="ltr" className="inline-block">{product.stockQuantity}</span>
                               {product.isSynced ? (
                                 <span title="מסונכרן מול WooCommerce"><CheckCircle2 className="h-3 w-3 text-green-500" /></span>
                               ) : (
@@ -320,7 +320,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                       <TableCell className="hidden md:table-cell text-center">
                         <div className="flex items-center justify-center gap-2">
                           <span className="flex items-center gap-1">
-                            {product.stockQuantity}
+                            <span dir="ltr" className="inline-block">{product.stockQuantity}</span>
                             {product.isSynced ? (
                               <span title="מסונכרן מול WooCommerce"><CheckCircle2 className="h-4 w-4 text-green-500" /></span>
                             ) : (
