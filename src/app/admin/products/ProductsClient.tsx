@@ -209,7 +209,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
               <Table className="w-full">
               <TableHeader className="bg-muted/50">
                 <TableRow className="border-border">
-                  <TableHead className="w-[40px] px-2 text-center">
+                  <TableHead className="w-[50px] pr-4 pl-2 text-center">
                     <Checkbox checked={isAllSelected} onCheckedChange={toggleAll} aria-label="בחר הכל" />
                   </TableHead>
                   <TableHead className="text-center w-[50px] md:w-[60px] px-1 md:px-2">תמונה</TableHead>
@@ -242,7 +242,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                 ) : (
                   sortedProducts.map((product) => (
                     <TableRow key={product.id} className={`border-border hover:bg-muted/20 transition-colors ${product.isDraft ? "opacity-50 grayscale-[50%]" : ""}`}>
-                      <TableCell className="px-2 text-center">
+                      <TableCell className="pr-4 pl-2 text-center">
                         <Checkbox checked={selectedIds.includes(product.id)} onCheckedChange={() => toggleOne(product.id)} aria-label={`בחר ${product.name}`} />
                       </TableCell>
                       <TableCell className="p-1 md:px-2 text-center">
