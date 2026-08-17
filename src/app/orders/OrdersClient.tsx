@@ -1,6 +1,5 @@
 "use client";
 
-import { ExportExcelButton } from "@/components/ExportExcelButton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FileDown } from "lucide-react";
@@ -54,32 +53,6 @@ interface OrdersClientProps {
 
 export function OrdersClient({ orders }: OrdersClientProps) {
   const [selectedOrder, setSelectedOrder] = useState<OrderRow | null>(null);
-  
-  // Format for Excel Export
-  const excelColumns = [
-    { header: "מספר הזמנה", key: "orderNumber", width: 15 },
-    { header: "תאריך", key: "date", width: 20 },
-    { header: "סטטוס", key: "status", width: 15 },
-    { header: "כמות פריטים", key: "itemsCount", width: 15 },
-    { header: "סכום כולל (₪)", key: "totalAmount", width: 20 },
-    { header: "מספר קומקס", key: "comaxRef", width: 20 },
-    { header: "פירוט פריטים", key: "itemsSummary", width: 60 },
-  ];
-
-  const excelData = orders.map(order => ({
-    orderNumber: order.orderNumber,
-    date: format(new Date(order.createdAt), "dd/MM/yyyy HH:mm"),
-    status: order.status === "pending" ? "ממתין" : 
-            order.status === "processing" ? "בטיפול" : 
-            order.status === "shipped" ? "נשלח" : 
-            order.status === "delivered" ? "נמסר" : "בוטל",
-    itemsCount: order.itemsCount,
-    totalAmount: Number(order.totalAmount).toFixed(2),
-    comaxRef: order.comaxRef || "לא קיים",
-    itemsSummary: order.orderItems?.map(item => 
-      `${item.quantity} x ${item.product.nameHe || item.product.name} (₪${Number(item.unitPrice).toFixed(2)})`
-    ).join("\n") || "אין פירוט",
-  }));
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -98,12 +71,6 @@ export function OrdersClient({ orders }: OrdersClientProps) {
         <div className="text-sm text-muted-foreground font-mono">
           נמצאו {orders.length} הזמנות
         </div>
-        <ExportExcelButton 
-          data={excelData} 
-          columns={excelColumns} 
-          filename="Libero_Orders_History" 
-          sheetName="היסטוריית הזמנות"
-        />
       </div>
 
       <div className="border border-border rounded-xl overflow-hidden bg-card/30 backdrop-blur-md">
