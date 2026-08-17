@@ -87,7 +87,9 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
           <span className="text-sm truncate max-w-[120px] inline-block">{product.brandHe || product.brand || '-'}</span>
         )}
       </TableCell>
-      <TableCell className="text-center font-medium w-[40px] md:w-[80px] text-[11px] md:text-sm px-0.5 md:px-4">{product.stockQuantity}</TableCell>
+      <TableCell className="text-center font-medium w-[40px] md:w-[80px] text-[11px] md:text-sm px-0.5 md:px-4">
+        <span dir="ltr" className="inline-block">{product.stockQuantity}</span>
+      </TableCell>
       <TableCell className="text-center w-[60px] md:w-[100px] px-0.5 md:px-4">
         <div className="flex flex-col items-center">
           {product.priceDropPrice ? (
