@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 export function CheckoutForm({ store }: { store: any }) {
-  const { items, getTotalPrice, clearCart } = useCartStore();
+  const { items, getSubtotalPrice, getVatAmount, getTotalPrice, clearCart } = useCartStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -132,10 +132,22 @@ export function CheckoutForm({ store }: { store: any }) {
           ))}
         </div>
 
+        <Separator className="mb-4 bg-border/60" />
+
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-muted-foreground">סכום ביניים</span>
+          <span className="font-mono font-medium">₪{getSubtotalPrice().toFixed(2)}</span>
+        </div>
+        
+        <div className="flex justify-between items-center mb-4">
+          <span className="text-muted-foreground">מע"מ (18%)</span>
+          <span className="font-mono font-medium">₪{getVatAmount().toFixed(2)}</span>
+        </div>
+
         <Separator className="mb-6 bg-border/60" />
 
         <div className="flex justify-between items-center mb-8">
-          <span className="font-bold text-lg">סה״כ לתשלום</span>
+          <span className="font-bold text-lg">סה״כ לתשלום (כולל מע"מ)</span>
           <span className="text-3xl font-bold font-mono text-primary">₪{getTotalPrice().toFixed(2)}</span>
         </div>
 

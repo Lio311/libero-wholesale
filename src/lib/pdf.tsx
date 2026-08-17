@@ -164,6 +164,14 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
       <View style={styles.totalSection}>
         <View style={styles.totalBox}>
           <View style={styles.row}>
+            <Text style={{ fontWeight: 'normal' }}>סכום ביניים:</Text>
+            <Text style={{ fontWeight: 'normal' }}>₪{(Number(order.totalAmount) / 1.18).toFixed(2)}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={{ fontWeight: 'normal' }}>מע"מ (18%):</Text>
+            <Text style={{ fontWeight: 'normal' }}>₪{(Number(order.totalAmount) - (Number(order.totalAmount) / 1.18)).toFixed(2)}</Text>
+          </View>
+          <View style={[styles.row, { marginTop: 5, borderTop: '1px solid #e4e4e7', paddingTop: 5 }]}>
             <Text style={{ fontWeight: 'bold' }}>סה"כ לתשלום (כולל מע"מ):</Text>
             <Text style={{ fontWeight: 'bold' }}>₪{Number(order.totalAmount).toFixed(2)}</Text>
           </View>

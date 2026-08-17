@@ -1,0 +1,1 @@
+ALTER TABLE "products" ADD COLUMN "is_synced" boolean DEFAULT false NOT NULL;

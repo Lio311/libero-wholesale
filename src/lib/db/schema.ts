@@ -69,6 +69,7 @@ export const products = pgTable('products', {
   testerRatio: integer('tester_ratio'),
   status: productStatusEnum('status').default('active').notNull(),
   isDraft: boolean('is_draft').default(false).notNull(),
+  isSynced: boolean('is_synced').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

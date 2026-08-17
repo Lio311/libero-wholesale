@@ -18,13 +18,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing customer details" }, { status: 400 });
     }
 
-    // Calculate total
-    let totalAmount = 0;
+    let subTotal = 0;
     const itemsCount = items.length;
 
     for (const item of items) {
-      totalAmount += Number(item.product.price) * item.quantity;
+      subTotal += Number(item.product.price) * item.quantity;
     }
+    
+    const totalAmount = subTotal * 1.18;
 
     // Create order
     const [newOrder] = await db.insert(orders).values({

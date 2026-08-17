@@ -16,6 +16,8 @@ interface CartState {
   clearCart: () => void;
   setIsOpen: (isOpen: boolean) => void;
   getTotalItems: () => number;
+  getSubtotalPrice: () => number;
+  getVatAmount: () => number;
   getTotalPrice: () => number;
 }
 
@@ -75,8 +77,10 @@ export const useCartStore = create<CartState>()(
       clearCart: () => set({ items: [] }),
       setIsOpen: (isOpen) => set({ isOpen }),
       getTotalItems: () => get().items.reduce((total, item) => total + item.quantity, 0),
-      getTotalPrice: () =>
+      getSubtotalPrice: () =>
         get().items.reduce((total, item) => total + (Number(item.product.price) * item.quantity), 0),
+      getVatAmount: () => get().getSubtotalPrice() * 0.18,
+      getTotalPrice: () => get().getSubtotalPrice() * 1.18,
     }),
     {
       name: 'libero-cart-storage',

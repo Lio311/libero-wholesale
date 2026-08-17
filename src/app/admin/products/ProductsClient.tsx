@@ -7,10 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, MoreHorizontal, Edit, Trash2, Loader2, ArrowUpDown, ArrowUp, ArrowDown, Image as ImageIcon } from "lucide-react";
+import { Search, Plus, MoreHorizontal, Edit, Trash2, Loader2, ArrowUpDown, ArrowUp, ArrowDown, Image as ImageIcon, CheckCircle2 } from "lucide-react";
 import { ProductDialog } from "./ProductDialog";
 import { ImageModal } from "@/components/ImageModal";
 import { deleteProduct } from "./actions";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
 interface ProductRow {
@@ -22,9 +23,9 @@ interface ProductRow {
   price: string | number;
   stockQuantity: number;
   status: string;
-  imageUrl: string | null;
   size?: string | null;
   isDraft?: boolean;
+  isSynced?: boolean;
 }
 
 interface Brand {
@@ -47,12 +48,19 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const [sortConfig, setSortConfig] = useState<{ key: keyof ProductRow; direction: "asc" | "desc" } | null>(null);
+  const [filterDraft, setFilterDraft] = useState<"all" | "draft" | "published">("published");
 
-  const filteredProducts = initialProducts.filter(p => 
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    (p.barcode && p.barcode.includes(searchTerm)) ||
-    (p.brand && p.brand.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredProducts = initialProducts.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      (p.barcode && p.barcode.includes(searchTerm)) ||
+      (p.brand && p.brand.toLowerCase().includes(searchTerm.toLowerCase()));
+      
+    let matchesDraft = true;
+    if (filterDraft === "draft") matchesDraft = p.isDraft === true;
+    if (filterDraft === "published") matchesDraft = p.isDraft !== true;
+    
+    return matchesSearch && matchesDraft;
+  });
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (!sortConfig) return 0;
@@ -125,16 +133,28 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="חיפוש לפי מק״ט, שם או מותג..." 
-            className="pr-9 bg-card border-border"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input 
+              placeholder="חיפוש לפי מק״ט, שם או מותג..." 
+              className="pr-9 bg-card border-border"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <Select value={filterDraft} onValueChange={(v: "all" | "draft" | "published") => setFilterDraft(v)}>
+            <SelectTrigger className="w-full sm:w-40 bg-card border-border">
+              <SelectValue placeholder="סטטוס" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">הכל</SelectItem>
+              <SelectItem value="published">פעילים</SelectItem>
+              <SelectItem value="draft">טיוטות</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-        <Button onClick={handleAddNew} className="bg-primary hover:bg-primary/90 rounded-full text-primary-foreground font-semibold shadow-sm">
+        <Button onClick={handleAddNew} className="bg-primary hover:bg-primary/90 rounded-full text-primary-foreground font-semibold shadow-sm w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
           הוספת מוצר חדש
         </Button>
@@ -208,7 +228,10 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                           </span>
                           <div className="md:hidden flex flex-col items-center mt-1 text-xs text-muted-foreground space-y-0.5">
                             <span className="font-bold text-primary">₪{Number(product.price).toFixed(2)}</span>
-                            <span>מלאי: {product.stockQuantity}</span>
+                            <span className="flex items-center justify-center gap-1">
+                              מלאי: {product.stockQuantity}
+                              {product.isSynced && <CheckCircle2 className="h-3 w-3 text-green-500" title="מסונכרן מול WooCommerce" />}
+                            </span>
                           </div>
                         </div>
                       </TableCell>
@@ -228,7 +251,10 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                       </TableCell>
                       <TableCell className="hidden md:table-cell text-center">
                         <div className="flex items-center justify-center gap-2">
-                          {product.stockQuantity}
+                          <span className="flex items-center gap-1">
+                            {product.stockQuantity}
+                            {product.isSynced && <CheckCircle2 className="h-4 w-4 text-green-500" title="מסונכרן מול WooCommerce" />}
+                          </span>
                           {product.stockQuantity < 10 && <Badge variant="destructive" className="hidden md:inline-flex h-5 px-1 text-[10px]">מלאי נמוך</Badge>}
                         </div>
                       </TableCell>
