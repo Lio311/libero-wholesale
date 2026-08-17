@@ -29,19 +29,18 @@ export async function GET(req: Request) {
     let totalUpdated = parseInt(url.searchParams.get("updated") || "0", 10);
     const maxLocalPerRun = 50; // Process 50 local products per request
 
-    // 1. Fetch all local products that have a barcode (SKU)
+    // 1. Fetch ALL local products (even those without barcodes)
     const localProducts = await db.select({
       id: products.id,
-      barcode: products.barcode
+      barcode: products.barcode,
+      name: products.name
     }).from(products);
-    
-    const productsWithBarcode = localProducts.filter(p => p.barcode && p.barcode.trim() !== '');
 
-    if (productsWithBarcode.length === 0) {
-      return NextResponse.json({ success: true, message: "No products with barcodes found to sync." });
+    if (localProducts.length === 0) {
+      return NextResponse.json({ success: true, message: "No local products found." });
     }
 
-    const chunkToProcess = productsWithBarcode.slice(startIdx, startIdx + maxLocalPerRun);
+    const chunkToProcess = localProducts.slice(startIdx, startIdx + maxLocalPerRun);
 
     const credentials = Buffer.from(`${WC_CK}:${WC_CS}`).toString('base64');
     const headers = {
@@ -57,25 +56,45 @@ export async function GET(req: Request) {
       
       const fetchPromises = batch.map(async (localProd) => {
         try {
-          const sku = encodeURIComponent(localProd.barcode!);
-          const fetchUrl = `${WC_URL}/wp-json/wc/v3/products?sku=${sku}`;
-          const res = await fetch(fetchUrl, { headers });
+          let fetchUrl = "";
+          let usedSearch = false;
           
+          if (localProd.barcode && localProd.barcode.trim() !== '') {
+            fetchUrl = `${WC_URL}/wp-json/wc/v3/products?sku=${encodeURIComponent(localProd.barcode)}`;
+          } else {
+            fetchUrl = `${WC_URL}/wp-json/wc/v3/products?search=${encodeURIComponent(localProd.name)}`;
+            usedSearch = true;
+          }
+          
+          const res = await fetch(fetchUrl, { headers });
           if (!res.ok) return 0;
           
           const wcData = await res.json();
           if (wcData && wcData.length > 0) {
-            const stock = wcData[0].stock_quantity || 0;
+            let matchedProduct = null;
             
-            await db.update(products)
-              .set({ stockQuantity: stock, isSynced: true })
-              .where(eq(products.id, localProd.id));
+            if (usedSearch) {
+              // Exact name match (case insensitive) if we used search
+              matchedProduct = wcData.find((w: any) => 
+                w.name && w.name.trim().toLowerCase() === localProd.name.trim().toLowerCase()
+              ) || wcData[0]; // Fallback to first search result if no exact match
+            } else {
+              matchedProduct = wcData[0];
+            }
+            
+            if (matchedProduct) {
+              const stock = matchedProduct.stock_quantity || 0;
               
-            return 1;
+              await db.update(products)
+                .set({ stockQuantity: stock, isSynced: true })
+                .where(eq(products.id, localProd.id));
+                
+              return 1;
+            }
           }
           return 0;
         } catch (err) {
-          console.error(`Failed to fetch/update SKU ${localProd.barcode}:`, err);
+          console.error(`Failed to fetch/update product ${localProd.name}:`, err);
           return 0;
         }
       });
@@ -88,7 +107,7 @@ export async function GET(req: Request) {
     
     const nextStart = startIdx + maxLocalPerRun;
     
-    if (nextStart < productsWithBarcode.length) {
+    if (nextStart < localProducts.length) {
       url.searchParams.set("start", nextStart.toString());
       url.searchParams.set("updated", totalUpdated.toString());
       return NextResponse.redirect(url.toString(), { status: 302 });
@@ -97,8 +116,8 @@ export async function GET(req: Request) {
     return NextResponse.json({ 
       success: true, 
       updatedInDb: totalUpdated,
-      totalChecked: productsWithBarcode.length,
-      message: `Successfully synced ${totalUpdated} products out of ${productsWithBarcode.length} local products.` 
+      totalChecked: localProducts.length,
+      message: `Successfully synced ${totalUpdated} products out of ${localProducts.length} local products.` 
     });
   } catch (error) {
     console.error("Sync Error:", error);
