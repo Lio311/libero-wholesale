@@ -220,3 +220,23 @@ export async function bulkUpdatePrices(ids: string[], price: number) {
   }
 }
 
+export async function bulkUpdateStatus(ids: string[], isDraft: boolean) {
+  try {
+    if (!ids.length) {
+      return { error: "Invalid input." };
+    }
+    
+    await db.update(products).set({
+      isDraft,
+      updatedAt: new Date(),
+    }).where(inArray(products.id, ids));
+
+    revalidatePath("/admin/products");
+    revalidatePath("/catalog");
+    return { success: true };
+  } catch (error) {
+    console.error("Error bulk updating status:", error);
+    return { error: "Failed to update status." };
+  }
+}
+

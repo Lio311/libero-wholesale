@@ -7,10 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, MoreHorizontal, Edit, Trash2, Loader2, ArrowUpDown, ArrowUp, ArrowDown, Image as ImageIcon, CheckCircle2, Pencil } from "lucide-react";
+import { Search, Plus, MoreHorizontal, Edit, Trash2, Loader2, ArrowUpDown, ArrowUp, ArrowDown, Image as ImageIcon, CheckCircle2, Pencil, EyeOff, Eye } from "lucide-react";
 import { ProductDialog } from "./ProductDialog";
 import { ImageModal } from "@/components/ImageModal";
-import { deleteProduct } from "./actions";
+import { deleteProduct, bulkUpdateStatus } from "./actions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { BulkPriceDialog } from "./BulkPriceDialog";
@@ -54,6 +54,20 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
   const [filterDraft, setFilterDraft] = useState<"all" | "draft" | "published">("published");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isBulkPriceOpen, setIsBulkPriceOpen] = useState(false);
+  const [isBulkStatusLoading, setIsBulkStatusLoading] = useState(false);
+
+  const handleBulkStatus = async (isDraft: boolean) => {
+    if (!selectedIds.length) return;
+    setIsBulkStatusLoading(true);
+    const result = await bulkUpdateStatus(selectedIds, isDraft);
+    setIsBulkStatusLoading(false);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      toast.success(isDraft ? "המוצרים הועברו לטיוטה" : "המוצרים פורסמו");
+      setSelectedIds([]);
+    }
+  };
 
   const filteredProducts = initialProducts.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -182,10 +196,20 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
           {selectedIds.length > 0 && (
-            <Button onClick={() => setIsBulkPriceOpen(true)} variant="secondary" className="w-full sm:w-auto font-semibold shadow-sm text-primary">
-              <Edit className="mr-2 h-4 w-4" />
-              עדכון מחיר ({selectedIds.length})
-            </Button>
+            <>
+              <Button onClick={() => handleBulkStatus(false)} disabled={isBulkStatusLoading} variant="secondary" className="w-full sm:w-auto font-semibold shadow-sm text-primary">
+                {isBulkStatusLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Eye className="mr-2 h-4 w-4" />}
+                פרסם ({selectedIds.length})
+              </Button>
+              <Button onClick={() => handleBulkStatus(true)} disabled={isBulkStatusLoading} variant="secondary" className="w-full sm:w-auto font-semibold shadow-sm text-primary">
+                {isBulkStatusLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <EyeOff className="mr-2 h-4 w-4" />}
+                לטיוטה ({selectedIds.length})
+              </Button>
+              <Button onClick={() => setIsBulkPriceOpen(true)} variant="secondary" className="w-full sm:w-auto font-semibold shadow-sm text-primary">
+                <Edit className="mr-2 h-4 w-4" />
+                עדכון מחיר ({selectedIds.length})
+              </Button>
+            </>
           )}
           <Button onClick={handleAddNew} className="bg-primary hover:bg-primary/90 rounded-full text-primary-foreground font-semibold shadow-sm w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
