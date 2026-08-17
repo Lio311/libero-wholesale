@@ -131,16 +131,28 @@ const OrderPDF = ({ order, items, origin }: { order: any, items: any[], origin: 
           <RText style={styles.subtitle}>סיכום הזמנה / הצעת מחיר (להפקת חשבונית)</RText>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
-          <RText style={{ fontWeight: 'bold' }}>:מספר הזמנה {order.orderNumber}</RText>
-          <RText>:תאריך {new Date(order.createdAt).toLocaleDateString('he-IL')}</RText>
+          <View style={{ flexDirection: 'row-reverse' }}>
+            <RText style={{ fontWeight: 'bold' }}>:מספר הזמנה</RText>
+            <RText style={{ fontWeight: 'bold', marginRight: 4 }}>{order.orderNumber}</RText>
+          </View>
+          <View style={{ flexDirection: 'row-reverse' }}>
+            <RText>:תאריך</RText>
+            <RText style={{ marginRight: 4 }}>{new Date(order.createdAt).toLocaleDateString('he-IL')}</RText>
+          </View>
         </View>
       </View>
 
       <View style={styles.section}>
         <RText style={styles.sectionTitle}>פרטי לקוח</RText>
         <View style={styles.row}>
-          <RText>:שם העסק {order.businessName}</RText>
-          <RText>:איש קשר {order.customerName}</RText>
+          <View style={{ flexDirection: 'row-reverse', flex: 1 }}>
+            <RText>:שם העסק</RText>
+            <RText style={{ marginRight: 4 }}>{order.businessName}</RText>
+          </View>
+          <View style={{ flexDirection: 'row-reverse', flex: 1 }}>
+            <RText>:איש קשר</RText>
+            <RText style={{ marginRight: 4 }}>{order.customerName}</RText>
+          </View>
         </View>
         <View style={styles.row}>
           <View style={{ flexDirection: 'row-reverse' }}>
@@ -153,11 +165,15 @@ const OrderPDF = ({ order, items, origin }: { order: any, items: any[], origin: 
           </View>
         </View>
         <View style={styles.row}>
-          <RText>:כתובת משלוח {order.deliveryAddress}</RText>
+          <View style={{ flexDirection: 'row-reverse', flex: 1 }}>
+            <RText>:כתובת משלוח</RText>
+            <RText style={{ marginRight: 4 }}>{order.deliveryAddress}</RText>
+          </View>
         </View>
         {order.notes ? (
-          <View style={{ marginTop: 4 }}>
-            <RText>:הערות {order.notes}</RText>
+          <View style={{ marginTop: 4, flexDirection: 'row-reverse' }}>
+            <RText>:הערות</RText>
+            <RText style={{ marginRight: 4 }}>{order.notes}</RText>
           </View>
         ) : <View />}
       </View>
