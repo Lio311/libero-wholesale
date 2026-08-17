@@ -19,6 +19,11 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  experimental: {
+    outputFileTracingIncludes: {
+      '/api/orders/[id]/pdf': ['./public/fonts/**/*'],
+    },
+  },
   async headers() {
     return [
       {
