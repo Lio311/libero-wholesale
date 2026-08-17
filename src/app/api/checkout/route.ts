@@ -27,6 +27,29 @@ export async function POST(req: Request) {
     
     const totalAmount = subTotal * 1.18;
 
+    // Validate obligo if storeId exists
+    if (storeId) {
+      const storeRecord = await db.query.stores.findFirst({
+        where: eq(stores.id, storeId),
+      });
+
+      if (storeRecord) {
+        const creditLimit = Number(storeRecord.creditLimit);
+        const currentBalance = Number(storeRecord.currentBalance);
+        
+        // If credit limit is greater than 0, enforce it
+        if (creditLimit > 0) {
+          const availableCredit = creditLimit - currentBalance;
+          if (totalAmount > availableCredit) {
+            return NextResponse.json(
+              { error: `חריגה ממסגרת האובליגו. המסגרת הפנויה היא ₪${availableCredit.toFixed(2)}` },
+              { status: 400 }
+            );
+          }
+        }
+      }
+    }
+
     // Create order
     const [newOrder] = await db.insert(orders).values({
       storeId: storeId || null,

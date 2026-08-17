@@ -2,17 +2,12 @@ import { Document, Page, Text, View, StyleSheet, Font, renderToStream } from '@r
 import path from 'path';
 import fs from 'fs';
 
-// Register Hebrew Font - try src/assets first (bundled), fallback to public/fonts
-const fontsDir = path.join(process.cwd(), 'src', 'assets', 'fonts');
-const actualFontsDir = fs.existsSync(fontsDir) 
-  ? fontsDir 
-  : path.join(process.cwd(), 'public', 'fonts');
-
+// Register Hebrew Font using static paths so Next.js can trace and bundle them on Vercel
 Font.register({
   family: 'Heebo',
   fonts: [
-    { src: path.join(actualFontsDir, 'Heebo-Regular.ttf'), fontWeight: 'normal' },
-    { src: path.join(actualFontsDir, 'Heebo-Bold.ttf'), fontWeight: 'bold' }
+    { src: path.join(process.cwd(), 'public', 'fonts', 'Heebo-Regular.ttf'), fontWeight: 'normal' },
+    { src: path.join(process.cwd(), 'public', 'fonts', 'Heebo-Bold.ttf'), fontWeight: 'bold' }
   ]
 });
 
