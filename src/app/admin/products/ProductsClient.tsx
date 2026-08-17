@@ -169,7 +169,9 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
           </div>
           <Select value={filterDraft} onValueChange={(v: "all" | "draft" | "published" | null) => v && setFilterDraft(v)}>
             <SelectTrigger className="w-full sm:w-40 bg-card border-border">
-              <SelectValue placeholder="סטטוס" />
+              <SelectValue placeholder="סטטוס">
+                {filterDraft === "published" ? "פעילים" : filterDraft === "draft" ? "טיוטות" : "הכל"}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">הכל</SelectItem>
