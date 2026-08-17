@@ -160,7 +160,7 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
         <View style={styles.row}>
           <RText>כתובת משלוח: {order.deliveryAddress}</RText>
         </View>
-        {order.notes && (
+        {Boolean(order.notes) && (
           <View style={{ marginTop: 4 }}>
             <RText>הערות: {order.notes}</RText>
           </View>
@@ -186,7 +186,7 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
                 <View style={styles.tableColPrice}><RText style={styles.tableCell}>₪ {Number(item.unitPrice).toFixed(2)}</RText></View>
                 <View style={styles.tableColTotal}><RText style={styles.tableCell}>₪ {Number(item.totalPrice).toFixed(2)}</RText></View>
               </View>
-              {item.testerRatio && item.quantity >= item.testerRatio && (
+              {Boolean(item.testerRatio) && item.quantity >= item.testerRatio && (
                 <View style={styles.tableRow}>
                   <View style={styles.tableColDesc}><RText style={[styles.tableCell, { color: '#16a34a', fontWeight: 'bold' }]}>טסטר מתנה: {item.productName}</RText></View>
                   <View style={styles.tableColMakat}><RText style={styles.tableCell}>{item.barcode || '—'}</RText></View>
