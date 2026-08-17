@@ -29,18 +29,20 @@ export async function GET(req: Request) {
     let totalUpdated = parseInt(url.searchParams.get("updated") || "0", 10);
     const maxLocalPerRun = 50; // Process 50 local products per request
 
-    // 1. Fetch ALL local products (even those without barcodes)
+    // 1. Fetch only local products that have a barcode (SKU)
     const localProducts = await db.select({
       id: products.id,
       barcode: products.barcode,
       name: products.name
     }).from(products);
+    
+    const productsWithBarcode = localProducts.filter(p => p.barcode && p.barcode.trim() !== '');
 
-    if (localProducts.length === 0) {
-      return NextResponse.json({ success: true, message: "No local products found." });
+    if (productsWithBarcode.length === 0) {
+      return NextResponse.json({ success: true, message: "No local products with barcodes found." });
     }
 
-    const chunkToProcess = localProducts.slice(startIdx, startIdx + maxLocalPerRun);
+    const chunkToProcess = productsWithBarcode.slice(startIdx, startIdx + maxLocalPerRun);
 
     const credentials = Buffer.from(`${WC_CK}:${WC_CS}`).toString('base64');
     const headers = {
@@ -56,59 +58,24 @@ export async function GET(req: Request) {
       
       const fetchPromises = batch.map(async (localProd) => {
         try {
-          let fetchUrl = "";
-          let usedSearch = false;
-          
-          if (localProd.barcode && localProd.barcode.trim() !== '') {
-            fetchUrl = `${WC_URL}/wp-json/wc/v3/products?sku=${encodeURIComponent(localProd.barcode)}`;
-          } else {
-            fetchUrl = `${WC_URL}/wp-json/wc/v3/products?search=${encodeURIComponent(localProd.name)}`;
-            usedSearch = true;
-          }
-          
+          const fetchUrl = `${WC_URL}/wp-json/wc/v3/products?sku=${encodeURIComponent(localProd.barcode!)}`;
           const res = await fetch(fetchUrl, { headers });
           if (!res.ok) return 0;
           
           const wcData = await res.json();
           if (wcData && wcData.length > 0) {
-            let matchedProduct = null;
+            const matchedProduct = wcData[0];
+            const stock = matchedProduct.stock_quantity || 0;
             
-            if (usedSearch) {
-              // Filter out "mini" perfumes to avoid pulling wrong SKU/stock
-              const filteredWcData = wcData.filter((w: any) => {
-                const wcName = w.name ? w.name.toLowerCase() : '';
-                return !wcName.includes('mini') && !wcName.includes('מיני');
-              });
+            await db.update(products)
+              .set({ stockQuantity: stock, isSynced: true })
+              .where(eq(products.id, localProd.id));
               
-              if (filteredWcData.length > 0) {
-                // Exact name match (case insensitive) if we used search
-                matchedProduct = filteredWcData.find((w: any) => 
-                  w.name && w.name.trim().toLowerCase() === localProd.name.trim().toLowerCase()
-                ) || filteredWcData[0]; // Fallback to first non-mini search result
-              }
-            } else {
-              matchedProduct = wcData[0];
-            }
-            
-            if (matchedProduct) {
-              const stock = matchedProduct.stock_quantity || 0;
-              const updateData: any = { stockQuantity: stock, isSynced: true };
-              
-              // If we searched by name and found a SKU, save it as barcode
-              if (usedSearch && matchedProduct.sku) {
-                updateData.barcode = matchedProduct.sku;
-              }
-              
-              await db.update(products)
-                .set(updateData)
-                .where(eq(products.id, localProd.id));
-                
-              return 1;
-            }
+            return 1;
           }
           return 0;
         } catch (err) {
-          console.error(`Failed to fetch/update product ${localProd.name}:`, err);
+          console.error(`Failed to fetch/update product ${localProd.barcode}:`, err);
           return 0;
         }
       });
@@ -121,7 +88,7 @@ export async function GET(req: Request) {
     
     const nextStart = startIdx + maxLocalPerRun;
     
-    if (nextStart < localProducts.length) {
+    if (nextStart < productsWithBarcode.length) {
       url.searchParams.set("start", nextStart.toString());
       url.searchParams.set("updated", totalUpdated.toString());
       return NextResponse.redirect(url.toString(), { status: 302 });
@@ -130,8 +97,8 @@ export async function GET(req: Request) {
     return NextResponse.json({ 
       success: true, 
       updatedInDb: totalUpdated,
-      totalChecked: localProducts.length,
-      message: `Successfully synced ${totalUpdated} products out of ${localProducts.length} local products.` 
+      totalChecked: productsWithBarcode.length,
+      message: `Successfully synced ${totalUpdated} products out of ${productsWithBarcode.length} local products with barcodes.` 
     });
   } catch (error) {
     console.error("Sync Error:", error);
