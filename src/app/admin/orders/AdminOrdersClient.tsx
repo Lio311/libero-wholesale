@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -537,8 +538,10 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                           )}
                         </TableCell>
                         <TableCell>
-                          <div className="font-medium">{item.product.nameHe || item.product.name}</div>
-                          <div className="text-xs text-muted-foreground flex gap-2">
+                          <Link href={`/catalog`} className="font-medium hover:underline text-primary">
+                            {item.product.nameHe || item.product.name}
+                          </Link>
+                          <div className="text-xs text-muted-foreground flex gap-2 mt-1">
                             <span>{item.product.brandHe || item.product.brand}</span>
                             {item.product.barcode && <span>• ברקוד: {item.product.barcode}</span>}
                           </div>
