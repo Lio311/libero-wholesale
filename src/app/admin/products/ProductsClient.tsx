@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, MoreHorizontal, Edit, Trash2, Loader2, ArrowUpDown, ArrowUp, ArrowDown, Image as ImageIcon, CheckCircle2, Pencil, EyeOff, Eye } from "lucide-react";
+import { Search, Plus, MoreHorizontal, Edit, Trash2, Loader2, ArrowUpDown, ArrowUp, ArrowDown, Image as ImageIcon, CheckCircle2, Pencil, EyeOff, Eye, RefreshCw } from "lucide-react";
 import { ProductDialog } from "./ProductDialog";
 import { ImageModal } from "@/components/ImageModal";
 import { deleteProduct, bulkUpdateStatus } from "./actions";
@@ -55,7 +55,26 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isBulkPriceOpen, setIsBulkPriceOpen] = useState(false);
   const [isBulkStatusLoading, setIsBulkStatusLoading] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
+  const handleSync = async () => {
+    setIsSyncing(true);
+    toast("מסנכרן מלאי מול WooCommerce", { description: "זה עשוי לקחת מספר רגעים..." });
+    try {
+      const res = await fetch("/api/sync-inventory");
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success("סנכרון מלאי הושלם!", { description: data.message });
+        window.location.reload();
+      } else {
+        toast.error("שגיאה בסנכרון מלאי", { description: data.error || data.message || "נסה שוב מאוחר יותר" });
+      }
+    } catch (error) {
+      toast.error("שגיאה", { description: "אירעה שגיאה בחיבור לשרת" });
+    } finally {
+      setIsSyncing(false);
+    }
+  };
   const handleBulkStatus = async (isDraft: boolean) => {
     if (!selectedIds.length) return;
     setIsBulkStatusLoading(true);
@@ -211,6 +230,19 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
               </Button>
             </>
           )}
+          <Button 
+            onClick={handleSync} 
+            disabled={isSyncing}
+            variant="outline" 
+            className="rounded-full shadow-sm w-full sm:w-auto"
+          >
+            {isSyncing ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="mr-2 h-4 w-4" />
+            )}
+            סנכרון מלאי
+          </Button>
           <Button onClick={handleAddNew} className="bg-primary hover:bg-primary/90 rounded-full text-primary-foreground font-semibold shadow-sm w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             הוספת מוצר חדש
