@@ -25,7 +25,7 @@ export default async function OrdersPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">היסטוריית הזמנות</h1>
         <p className="text-muted-foreground mt-2">
-          צפה בהזמנות הקודמות שלך, עקוב אחרי סטטוסים וייצא נתונים לאקסל.
+          צפה בהזמנות הקודמות שלך ועקוב אחרי סטטוסים.
         </p>
       </div>
 

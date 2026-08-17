@@ -5,6 +5,7 @@ import { sql, relations } from 'drizzle-orm';
 export const storeStatusEnum = pgEnum('store_status', ['active', 'pending', 'suspended']);
 export const productStatusEnum = pgEnum('product_status', ['active', 'draft', 'archived']);
 export const orderStatusEnum = pgEnum('order_status', ['pending', 'processing', 'shipped', 'delivered', 'cancelled']);
+export const paymentStatusEnum = pgEnum('payment_status', ['paid', 'unpaid']);
 export const transactionTypeEnum = pgEnum('transaction_type', ['payment', 'charge', 'refund', 'adjustment']);
 
 // Stores Table
@@ -81,6 +82,7 @@ export const orders = pgTable('orders', {
   clerkUserId: text('clerk_user_id'), // For the personal area
   orderNumber: serial('order_number').notNull(),
   status: orderStatusEnum('status').default('pending').notNull(),
+  paymentStatus: paymentStatusEnum('payment_status').default('unpaid').notNull(),
   totalAmount: decimal('total_amount', { precision: 12, scale: 2 }).notNull(),
   discountAmount: decimal('discount_amount', { precision: 12, scale: 2 }).default('0').notNull(),
   itemsCount: integer('items_count').notNull(),

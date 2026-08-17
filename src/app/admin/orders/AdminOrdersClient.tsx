@@ -16,6 +16,7 @@ interface AdminOrderRow {
   id: string;
   orderNumber: number;
   status: string;
+  paymentStatus: string;
   totalAmount: string | number;
   discountAmount?: string | number;
   itemsCount: number;
@@ -83,6 +84,30 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
       }
     } catch (e) {
       toast.error("שגיאה בעדכון הסטטוס");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handlePaymentStatusChange = async (orderId: string, newStatus: string) => {
+    setUpdatingId(`payment-${orderId}`);
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}/payment-status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentStatus: newStatus })
+      });
+      if (res.ok) {
+        setOrders(orders.map(o => o.id === orderId ? { ...o, paymentStatus: newStatus } : o));
+        if (selectedOrder?.id === orderId) {
+          setSelectedOrder({ ...selectedOrder, paymentStatus: newStatus });
+        }
+        toast.success("סטטוס התשלום עודכן בהצלחה");
+      } else {
+        toast.error("שגיאה בעדכון סטטוס התשלום");
+      }
+    } catch (e) {
+      toast.error("שגיאה בעדכון סטטוס התשלום");
     } finally {
       setUpdatingId(null);
     }
@@ -329,7 +354,8 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
               <TableHead className="text-right">לקוח / חנות</TableHead>
               <TableHead className="text-right hidden md:table-cell">תאריך</TableHead>
               <TableHead className="text-center hidden md:table-cell">פריטים</TableHead>
-              <TableHead className="text-right">סטטוס</TableHead>
+              <TableHead className="text-right">סטטוס הזמנה</TableHead>
+              <TableHead className="text-right">סטטוס תשלום</TableHead>
               <TableHead className="text-left">סכום כולל</TableHead>
               <TableHead className="w-[100px] text-center">פעולות</TableHead>
             </TableRow>
@@ -337,7 +363,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
           <TableBody>
             {orders.length === 0 ? (
               <TableRow className="border-border hover:bg-muted/20">
-                <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
+                <TableCell colSpan={8} className="h-32 text-center text-muted-foreground">
                   אין הזמנות קודמות
                 </TableCell>
               </TableRow>
@@ -377,6 +403,24 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                           <SelectItem value="shipped">נשלח</SelectItem>
                           <SelectItem value="delivered">נמסר</SelectItem>
                           <SelectItem value="cancelled">בוטל</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {updatingId === `payment-${order.id}` ? (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        מעדכן...
+                      </div>
+                    ) : (
+                      <Select value={order.paymentStatus} onValueChange={(val) => handlePaymentStatusChange(order.id, val as string)}>
+                        <SelectTrigger className="w-[100px] h-8 text-xs border-border bg-background" dir="rtl">
+                          <span className="flex-1 text-right">{order.paymentStatus === 'paid' ? 'שולם' : 'טרם שולם'}</span>
+                        </SelectTrigger>
+                        <SelectContent side="bottom" sideOffset={4} align="end">
+                          <SelectItem value="paid">שולם</SelectItem>
+                          <SelectItem value="unpaid">טרם שולם</SelectItem>
                         </SelectContent>
                       </Select>
                     )}

@@ -25,6 +25,7 @@ interface OrderRow {
   id: string;
   orderNumber: number;
   status: string;
+  paymentStatus: string;
   totalAmount: string | number;
   itemsCount: number;
   createdAt: Date;
@@ -65,6 +66,14 @@ export function OrdersClient({ orders }: OrdersClientProps) {
     }
   };
 
+  const getPaymentBadge = (status: string) => {
+    switch (status) {
+      case "paid": return <Badge className="bg-green-500/20 text-green-600 border-green-500/50">שולם</Badge>;
+      case "unpaid": return <Badge variant="destructive" className="bg-red-500/20 text-red-600 border-red-500/50 hover:bg-red-500/30">טרם שולם</Badge>;
+      default: return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
   return (
     <div className="w-full space-y-6">
       <div className="flex justify-between items-center">
@@ -79,14 +88,15 @@ export function OrdersClient({ orders }: OrdersClientProps) {
             <TableRow className="border-border hover:bg-transparent">
               <TableHead className="w-[100px] text-right">מספר הזמנה</TableHead>
               <TableHead className="text-right">תאריך</TableHead>
-              <TableHead className="text-right">סטטוס</TableHead>
+              <TableHead className="text-right">סטטוס הזמנה</TableHead>
+              <TableHead className="text-right">סטטוס תשלום</TableHead>
               <TableHead className="text-left">סכום כולל</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {orders.length === 0 ? (
               <TableRow className="border-border hover:bg-muted/20">
-                <TableCell colSpan={4} className="h-32 text-center text-muted-foreground">
+                <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
                   אין הזמנות קודמות
                 </TableCell>
               </TableRow>
@@ -98,6 +108,7 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                     {format(new Date(order.createdAt), "dd/MM/yyyy HH:mm")}
                   </TableCell>
                   <TableCell>{getStatusBadge(order.status)}</TableCell>
+                  <TableCell>{getPaymentBadge(order.paymentStatus)}</TableCell>
                   <TableCell className="text-left font-mono font-bold">₪{Number(order.totalAmount).toFixed(2)}</TableCell>
                 </TableRow>
               ))
@@ -114,6 +125,7 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                 <DialogTitle className="text-xl flex items-center gap-3">
                   <span>הזמנה #{selectedOrder.orderNumber}</span>
                   {getStatusBadge(selectedOrder.status)}
+                  {getPaymentBadge(selectedOrder.paymentStatus)}
                 </DialogTitle>
                 <a
                   href={`/api/orders/${selectedOrder.id}/pdf`}
