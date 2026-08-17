@@ -141,9 +141,9 @@ export function OrdersClient({ orders }: OrdersClientProps) {
 
       {selectedOrder && (
         <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
-          <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            <DialogHeader>
-              <div className="flex items-center justify-between">
+          <DialogContent className="sm:max-w-4xl w-[95vw] max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <DialogHeader className="pt-2 pl-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <DialogTitle className="text-xl flex items-center gap-3">
                   <span>הזמנה #{selectedOrder.orderNumber}</span>
                   {getStatusBadge(selectedOrder.status)}
@@ -152,9 +152,9 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                   href={`/api/orders/${selectedOrder.id}/pdf`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="ml-4"
+                  className="sm:ml-4"
                 >
-                  <Button variant="outline" size="sm" className="gap-2 rounded-full">
+                  <Button variant="outline" size="sm" className="gap-2 rounded-full w-full sm:w-auto">
                     <FileDown className="h-4 w-4" />
                     הורד סיכום הזמנה
                   </Button>
