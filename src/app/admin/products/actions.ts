@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { products, brands } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function createProduct(formData: FormData) {
@@ -199,3 +199,24 @@ export async function deleteProduct(id: string) {
     return { error: "Failed to delete product. It might be linked to an order." };
   }
 }
+
+export async function bulkUpdatePrices(ids: string[], price: number) {
+  try {
+    if (!ids.length || isNaN(price)) {
+      return { error: "Invalid input." };
+    }
+    
+    await db.update(products).set({
+      price: price.toString(),
+      updatedAt: new Date(),
+    }).where(inArray(products.id, ids));
+
+    revalidatePath("/admin/products");
+    revalidatePath("/catalog");
+    return { success: true };
+  } catch (error) {
+    console.error("Error bulk updating prices:", error);
+    return { error: "Failed to update prices." };
+  }
+}
+

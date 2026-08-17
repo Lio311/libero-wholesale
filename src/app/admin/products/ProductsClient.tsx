@@ -12,6 +12,8 @@ import { ProductDialog } from "./ProductDialog";
 import { ImageModal } from "@/components/ImageModal";
 import { deleteProduct } from "./actions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { BulkPriceDialog } from "./BulkPriceDialog";
 import { toast } from "sonner";
 
 interface ProductRow {
@@ -23,6 +25,7 @@ interface ProductRow {
   price: string | number;
   stockQuantity: number;
   status: string;
+  imageUrl: string | null;
   size?: string | null;
   isDraft?: boolean;
   isSynced?: boolean;
@@ -49,6 +52,8 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
 
   const [sortConfig, setSortConfig] = useState<{ key: keyof ProductRow; direction: "asc" | "desc" } | null>(null);
   const [filterDraft, setFilterDraft] = useState<"all" | "draft" | "published">("published");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isBulkPriceOpen, setIsBulkPriceOpen] = useState(false);
 
   const filteredProducts = initialProducts.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -61,6 +66,25 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
     
     return matchesSearch && matchesDraft;
   });
+
+  const allFilteredIds = filteredProducts.map(p => p.id);
+  const isAllSelected = allFilteredIds.length > 0 && selectedIds.length === allFilteredIds.length;
+  
+  const toggleAll = () => {
+    if (isAllSelected) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(allFilteredIds);
+    }
+  };
+
+  const toggleOne = (id: string) => {
+    if (selectedIds.includes(id)) {
+      setSelectedIds(selectedIds.filter(x => x !== id));
+    } else {
+      setSelectedIds([...selectedIds, id]);
+    }
+  };
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (!sortConfig) return 0;
@@ -143,7 +167,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <Select value={filterDraft} onValueChange={(v: "all" | "draft" | "published") => setFilterDraft(v)}>
+          <Select value={filterDraft} onValueChange={(v: "all" | "draft" | "published" | null) => v && setFilterDraft(v)}>
             <SelectTrigger className="w-full sm:w-40 bg-card border-border">
               <SelectValue placeholder="סטטוס" />
             </SelectTrigger>
@@ -154,10 +178,18 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={handleAddNew} className="bg-primary hover:bg-primary/90 rounded-full text-primary-foreground font-semibold shadow-sm w-full sm:w-auto">
-          <Plus className="mr-2 h-4 w-4" />
-          הוספת מוצר חדש
-        </Button>
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+          {selectedIds.length > 0 && (
+            <Button onClick={() => setIsBulkPriceOpen(true)} variant="secondary" className="w-full sm:w-auto font-semibold shadow-sm text-primary">
+              <Edit className="mr-2 h-4 w-4" />
+              עדכון מחיר ({selectedIds.length})
+            </Button>
+          )}
+          <Button onClick={handleAddNew} className="bg-primary hover:bg-primary/90 rounded-full text-primary-foreground font-semibold shadow-sm w-full sm:w-auto">
+            <Plus className="mr-2 h-4 w-4" />
+            הוספת מוצר חדש
+          </Button>
+        </div>
       </div>
 
       <Card className="bg-card border-border shadow-sm">
@@ -175,6 +207,9 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
               <Table className="w-full">
               <TableHeader className="bg-muted/50">
                 <TableRow className="border-border">
+                  <TableHead className="w-[40px] px-2 text-center">
+                    <Checkbox checked={isAllSelected} onCheckedChange={toggleAll} aria-label="בחר הכל" />
+                  </TableHead>
                   <TableHead className="text-center w-[50px] md:w-[60px] px-1 md:px-2">תמונה</TableHead>
                   <TableHead className="hidden md:table-cell text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("barcode")}>
                     מק״ט / ברקוד <SortIcon columnKey="barcode" />
@@ -200,11 +235,14 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
               <TableBody>
                 {sortedProducts.length === 0 ? (
                   <TableRow className="border-border">
-                    <TableCell colSpan={8} className="text-center h-32 text-muted-foreground">לא נמצאו מוצרים</TableCell>
+                    <TableCell colSpan={9} className="text-center h-32 text-muted-foreground">לא נמצאו מוצרים</TableCell>
                   </TableRow>
                 ) : (
                   sortedProducts.map((product) => (
                     <TableRow key={product.id} className={`border-border hover:bg-muted/20 transition-colors ${product.isDraft ? "opacity-50 grayscale-[50%]" : ""}`}>
+                      <TableCell className="px-2 text-center">
+                        <Checkbox checked={selectedIds.includes(product.id)} onCheckedChange={() => toggleOne(product.id)} aria-label={`בחר ${product.name}`} />
+                      </TableCell>
                       <TableCell className="p-1 md:px-2 text-center">
                         <div 
                           className={`h-10 w-10 md:h-12 md:w-12 bg-white rounded-md flex items-center justify-center overflow-hidden border border-border/50 mx-auto relative ${product.imageUrl ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
@@ -230,7 +268,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                             <span className="font-bold text-primary">₪{Number(product.price).toFixed(2)}</span>
                             <span className="flex items-center justify-center gap-1">
                               מלאי: {product.stockQuantity}
-                              {product.isSynced && <CheckCircle2 className="h-3 w-3 text-green-500" title="מסונכרן מול WooCommerce" />}
+                              {product.isSynced && <span title="מסונכרן מול WooCommerce"><CheckCircle2 className="h-3 w-3 text-green-500" /></span>}
                             </span>
                           </div>
                         </div>
@@ -253,7 +291,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                         <div className="flex items-center justify-center gap-2">
                           <span className="flex items-center gap-1">
                             {product.stockQuantity}
-                            {product.isSynced && <CheckCircle2 className="h-4 w-4 text-green-500" title="מסונכרן מול WooCommerce" />}
+                            {product.isSynced && <span title="מסונכרן מול WooCommerce"><CheckCircle2 className="h-4 w-4 text-green-500" /></span>}
                           </span>
                           {product.stockQuantity < 10 && <Badge variant="destructive" className="hidden md:inline-flex h-5 px-1 text-[10px]">מלאי נמוך</Badge>}
                         </div>
@@ -287,6 +325,13 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
       />
       
       <ImageModal imageUrl={selectedImage} onClose={() => setSelectedImage(null)} />
+
+      <BulkPriceDialog 
+        open={isBulkPriceOpen}
+        onOpenChange={setIsBulkPriceOpen}
+        selectedIds={selectedIds}
+        onSuccess={() => setSelectedIds([])}
+      />
     </div>
   );
 }
