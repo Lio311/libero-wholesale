@@ -96,7 +96,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
     let matchesDraft = true;
     if (filterDraft === "draft") matchesDraft = p.isDraft === true;
     if (filterDraft === "published") matchesDraft = p.isDraft !== true && p.isSynced !== false;
-    if (filterDraft === "unsynced") matchesDraft = p.isSynced === false;
+    if (filterDraft === "unsynced") matchesDraft = p.isSynced === false && p.isDraft !== true;
     
     return matchesSearch && matchesDraft;
   });
