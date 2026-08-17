@@ -11,14 +11,17 @@ async function registerFonts(origin: string) {
     const regularRes = await fetch(`${origin}/fonts/Heebo-Regular.ttf`);
     const boldRes = await fetch(`${origin}/fonts/Heebo-Bold.ttf`);
     
-    const regularBuffer = Buffer.from(await regularRes.arrayBuffer());
-    const boldBuffer = Buffer.from(await boldRes.arrayBuffer());
+    const regularArrayBuffer = await regularRes.arrayBuffer();
+    const boldArrayBuffer = await boldRes.arrayBuffer();
+    
+    const regularDataUrl = `data:font/ttf;base64,${Buffer.from(regularArrayBuffer).toString('base64')}`;
+    const boldDataUrl = `data:font/ttf;base64,${Buffer.from(boldArrayBuffer).toString('base64')}`;
     
     Font.register({
       family: 'Heebo',
       fonts: [
-        { src: regularBuffer, fontWeight: 'normal' },
-        { src: boldBuffer, fontWeight: 'bold' }
+        { src: regularDataUrl, fontWeight: 'normal' },
+        { src: boldDataUrl, fontWeight: 'bold' }
       ]
     });
     fontsRegistered = true;
