@@ -118,14 +118,14 @@ export function AccountClient({ store }: AccountClientProps) {
 
       {/* Financial Info */}
       <div className="flex flex-col gap-6">
-        <Card className="bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-md border-border relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-32 bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
+        <Card className="bg-white border-border shadow-lg relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-32 bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
           <CardHeader className="pb-2">
             <CardDescription className="flex items-center gap-2">
               <Wallet className="h-4 w-4" />
               אובליגו (יתרת חוב)
             </CardDescription>
-            <CardTitle className="text-3xl font-mono">₪{Number(displayStore.currentBalance).toLocaleString('en-US', { minimumFractionDigits: 2 })}</CardTitle>
+            <CardTitle className="text-3xl font-mono text-foreground">₪{Number(displayStore.currentBalance).toLocaleString('en-US', { minimumFractionDigits: 2 })}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="mt-4">
@@ -133,7 +133,7 @@ export function AccountClient({ store }: AccountClientProps) {
                 <span className="text-muted-foreground">ניצול מסגרת</span>
                 <span className="font-mono">{creditPercentage.toFixed(1)}%</span>
               </div>
-              <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+              <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                 <div 
                   className={`h-full rounded-full ${creditPercentage > 90 ? 'bg-destructive' : creditPercentage > 75 ? 'bg-orange-500' : 'bg-primary'}`}
                   style={{ width: `${creditPercentage}%` }}
