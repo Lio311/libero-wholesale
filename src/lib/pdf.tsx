@@ -33,26 +33,7 @@ async function registerFonts(origin: string) {
 
 const reverseHebrew = (text: string | null | undefined) => {
   if (!text) return text || '';
-  
-  const textStr = String(text);
-  
-  // 1. Reverse the entire string
-  let reversed = textStr.split('').reverse().join('');
-  
-  // 2. Swap mirrored characters (parentheses, brackets, etc.)
-  const map: Record<string, string> = {
-    '(': ')', ')': '(',
-    '[': ']', ']': '[',
-    '{': '}', '}': '{',
-    '<': '>', '>': '<'
-  };
-  reversed = reversed.replace(/[()[\]{}<>]/g, c => map[c]);
-  
-  // 3. Find LTR blocks (English/Numbers + internal punctuation) and reverse them back
-  const ltrRegex = /[a-zA-Z0-9]+(?:[\s.,\-\/]+[a-zA-Z0-9]+)*/g;
-  reversed = reversed.replace(ltrRegex, match => match.split('').reverse().join(''));
-  
-  return reversed;
+  return String(text);
 };
 
 const RText = ({ children, style }: { children: React.ReactNode, style?: any }) => {
