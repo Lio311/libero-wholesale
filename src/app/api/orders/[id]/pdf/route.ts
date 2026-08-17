@@ -50,11 +50,12 @@ export async function GET(
     const pdfBuffer = await generateOrderPDFBuffer(orderData, itemsData);
     
     // Return PDF
-    return new NextResponse(pdfBuffer as unknown as BodyInit, {
+    return new Response(pdfBuffer, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="order-${orderData.orderNumber}.pdf"`,
+        'Content-Length': String(pdfBuffer.byteLength),
       },
     });
   } catch (error) {

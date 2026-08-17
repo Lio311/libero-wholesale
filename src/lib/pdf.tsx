@@ -1,12 +1,18 @@
-import { Document, Page, Text, View, StyleSheet, Font, renderToStream, Image } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font, renderToStream } from '@react-pdf/renderer';
 import path from 'path';
+import fs from 'fs';
 
-// Register Hebrew Font
+// Register Hebrew Font - try src/assets first (bundled), fallback to public/fonts
+const fontsDir = path.join(process.cwd(), 'src', 'assets', 'fonts');
+const actualFontsDir = fs.existsSync(fontsDir) 
+  ? fontsDir 
+  : path.join(process.cwd(), 'public', 'fonts');
+
 Font.register({
   family: 'Heebo',
   fonts: [
-    { src: path.join(process.cwd(), 'public', 'fonts', 'Heebo-Regular.ttf'), fontWeight: 'normal' },
-    { src: path.join(process.cwd(), 'public', 'fonts', 'Heebo-Bold.ttf'), fontWeight: 'bold' }
+    { src: path.join(actualFontsDir, 'Heebo-Regular.ttf'), fontWeight: 'normal' },
+    { src: path.join(actualFontsDir, 'Heebo-Bold.ttf'), fontWeight: 'bold' }
   ]
 });
 
@@ -61,23 +67,6 @@ const styles = StyleSheet.create({
     margin: 'auto',
     flexDirection: 'row',
   },
-  tableColHeader: {
-    width: '25%',
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderColor: '#e4e4e7',
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-    backgroundColor: '#f4f4f5',
-  },
-  tableCol: {
-    width: '25%',
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderColor: '#e4e4e7',
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-  },
   tableCellHeader: {
     margin: 5,
     fontSize: 10,
@@ -95,7 +84,7 @@ const styles = StyleSheet.create({
   totalSection: {
     marginTop: 20,
     flexDirection: 'row',
-    justifyContent: 'flex-start', // Since RTL, flex-start pushes it to left side conceptually if nested, wait.
+    justifyContent: 'flex-start',
   },
   totalBox: {
     width: '40%',
@@ -143,7 +132,6 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>פירוט מוצרים</Text>
         <View style={styles.table}>
-          {/* Table Header */}
           <View style={styles.tableRow}>
             <View style={[styles.tableColDesc, { backgroundColor: '#f4f4f5' }]}><Text style={styles.tableCellHeader}>פריט</Text></View>
             <View style={[styles.tableColMakat, { backgroundColor: '#f4f4f5' }]}><Text style={styles.tableCellHeader}>מק״ט / ברקוד</Text></View>
@@ -151,7 +139,6 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
             <View style={[styles.tableColPrice, { backgroundColor: '#f4f4f5' }]}><Text style={styles.tableCellHeader}>מחיר יחידה</Text></View>
             <View style={[styles.tableColTotal, { backgroundColor: '#f4f4f5' }]}><Text style={styles.tableCellHeader}>סה"כ</Text></View>
           </View>
-          {/* Table Rows */}
           {items.map((item, i) => (
             <View key={i}>
               <View style={styles.tableRow}>
@@ -200,17 +187,24 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
   </Document>
 );
 
-export async function generateOrderPDFBuffer(order: any, items: any[]): Promise<Buffer> {
+export async function generateOrderPDFBuffer(order: any, items: any[]): Promise<Uint8Array> {
   const stream = await renderToStream(<OrderPDF order={order} items={items} />);
   return new Promise((resolve, reject) => {
-    const buffers: Buffer[] = [];
-    stream.on('data', (data) => {
-      buffers.push(data);
+    const chunks: Uint8Array[] = [];
+    stream.on('data', (data: Buffer) => {
+      chunks.push(new Uint8Array(data));
     });
     stream.on('end', () => {
-      resolve(Buffer.concat(buffers));
+      const totalLength = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+      const result = new Uint8Array(totalLength);
+      let offset = 0;
+      for (const chunk of chunks) {
+        result.set(chunk, offset);
+        offset += chunk.length;
+      }
+      resolve(result);
     });
-    stream.on('error', (err) => {
+    stream.on('error', (err: Error) => {
       reject(err);
     });
   });
