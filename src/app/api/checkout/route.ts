@@ -59,6 +59,13 @@ export async function POST(req: Request) {
       );
     }
 
+    // Update store balance if storeId exists
+    if (storeId) {
+      await db.execute(
+        sql`UPDATE stores SET current_balance = current_balance + ${totalAmount} WHERE id = ${storeId}`
+      );
+    }
+
     // TODO: Send emails and generate PDF invoice (Phase 3)
 
     return NextResponse.json({ success: true, orderId: newOrder.id, orderNumber: newOrder.orderNumber });
