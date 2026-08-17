@@ -43,6 +43,7 @@ interface OrderRow {
       brandHe?: string | null;
       imageUrl?: string | null;
       barcode?: string | null;
+      testerRatio?: number | null;
     }
   }[];
 }
@@ -201,6 +202,11 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                             <span>{item.product.brandHe || item.product.brand}</span>
                             {item.product.barcode && <span>• ברקוד: {item.product.barcode}</span>}
                           </div>
+                          {item.product.testerRatio && item.quantity >= item.product.testerRatio && (
+                            <div className="text-xs font-semibold text-green-600 bg-green-500/10 w-fit px-2 py-0.5 rounded-full mt-1">
+                              + {Math.floor(item.quantity / item.product.testerRatio)} טסטר מתנה
+                            </div>
+                          )}
                         </TableCell>
                         <TableCell className="text-center font-bold text-lg">{item.quantity}</TableCell>
                         <TableCell className="text-center font-mono" dir="ltr">₪{Number(item.unitPrice).toFixed(2)}</TableCell>

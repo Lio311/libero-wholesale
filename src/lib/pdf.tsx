@@ -5,8 +5,8 @@ import path from 'path';
 Font.register({
   family: 'Heebo',
   fonts: [
-    { src: path.resolve('./public/fonts/Heebo-Regular.ttf'), fontWeight: 'normal' },
-    { src: path.resolve('./public/fonts/Heebo-Bold.ttf'), fontWeight: 'bold' }
+    { src: path.join(process.cwd(), 'public', 'fonts', 'Heebo-Regular.ttf'), fontWeight: 'normal' },
+    { src: path.join(process.cwd(), 'public', 'fonts', 'Heebo-Bold.ttf'), fontWeight: 'bold' }
   ]
 });
 
@@ -153,12 +153,23 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
           </View>
           {/* Table Rows */}
           {items.map((item, i) => (
-            <View style={styles.tableRow} key={i}>
-              <View style={styles.tableColDesc}><Text style={styles.tableCell}>{item.productName}</Text></View>
-              <View style={styles.tableColMakat}><Text style={styles.tableCell}>{item.barcode || '—'}</Text></View>
-              <View style={styles.tableColQty}><Text style={styles.tableCell}>{item.quantity}</Text></View>
-              <View style={styles.tableColPrice}><Text style={styles.tableCell}>₪{Number(item.unitPrice).toFixed(2)}</Text></View>
-              <View style={styles.tableColTotal}><Text style={styles.tableCell}>₪{Number(item.totalPrice).toFixed(2)}</Text></View>
+            <View key={i}>
+              <View style={styles.tableRow}>
+                <View style={styles.tableColDesc}><Text style={styles.tableCell}>{item.productName}</Text></View>
+                <View style={styles.tableColMakat}><Text style={styles.tableCell}>{item.barcode || '—'}</Text></View>
+                <View style={styles.tableColQty}><Text style={styles.tableCell}>{item.quantity}</Text></View>
+                <View style={styles.tableColPrice}><Text style={styles.tableCell}>₪{Number(item.unitPrice).toFixed(2)}</Text></View>
+                <View style={styles.tableColTotal}><Text style={styles.tableCell}>₪{Number(item.totalPrice).toFixed(2)}</Text></View>
+              </View>
+              {item.testerRatio && item.quantity >= item.testerRatio && (
+                <View style={styles.tableRow}>
+                  <View style={styles.tableColDesc}><Text style={[styles.tableCell, { color: '#16a34a', fontWeight: 'bold' }]}>טסטר מתנה: {item.productName}</Text></View>
+                  <View style={styles.tableColMakat}><Text style={styles.tableCell}>{item.barcode || '—'}</Text></View>
+                  <View style={styles.tableColQty}><Text style={[styles.tableCell, { color: '#16a34a', fontWeight: 'bold' }]}>{Math.floor(item.quantity / item.testerRatio)}</Text></View>
+                  <View style={styles.tableColPrice}><Text style={styles.tableCell}>₪0.00</Text></View>
+                  <View style={styles.tableColTotal}><Text style={styles.tableCell}>₪0.00</Text></View>
+                </View>
+              )}
             </View>
           ))}
         </View>

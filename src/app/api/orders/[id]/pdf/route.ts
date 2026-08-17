@@ -13,7 +13,7 @@ export async function GET(
   try {
     const { userId } = await auth();
     const user = await currentUser();
-    const isAdmin = await checkIsAdmin(user?.emailAddresses[0]?.emailAddress);
+    const isAdmin = await checkIsAdmin(user?.emailAddresses?.[0]?.emailAddress);
 
     const resolvedParams = await params;
     const orderId = resolvedParams.id;
@@ -40,6 +40,7 @@ export async function GET(
         totalPrice: orderItems.totalPrice,
         productName: products.name,
         barcode: products.barcode,
+        testerRatio: products.testerRatio,
       })
       .from(orderItems)
       .leftJoin(products, eq(orderItems.productId, products.id))

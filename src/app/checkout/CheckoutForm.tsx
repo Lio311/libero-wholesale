@@ -124,6 +124,11 @@ export function CheckoutForm({ store }: { store: any }) {
               <div className="flex-1">
                 <p className="text-sm font-semibold line-clamp-2 leading-tight">{item.product.nameHe || item.product.name}</p>
                 <p className="text-xs text-muted-foreground mt-1">{item.quantity} יחידות</p>
+                {item.product.testerRatio && item.quantity >= item.product.testerRatio && (
+                  <p className="text-xs font-semibold text-green-600 mt-1">
+                    + {Math.floor(item.quantity / item.product.testerRatio)} טסטר מתנה
+                  </p>
+                )}
               </div>
               <div className="text-sm font-bold font-mono">
                 ₪{(Number(item.product.price) * item.quantity).toFixed(2)}

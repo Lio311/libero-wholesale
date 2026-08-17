@@ -61,6 +61,11 @@ export function CartSheet() {
                     {item.product.barcode && <span className="font-mono">{item.product.barcode}</span>}
                   </p>
                   
+                  {item.product.testerRatio && item.quantity >= item.product.testerRatio && (
+                    <div className="text-xs font-semibold text-green-600 bg-green-500/10 w-fit px-2 py-0.5 rounded-full mt-1">
+                      + {Math.floor(item.quantity / item.product.testerRatio)} טסטר מתנה
+                    </div>
+                  )}
                   <div className="flex flex-wrap items-center justify-between gap-2 mt-2">
                     <div className="flex items-center bg-muted/50 border border-border rounded-md">
                       <Button
