@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Font, renderToStream } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font, renderToStream, Link } from '@react-pdf/renderer';
 import path from 'path';
 import fs from 'fs';
 
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
+const OrderPDF = ({ order, items, origin }: { order: any, items: any[], origin: string }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
@@ -170,7 +170,11 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
           {items.map((item, i) => (
             <View key={i}>
               <View style={styles.tableRow}>
-                <View style={styles.tableColDesc}><RText style={styles.tableCell}>{item.productName}</RText></View>
+                <View style={styles.tableColDesc}>
+                  <Link src={`${origin}/catalog`} style={{ textDecoration: 'none', color: '#000' }}>
+                    <RText style={styles.tableCell}>{item.productName}</RText>
+                  </Link>
+                </View>
                 <View style={styles.tableColMakat}><RText style={styles.tableCell}>{item.barcode || '—'}</RText></View>
                 <View style={styles.tableColQty}><RText style={styles.tableCell}>{item.quantity}</RText></View>
                 <View style={styles.tableColPrice}><RText style={styles.tableCell}>₪ {Number(item.unitPrice).toFixed(2)}</RText></View>
@@ -178,7 +182,11 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
               </View>
               {Boolean(item.testerRatio) && item.quantity >= item.testerRatio ? (
                 <View style={styles.tableRow}>
-                  <View style={styles.tableColDesc}><RText style={[styles.tableCell, { color: '#16a34a', fontWeight: 'bold' }]}>טסטר מתנה: {item.productName}</RText></View>
+                  <View style={styles.tableColDesc}>
+                    <Link src={`${origin}/catalog`} style={{ textDecoration: 'none', color: '#16a34a' }}>
+                      <RText style={[styles.tableCell, { color: '#16a34a', fontWeight: 'bold' }]}>טסטר מתנה: {item.productName}</RText>
+                    </Link>
+                  </View>
                   <View style={styles.tableColMakat}><RText style={styles.tableCell}>{item.barcode || '—'}</RText></View>
                   <View style={styles.tableColQty}><RText style={[styles.tableCell, { color: '#16a34a', fontWeight: 'bold' }]}>{Math.floor(item.quantity / item.testerRatio)}</RText></View>
                   <View style={styles.tableColPrice}><RText style={styles.tableCell}>₪ 0.00</RText></View>
@@ -218,7 +226,7 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
 export async function generateOrderPDFBuffer(order: any, items: any[], origin: string): Promise<Uint8Array> {
   await registerFonts(origin);
   
-  const stream = await renderToStream(<OrderPDF order={order} items={items} />);
+  const stream = await renderToStream(<OrderPDF order={order} items={items} origin={origin} />);
   return new Promise((resolve, reject) => {
     const chunks: Uint8Array[] = [];
     stream.on('data', (data: Buffer) => {
