@@ -321,7 +321,15 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                       <TableCell className="font-medium text-center p-1 md:p-2">
                         <div className="flex flex-col items-center">
                           <span className="flex items-center gap-2 justify-center text-sm md:text-base">
-                            {product.name}
+                            <a 
+                              href={`https://libero-il.co.il/?s=${encodeURIComponent(product.name)}&post_type=product`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:underline hover:text-primary transition-colors cursor-pointer"
+                              title="צפה במוצר באתר"
+                            >
+                              {product.name}
+                            </a>
                             {product.isDraft && <Badge variant="secondary" className="h-5 px-1 text-[10px]">טיוטה</Badge>}
                             {product.isSynced === false && <Badge variant="destructive" className="h-5 px-1 text-[10px] bg-yellow-500 hover:bg-yellow-600 text-white">לא מסונכרן</Badge>}
                           </span>
