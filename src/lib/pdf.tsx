@@ -30,15 +30,37 @@ async function registerFonts(origin: string) {
   }
 }
 
+const reverseHebrew = (text: string | number | undefined | null): string => {
+  if (text === undefined || text === null) return '';
+  const str = String(text);
+  
+  const reversed = str.split('').map(c => {
+    if (c === '(') return ')';
+    if (c === ')') return '(';
+    if (c === '[') return ']';
+    if (c === ']') return '[';
+    return c;
+  }).reverse().join('');
+  
+  return reversed.replace(/[a-zA-Z0-9]+(?:[\s.,:\\/\\-@%]+[a-zA-Z0-9]+)*/g, (match) => {
+    return match.split('').reverse().join('');
+  });
+};
+
+const RText = ({ children, style }: { children: React.ReactNode, style?: any }) => {
+  const content = React.Children.toArray(children).join('');
+  return <Text style={style}>{reverseHebrew(content)}</Text>;
+};
+
 const styles = StyleSheet.create({
   page: {
     padding: 30,
     fontFamily: 'Heebo',
     fontSize: 12,
-    direction: 'rtl',
+    textAlign: 'right',
   },
   header: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'space-between',
     marginBottom: 20,
     borderBottomWidth: 1,
@@ -64,7 +86,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'space-between',
     marginBottom: 4,
   },
@@ -79,16 +101,18 @@ const styles = StyleSheet.create({
   },
   tableRow: {
     margin: 'auto',
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
   },
   tableCellHeader: {
     margin: 5,
     fontSize: 10,
     fontWeight: 'bold',
+    textAlign: 'right',
   },
   tableCell: {
     margin: 5,
     fontSize: 10,
+    textAlign: 'right',
   },
   tableColDesc: { width: '35%', borderStyle: 'solid', borderWidth: 1, borderColor: '#e4e4e7', borderLeftWidth: 0, borderTopWidth: 0 },
   tableColMakat: { width: '20%', borderStyle: 'solid', borderWidth: 1, borderColor: '#e4e4e7', borderLeftWidth: 0, borderTopWidth: 0 },
@@ -97,8 +121,8 @@ const styles = StyleSheet.create({
   tableColTotal: { width: '20%', borderStyle: 'solid', borderWidth: 1, borderColor: '#e4e4e7', borderLeftWidth: 0, borderTopWidth: 0 },
   totalSection: {
     marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
+    flexDirection: 'row-reverse',
+    justifyContent: 'flex-end',
   },
   totalBox: {
     width: '40%',
@@ -114,61 +138,61 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.title}>Libero Wholesale</Text>
-          <Text style={styles.subtitle}>סיכום הזמנה / הצעת מחיר (להפקת חשבונית)</Text>
+          <RText style={styles.title}>Libero Wholesale</RText>
+          <RText style={styles.subtitle}>סיכום הזמנה / הצעת מחיר (להפקת חשבונית)</RText>
         </View>
-        <View style={{ alignItems: 'flex-start' }}>
-          <Text style={{ fontWeight: 'bold' }}>מספר הזמנה: {order.orderNumber}</Text>
-          <Text>תאריך: {new Date(order.createdAt).toLocaleDateString('he-IL')}</Text>
+        <View style={{ alignItems: 'flex-end' }}>
+          <RText style={{ fontWeight: 'bold' }}>מספר הזמנה: {order.orderNumber}</RText>
+          <RText>תאריך: {new Date(order.createdAt).toLocaleDateString('he-IL')}</RText>
         </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>פרטי לקוח</Text>
+        <RText style={styles.sectionTitle}>פרטי לקוח</RText>
         <View style={styles.row}>
-          <Text>שם העסק: {order.businessName}</Text>
-          <Text>איש קשר: {order.customerName}</Text>
+          <RText>שם העסק: {order.businessName}</RText>
+          <RText>איש קשר: {order.customerName}</RText>
         </View>
         <View style={styles.row}>
-          <Text>אימייל: {order.customerEmail}</Text>
-          <Text>טלפון: {order.customerPhone}</Text>
+          <RText>אימייל: {order.customerEmail}</RText>
+          <RText>טלפון: {order.customerPhone}</RText>
         </View>
         <View style={styles.row}>
-          <Text>כתובת משלוח: {order.deliveryAddress}</Text>
+          <RText>כתובת משלוח: {order.deliveryAddress}</RText>
         </View>
         {order.notes && (
           <View style={{ marginTop: 4 }}>
-            <Text>הערות: {order.notes}</Text>
+            <RText>הערות: {order.notes}</RText>
           </View>
         )}
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>פירוט מוצרים</Text>
+        <RText style={styles.sectionTitle}>פירוט מוצרים</RText>
         <View style={styles.table}>
           <View style={styles.tableRow}>
-            <View style={[styles.tableColDesc, { backgroundColor: '#f4f4f5' }]}><Text style={styles.tableCellHeader}>פריט</Text></View>
-            <View style={[styles.tableColMakat, { backgroundColor: '#f4f4f5' }]}><Text style={styles.tableCellHeader}>מק״ט / ברקוד</Text></View>
-            <View style={[styles.tableColQty, { backgroundColor: '#f4f4f5' }]}><Text style={styles.tableCellHeader}>כמות</Text></View>
-            <View style={[styles.tableColPrice, { backgroundColor: '#f4f4f5' }]}><Text style={styles.tableCellHeader}>מחיר יחידה</Text></View>
-            <View style={[styles.tableColTotal, { backgroundColor: '#f4f4f5' }]}><Text style={styles.tableCellHeader}>סה"כ</Text></View>
+            <View style={[styles.tableColDesc, { backgroundColor: '#f4f4f5' }]}><RText style={styles.tableCellHeader}>פריט</RText></View>
+            <View style={[styles.tableColMakat, { backgroundColor: '#f4f4f5' }]}><RText style={styles.tableCellHeader}>מק״ט / ברקוד</RText></View>
+            <View style={[styles.tableColQty, { backgroundColor: '#f4f4f5' }]}><RText style={styles.tableCellHeader}>כמות</RText></View>
+            <View style={[styles.tableColPrice, { backgroundColor: '#f4f4f5' }]}><RText style={styles.tableCellHeader}>מחיר יחידה</RText></View>
+            <View style={[styles.tableColTotal, { backgroundColor: '#f4f4f5' }]}><RText style={styles.tableCellHeader}>סה"כ</RText></View>
           </View>
           {items.map((item, i) => (
             <View key={i}>
               <View style={styles.tableRow}>
-                <View style={styles.tableColDesc}><Text style={styles.tableCell}>{item.productName}</Text></View>
-                <View style={styles.tableColMakat}><Text style={styles.tableCell}>{item.barcode || '—'}</Text></View>
-                <View style={styles.tableColQty}><Text style={styles.tableCell}>{item.quantity}</Text></View>
-                <View style={styles.tableColPrice}><Text style={styles.tableCell}>₪{Number(item.unitPrice).toFixed(2)}</Text></View>
-                <View style={styles.tableColTotal}><Text style={styles.tableCell}>₪{Number(item.totalPrice).toFixed(2)}</Text></View>
+                <View style={styles.tableColDesc}><RText style={styles.tableCell}>{item.productName}</RText></View>
+                <View style={styles.tableColMakat}><RText style={styles.tableCell}>{item.barcode || '—'}</RText></View>
+                <View style={styles.tableColQty}><RText style={styles.tableCell}>{item.quantity}</RText></View>
+                <View style={styles.tableColPrice}><RText style={styles.tableCell}>₪ {Number(item.unitPrice).toFixed(2)}</RText></View>
+                <View style={styles.tableColTotal}><RText style={styles.tableCell}>₪ {Number(item.totalPrice).toFixed(2)}</RText></View>
               </View>
               {item.testerRatio && item.quantity >= item.testerRatio && (
                 <View style={styles.tableRow}>
-                  <View style={styles.tableColDesc}><Text style={[styles.tableCell, { color: '#16a34a', fontWeight: 'bold' }]}>טסטר מתנה: {item.productName}</Text></View>
-                  <View style={styles.tableColMakat}><Text style={styles.tableCell}>{item.barcode || '—'}</Text></View>
-                  <View style={styles.tableColQty}><Text style={[styles.tableCell, { color: '#16a34a', fontWeight: 'bold' }]}>{Math.floor(item.quantity / item.testerRatio)}</Text></View>
-                  <View style={styles.tableColPrice}><Text style={styles.tableCell}>₪0.00</Text></View>
-                  <View style={styles.tableColTotal}><Text style={styles.tableCell}>₪0.00</Text></View>
+                  <View style={styles.tableColDesc}><RText style={[styles.tableCell, { color: '#16a34a', fontWeight: 'bold' }]}>טסטר מתנה: {item.productName}</RText></View>
+                  <View style={styles.tableColMakat}><RText style={styles.tableCell}>{item.barcode || '—'}</RText></View>
+                  <View style={styles.tableColQty}><RText style={[styles.tableCell, { color: '#16a34a', fontWeight: 'bold' }]}>{Math.floor(item.quantity / item.testerRatio)}</RText></View>
+                  <View style={styles.tableColPrice}><RText style={styles.tableCell}>₪ 0.00</RText></View>
+                  <View style={styles.tableColTotal}><RText style={styles.tableCell}>₪ 0.00</RText></View>
                 </View>
               )}
             </View>
@@ -179,23 +203,23 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
       <View style={styles.totalSection}>
         <View style={styles.totalBox}>
           <View style={styles.row}>
-            <Text style={{ fontWeight: 'normal' }}>סכום ביניים:</Text>
-            <Text style={{ fontWeight: 'normal' }}>₪{(Number(order.totalAmount) / 1.18).toFixed(2)}</Text>
+            <RText style={{ fontWeight: 'normal' }}>סכום ביניים:</RText>
+            <RText style={{ fontWeight: 'normal' }}>₪ {(Number(order.totalAmount) / 1.18).toFixed(2)}</RText>
           </View>
           <View style={styles.row}>
-            <Text style={{ fontWeight: 'normal' }}>מע"מ (18%):</Text>
-            <Text style={{ fontWeight: 'normal' }}>₪{(Number(order.totalAmount) - (Number(order.totalAmount) / 1.18)).toFixed(2)}</Text>
+            <RText style={{ fontWeight: 'normal' }}>מע"מ (18%):</RText>
+            <RText style={{ fontWeight: 'normal' }}>₪ {(Number(order.totalAmount) - (Number(order.totalAmount) / 1.18)).toFixed(2)}</RText>
           </View>
-          <View style={[styles.row, { marginTop: 5, borderTop: '1px solid #e4e4e7', paddingTop: 5 }]}>
-            <Text style={{ fontWeight: 'bold' }}>סה"כ לתשלום (כולל מע"מ):</Text>
-            <Text style={{ fontWeight: 'bold' }}>₪{Number(order.totalAmount).toFixed(2)}</Text>
+          <View style={[styles.row, { marginTop: 5, borderTopWidth: 1, borderTopColor: '#e4e4e7', borderTopStyle: 'solid', paddingTop: 5 }]}>
+            <RText style={{ fontWeight: 'bold' }}>סה"כ לתשלום (כולל מע"מ):</RText>
+            <RText style={{ fontWeight: 'bold' }}>₪ {Number(order.totalAmount).toFixed(2)}</RText>
           </View>
         </View>
       </View>
 
       <View style={{ marginTop: 50, textAlign: 'center', fontSize: 10, color: '#71717a' }}>
-        <Text>מסמך זה מיועד להפקת חשבונית ואינו מהווה חשבונית מס.</Text>
-        <Text>תודה שבחרתם Libero Wholesale.</Text>
+        <RText>מסמך זה מיועד להפקת חשבונית ואינו מהווה חשבונית מס.</RText>
+        <RText>תודה שבחרתם Libero Wholesale.</RText>
       </View>
     </Page>
   </Document>
