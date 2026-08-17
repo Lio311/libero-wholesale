@@ -81,7 +81,7 @@ export async function GET(req: Request) {
       });
       
       const results = await Promise.all(fetchPromises);
-      updatedCount += results.reduce((a, b) => a + b, 0);
+      updatedCount += results.reduce<number>((a, b) => a + b, 0);
     }
     
     totalUpdated += updatedCount;
