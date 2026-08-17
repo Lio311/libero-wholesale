@@ -10,7 +10,8 @@ export default async function CatalogPage() {
   const initialProducts = await db.query.products.findMany({
     where: (products, { and, eq }) => and(
       eq(products.status, 'active'),
-      eq(products.isDraft, false)
+      eq(products.isDraft, false),
+      eq(products.isSynced, true)
     ),
     orderBy: [desc(products.createdAt)],
   });
@@ -21,7 +22,8 @@ export default async function CatalogPage() {
   const latestUpdatedProduct = await db.query.products.findFirst({
     where: (products, { and, eq }) => and(
       eq(products.status, 'active'),
-      eq(products.isDraft, false)
+      eq(products.isDraft, false),
+      eq(products.isSynced, true)
     ),
     orderBy: [desc(products.updatedAt)],
   });

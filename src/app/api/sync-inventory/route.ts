@@ -37,6 +37,16 @@ export async function GET(req: Request) {
     }).from(products);
     
     const productsWithBarcode = localProducts.filter(p => p.barcode && p.barcode.trim() !== '');
+    const productsWithoutBarcode = localProducts.filter(p => !p.barcode || p.barcode.trim() === '');
+    
+    // Mark products without barcodes as unsynced (only run on first chunk)
+    if (startIdx === 0 && productsWithoutBarcode.length > 0) {
+      for (const p of productsWithoutBarcode) {
+        await db.update(products)
+          .set({ isSynced: false })
+          .where(eq(products.id, p.id));
+      }
+    }
 
     if (productsWithBarcode.length === 0) {
       return NextResponse.json({ success: true, message: "No local products with barcodes found." });
@@ -72,8 +82,13 @@ export async function GET(req: Request) {
               .where(eq(products.id, localProd.id));
               
             return 1;
+          } else {
+            // Product not found in WooCommerce, mark as unsynced
+            await db.update(products)
+              .set({ isSynced: false })
+              .where(eq(products.id, localProd.id));
+            return 0;
           }
-          return 0;
         } catch (err) {
           console.error(`Failed to fetch/update product ${localProd.barcode}:`, err);
           return 0;

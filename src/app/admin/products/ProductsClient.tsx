@@ -51,7 +51,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const [sortConfig, setSortConfig] = useState<{ key: keyof ProductRow; direction: "asc" | "desc" } | null>(null);
-  const [filterDraft, setFilterDraft] = useState<"all" | "draft" | "published">("published");
+  const [filterDraft, setFilterDraft] = useState<"all" | "draft" | "published" | "unsynced">("published");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isBulkPriceOpen, setIsBulkPriceOpen] = useState(false);
   const [isBulkStatusLoading, setIsBulkStatusLoading] = useState(false);
@@ -95,7 +95,8 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
       
     let matchesDraft = true;
     if (filterDraft === "draft") matchesDraft = p.isDraft === true;
-    if (filterDraft === "published") matchesDraft = p.isDraft !== true;
+    if (filterDraft === "published") matchesDraft = p.isDraft !== true && p.isSynced !== false;
+    if (filterDraft === "unsynced") matchesDraft = p.isSynced === false;
     
     return matchesSearch && matchesDraft;
   });
@@ -200,16 +201,17 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <Select value={filterDraft} onValueChange={(v: "all" | "draft" | "published" | null) => v && setFilterDraft(v)}>
+          <Select value={filterDraft} onValueChange={(v: "all" | "draft" | "published" | "unsynced" | null) => v && setFilterDraft(v as any)}>
             <SelectTrigger className="w-full sm:w-40 bg-card border-border">
               <SelectValue placeholder="סטטוס">
-                {filterDraft === "published" ? "פעילים" : filterDraft === "draft" ? "טיוטות" : "הכל"}
+                {filterDraft === "published" ? "פעילים" : filterDraft === "draft" ? "טיוטות" : filterDraft === "unsynced" ? "מלאי לא מסונכרן" : "הכל"}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">הכל</SelectItem>
               <SelectItem value="published">פעילים</SelectItem>
               <SelectItem value="draft">טיוטות</SelectItem>
+              <SelectItem value="unsynced">מלאי לא מסונכרן</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -297,7 +299,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                   </TableRow>
                 ) : (
                   sortedProducts.map((product) => (
-                    <TableRow key={product.id} className={`border-border hover:bg-muted/20 transition-colors ${product.isDraft ? "opacity-50 grayscale-[50%]" : ""}`}>
+                    <TableRow key={product.id} className={`border-border hover:bg-muted/20 transition-colors ${product.isDraft || product.isSynced === false ? "opacity-50 grayscale-[50%]" : ""}`}>
                       <TableCell className="pr-4 pl-2 text-center">
                         <Checkbox checked={selectedIds.includes(product.id)} onCheckedChange={() => toggleOne(product.id)} aria-label={`בחר ${product.name}`} />
                       </TableCell>
@@ -321,6 +323,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                           <span className="flex items-center gap-2 justify-center text-sm md:text-base">
                             {product.name}
                             {product.isDraft && <Badge variant="secondary" className="h-5 px-1 text-[10px]">טיוטה</Badge>}
+                            {product.isSynced === false && <Badge variant="destructive" className="h-5 px-1 text-[10px] bg-yellow-500 hover:bg-yellow-600 text-white">לא מסונכרן</Badge>}
                           </span>
                           <div className="md:hidden flex flex-col items-center mt-1 text-xs text-muted-foreground space-y-0.5">
                             <span className="font-bold text-primary">₪{Number(product.price).toFixed(2)}</span>
