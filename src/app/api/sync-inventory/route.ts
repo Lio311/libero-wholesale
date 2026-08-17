@@ -5,6 +5,8 @@ import { eq } from "drizzle-orm";
 
 // You can protect this route with a secret key if needed.
 // For example, appending ?secret=YOUR_SECRET to the URL.
+export const maxDuration = 60; // Max execution time for Vercel Hobby tier
+
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
@@ -54,21 +56,28 @@ export async function GET(req: Request) {
 
     let updatedCount = 0;
     
-    // Match WooCommerce SKU to our DB Barcode
-    for (const wcProd of allWcProducts) {
-       const sku = wcProd.sku;
-       const stock = wcProd.stock_quantity || 0;
-       
-       if (sku) {
+    // Process updates in chunks to avoid rate limiting and connection timeouts
+    const chunkSize = 50;
+    for (let i = 0; i < allWcProducts.length; i += chunkSize) {
+      const chunk = allWcProducts.slice(i, i + chunkSize);
+      
+      const updatePromises = chunk.map(async (wcProd) => {
+        const sku = wcProd.sku;
+        const stock = wcProd.stock_quantity || 0;
+        
+        if (sku) {
           const result = await db.update(products)
             .set({ stockQuantity: stock, isSynced: true })
             .where(eq(products.barcode, sku))
             .returning({ updatedId: products.id });
             
-          if (result.length > 0) {
-            updatedCount += result.length;
-          }
-       }
+          return result.length;
+        }
+        return 0;
+      });
+      
+      const results = await Promise.all(updatePromises);
+      updatedCount += results.reduce((a, b) => a + b, 0);
     }
 
     return NextResponse.json({ 
