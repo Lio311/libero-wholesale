@@ -47,7 +47,8 @@ export async function GET(
       .where(eq(orderItems.orderId, orderId));
       
     // Generate PDF
-    const pdfBuffer = await generateOrderPDFBuffer(orderData, itemsData);
+    const origin = request.nextUrl.origin;
+    const pdfBuffer = await generateOrderPDFBuffer(orderData, itemsData, origin);
     
     // Return PDF
     return new Response(pdfBuffer, {

@@ -4,16 +4,15 @@ import fs from 'fs';
 
 let fontsRegistered = false;
 
-function registerFonts() {
+async function registerFonts(origin: string) {
   if (fontsRegistered) return;
   
   try {
-    const regularPath = path.join(process.cwd(), 'public', 'fonts', 'Heebo-Regular.ttf');
-    const boldPath = path.join(process.cwd(), 'public', 'fonts', 'Heebo-Bold.ttf');
+    const regularRes = await fetch(`${origin}/fonts/Heebo-Regular.ttf`);
+    const boldRes = await fetch(`${origin}/fonts/Heebo-Bold.ttf`);
     
-    // Read directly to Buffer so react-pdf doesn't have to resolve paths on Vercel
-    const regularBuffer = fs.readFileSync(regularPath);
-    const boldBuffer = fs.readFileSync(boldPath);
+    const regularBuffer = Buffer.from(await regularRes.arrayBuffer());
+    const boldBuffer = Buffer.from(await boldRes.arrayBuffer());
     
     Font.register({
       family: 'Heebo',
@@ -24,7 +23,7 @@ function registerFonts() {
     });
     fontsRegistered = true;
   } catch (error) {
-    console.error('Failed to load fonts from local fs:', error);
+    console.error('Failed to load fonts from network:', error);
   }
 }
 
@@ -199,8 +198,8 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
   </Document>
 );
 
-export async function generateOrderPDFBuffer(order: any, items: any[]): Promise<Uint8Array> {
-  registerFonts();
+export async function generateOrderPDFBuffer(order: any, items: any[], origin: string): Promise<Uint8Array> {
+  await registerFonts(origin);
   
   const stream = await renderToStream(<OrderPDF order={order} items={items} />);
   return new Promise((resolve, reject) => {
