@@ -3,12 +3,18 @@ import { db } from '@/lib/db';
 import { orders, orderItems, products } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { generateOrderPDFBuffer } from '@/lib/pdf';
+import { auth, currentUser } from '@clerk/nextjs/server';
+import { checkIsAdmin } from '@/lib/admin';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { userId } = await auth();
+    const user = await currentUser();
+    const isAdmin = await checkIsAdmin(user?.emailAddresses[0]?.emailAddress);
+
     const resolvedParams = await params;
     const orderId = resolvedParams.id;
     
@@ -19,6 +25,10 @@ export async function GET(
     
     if (!orderData) {
       return new NextResponse('Order not found', { status: 404 });
+    }
+    
+    if (!isAdmin && orderData.clerkUserId !== userId) {
+      return new NextResponse('Unauthorized', { status: 401 });
     }
     
     // Fetch items with product data

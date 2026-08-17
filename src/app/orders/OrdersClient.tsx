@@ -2,6 +2,8 @@
 
 import { ExportExcelButton } from "@/components/ExportExcelButton";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { FileDown } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -140,10 +142,23 @@ export function OrdersClient({ orders }: OrdersClientProps) {
         <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
           <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <DialogHeader>
-              <DialogTitle className="text-xl flex items-center gap-3">
-                <span>הזמנה #{selectedOrder.orderNumber}</span>
-                {getStatusBadge(selectedOrder.status)}
-              </DialogTitle>
+              <div className="flex items-center justify-between">
+                <DialogTitle className="text-xl flex items-center gap-3">
+                  <span>הזמנה #{selectedOrder.orderNumber}</span>
+                  {getStatusBadge(selectedOrder.status)}
+                </DialogTitle>
+                <a
+                  href={`/api/orders/${selectedOrder.id}/pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-4"
+                >
+                  <Button variant="outline" size="sm" className="gap-2 rounded-full">
+                    <FileDown className="h-4 w-4" />
+                    הורד סיכום הזמנה
+                  </Button>
+                </a>
+              </div>
             </DialogHeader>
             <div className="space-y-6 mt-4">
               <div className="grid grid-cols-2 gap-4 bg-muted/30 p-4 rounded-xl border border-border">

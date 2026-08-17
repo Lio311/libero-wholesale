@@ -112,7 +112,7 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
       <View style={styles.header}>
         <View>
           <Text style={styles.title}>Libero Wholesale</Text>
-          <Text style={styles.subtitle}>סיכום הזמנה / הצעת מחיר</Text>
+          <Text style={styles.subtitle}>סיכום הזמנה / הצעת מחיר (להפקת חשבונית)</Text>
         </View>
         <View style={{ alignItems: 'flex-start' }}>
           <Text style={{ fontWeight: 'bold' }}>מספר הזמנה: {order.orderNumber}</Text>
@@ -182,7 +182,7 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
       </View>
 
       <View style={{ marginTop: 50, textAlign: 'center', fontSize: 10, color: '#71717a' }}>
-        <Text>מסמך זה מהווה אישור הזמנה ואינו מהווה חשבונית מס.</Text>
+        <Text>מסמך זה מיועד להפקת חשבונית ואינו מהווה חשבונית מס.</Text>
         <Text>תודה שבחרתם Libero Wholesale.</Text>
       </View>
     </Page>

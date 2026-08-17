@@ -60,7 +60,7 @@ export function CheckoutForm({ store }: { store: any }) {
       }
 
       clearCart();
-      router.push(`/checkout/success`);
+      router.push(`/checkout/success?orderId=${data.orderId}`);
     } catch (err: any) {
       setError(err.message);
       setIsLoading(false);
