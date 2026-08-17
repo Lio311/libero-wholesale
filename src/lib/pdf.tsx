@@ -33,8 +33,7 @@ async function registerFonts(origin: string) {
 
 const reverseHebrew = (text: string | null | undefined) => {
   if (!text) return text || '';
-  // Wrap with RLE (U+202B) and PDF (U+202C) to force RTL base direction
-  return '\u202B' + String(text) + '\u202C';
+  return String(text);
 };
 
 const RText = ({ children, style }: { children: React.ReactNode, style?: any }) => {
@@ -132,27 +131,33 @@ const OrderPDF = ({ order, items, origin }: { order: any, items: any[], origin: 
           <RText style={styles.subtitle}>סיכום הזמנה / הצעת מחיר (להפקת חשבונית)</RText>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
-          <RText style={{ fontWeight: 'bold' }}>מספר הזמנה: {order.orderNumber}</RText>
-          <RText>תאריך: {new Date(order.createdAt).toLocaleDateString('he-IL')}</RText>
+          <RText style={{ fontWeight: 'bold' }}>:מספר הזמנה {order.orderNumber}</RText>
+          <RText>:תאריך {new Date(order.createdAt).toLocaleDateString('he-IL')}</RText>
         </View>
       </View>
 
       <View style={styles.section}>
         <RText style={styles.sectionTitle}>פרטי לקוח</RText>
         <View style={styles.row}>
-          <RText>שם העסק: {order.businessName}</RText>
-          <RText>איש קשר: {order.customerName}</RText>
+          <RText>:שם העסק {order.businessName}</RText>
+          <RText>:איש קשר {order.customerName}</RText>
         </View>
         <View style={styles.row}>
-          <RText>אימייל: {order.customerEmail}</RText>
-          <RText>טלפון: {order.customerPhone}</RText>
+          <View style={{ flexDirection: 'row-reverse' }}>
+            <RText>:אימייל</RText>
+            <RText style={{ marginRight: 4 }}>{order.customerEmail}</RText>
+          </View>
+          <View style={{ flexDirection: 'row-reverse' }}>
+            <RText>:טלפון</RText>
+            <RText style={{ marginRight: 4 }}>{order.customerPhone}</RText>
+          </View>
         </View>
         <View style={styles.row}>
-          <RText>כתובת משלוח: {order.deliveryAddress}</RText>
+          <RText>:כתובת משלוח {order.deliveryAddress}</RText>
         </View>
         {order.notes ? (
           <View style={{ marginTop: 4 }}>
-            <RText>הערות: {order.notes}</RText>
+            <RText>:הערות {order.notes}</RText>
           </View>
         ) : <View />}
       </View>
@@ -201,23 +206,23 @@ const OrderPDF = ({ order, items, origin }: { order: any, items: any[], origin: 
       <View style={styles.totalSection}>
         <View style={styles.totalBox}>
           <View style={styles.row}>
-            <RText style={{ fontWeight: 'normal' }}>סכום ביניים:</RText>
+            <RText style={{ fontWeight: 'normal' }}>:סכום ביניים</RText>
             <RText style={{ fontWeight: 'normal' }}>₪ {(Number(order.totalAmount) / 1.18).toFixed(2)}</RText>
           </View>
           <View style={styles.row}>
-            <RText style={{ fontWeight: 'normal' }}>מע"מ (18%):</RText>
+            <RText style={{ fontWeight: 'normal' }}>:(18%) מע"מ</RText>
             <RText style={{ fontWeight: 'normal' }}>₪ {(Number(order.totalAmount) - (Number(order.totalAmount) / 1.18)).toFixed(2)}</RText>
           </View>
           <View style={[styles.row, { marginTop: 5, borderTopWidth: 1, borderTopColor: '#e4e4e7', borderTopStyle: 'solid', paddingTop: 5 }]}>
-            <RText style={{ fontWeight: 'bold' }}>סה"כ לתשלום (כולל מע"מ):</RText>
+            <RText style={{ fontWeight: 'bold' }}>:סה"כ לתשלום (כולל מע"מ)</RText>
             <RText style={{ fontWeight: 'bold' }}>₪ {Number(order.totalAmount).toFixed(2)}</RText>
           </View>
         </View>
       </View>
 
       <View style={{ marginTop: 50, textAlign: 'center', fontSize: 10, color: '#71717a' }}>
-        <RText>מסמך זה מיועד להפקת חשבונית ואינו מהווה חשבונית מס.</RText>
-        <RText>תודה שבחרתם Libero Wholesale.</RText>
+        <RText>.מסמך זה מיועד להפקת חשבונית ואינו מהווה חשבונית מס</RText>
+        <RText>.Libero Wholesale תודה שבחרתם</RText>
       </View>
     </Page>
   </Document>
