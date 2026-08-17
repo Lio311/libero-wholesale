@@ -42,7 +42,7 @@ const reverseHebrew = (text: string | number | undefined | null): string => {
     return c;
   }).reverse().join('');
   
-  return reversed.replace(/[a-zA-Z0-9]+(?:[\s.,:\\/\\-@%]+[a-zA-Z0-9]+)*/g, (match) => {
+  return reversed.replace(/[a-zA-Z0-9]+(?:[\s.,:\/\\@%-]+[a-zA-Z0-9]+)*/g, (match) => {
     return match.split('').reverse().join('');
   });
 };
