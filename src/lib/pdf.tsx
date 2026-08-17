@@ -87,8 +87,9 @@ const styles = StyleSheet.create({
     margin: 5,
     fontSize: 10,
   },
-  tableColDesc: { width: '50%', borderStyle: 'solid', borderWidth: 1, borderColor: '#e4e4e7', borderLeftWidth: 0, borderTopWidth: 0 },
-  tableColQty: { width: '15%', borderStyle: 'solid', borderWidth: 1, borderColor: '#e4e4e7', borderLeftWidth: 0, borderTopWidth: 0 },
+  tableColDesc: { width: '35%', borderStyle: 'solid', borderWidth: 1, borderColor: '#e4e4e7', borderLeftWidth: 0, borderTopWidth: 0 },
+  tableColMakat: { width: '20%', borderStyle: 'solid', borderWidth: 1, borderColor: '#e4e4e7', borderLeftWidth: 0, borderTopWidth: 0 },
+  tableColQty: { width: '10%', borderStyle: 'solid', borderWidth: 1, borderColor: '#e4e4e7', borderLeftWidth: 0, borderTopWidth: 0 },
   tableColPrice: { width: '15%', borderStyle: 'solid', borderWidth: 1, borderColor: '#e4e4e7', borderLeftWidth: 0, borderTopWidth: 0 },
   tableColTotal: { width: '20%', borderStyle: 'solid', borderWidth: 1, borderColor: '#e4e4e7', borderLeftWidth: 0, borderTopWidth: 0 },
   totalSection: {
@@ -145,6 +146,7 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
           {/* Table Header */}
           <View style={styles.tableRow}>
             <View style={[styles.tableColDesc, { backgroundColor: '#f4f4f5' }]}><Text style={styles.tableCellHeader}>פריט</Text></View>
+            <View style={[styles.tableColMakat, { backgroundColor: '#f4f4f5' }]}><Text style={styles.tableCellHeader}>מק״ט / ברקוד</Text></View>
             <View style={[styles.tableColQty, { backgroundColor: '#f4f4f5' }]}><Text style={styles.tableCellHeader}>כמות</Text></View>
             <View style={[styles.tableColPrice, { backgroundColor: '#f4f4f5' }]}><Text style={styles.tableCellHeader}>מחיר יחידה</Text></View>
             <View style={[styles.tableColTotal, { backgroundColor: '#f4f4f5' }]}><Text style={styles.tableCellHeader}>סה"כ</Text></View>
@@ -153,6 +155,7 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
           {items.map((item, i) => (
             <View style={styles.tableRow} key={i}>
               <View style={styles.tableColDesc}><Text style={styles.tableCell}>{item.productName}</Text></View>
+              <View style={styles.tableColMakat}><Text style={styles.tableCell}>{item.barcode || '—'}</Text></View>
               <View style={styles.tableColQty}><Text style={styles.tableCell}>{item.quantity}</Text></View>
               <View style={styles.tableColPrice}><Text style={styles.tableCell}>₪{Number(item.unitPrice).toFixed(2)}</Text></View>
               <View style={styles.tableColTotal}><Text style={styles.tableCell}>₪{Number(item.totalPrice).toFixed(2)}</Text></View>

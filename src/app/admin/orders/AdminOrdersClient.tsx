@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Trash2, Plus, Minus, Edit, Eye } from "lucide-react";
+import { Loader2, Trash2, Plus, Minus, Edit, Eye, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -84,6 +84,24 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
       toast.error("שגיאה בעדכון הסטטוס");
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleDownloadPDF = async (order: AdminOrderRow) => {
+    try {
+      const res = await fetch(`/api/orders/${order.id}/pdf`);
+      if (!res.ok) throw new Error("Failed to generate PDF");
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `order-${order.orderNumber}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (e) {
+      toast.error("שגיאה בהורדת ה-PDF");
     }
   };
 
@@ -371,6 +389,15 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                         variant="ghost" 
                         size="icon" 
                         className="h-8 w-8 text-muted-foreground hover:text-primary"
+                        onClick={() => handleDownloadPDF(order)}
+                        title="הורד PDF"
+                      >
+                        <FileDown className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-muted-foreground hover:text-primary"
                         onClick={() => handleOpenOrder(order)}
                         title="צפה וערוך"
                       >
@@ -398,9 +425,20 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
         <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
           <DialogContent className="w-[95vw] max-w-6xl sm:max-w-6xl max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] px-4 md:px-6">
             <DialogHeader>
-              <DialogTitle className="text-xl flex items-center gap-3">
-                <span>הזמנה #{selectedOrder.orderNumber}</span>
-                {getStatusBadge(selectedOrder.status)}
+              <DialogTitle className="text-xl flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <span>הזמנה #{selectedOrder.orderNumber}</span>
+                  {getStatusBadge(selectedOrder.status)}
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="gap-2"
+                  onClick={() => handleDownloadPDF(selectedOrder)}
+                >
+                  <FileDown className="w-4 h-4" />
+                  הורד PDF
+                </Button>
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-6 mt-4">
