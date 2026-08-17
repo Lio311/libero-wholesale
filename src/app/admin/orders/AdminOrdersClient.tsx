@@ -424,8 +424,8 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
       {selectedOrder && (
         <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
           <DialogContent className="w-[95vw] max-w-6xl sm:max-w-6xl max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] px-4 md:px-6">
-            <DialogHeader>
-              <DialogTitle className="text-xl flex items-center justify-between gap-3">
+            <DialogHeader className="pt-2 pl-10 pr-2">
+              <DialogTitle className="text-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <span>הזמנה #{selectedOrder.orderNumber}</span>
                   {getStatusBadge(selectedOrder.status)}
@@ -433,7 +433,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="gap-2"
+                  className="gap-2 w-full sm:w-auto"
                   onClick={() => handleDownloadPDF(selectedOrder)}
                 >
                   <FileDown className="w-4 h-4" />
