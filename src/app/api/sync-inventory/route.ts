@@ -74,19 +74,33 @@ export async function GET(req: Request) {
             let matchedProduct = null;
             
             if (usedSearch) {
-              // Exact name match (case insensitive) if we used search
-              matchedProduct = wcData.find((w: any) => 
-                w.name && w.name.trim().toLowerCase() === localProd.name.trim().toLowerCase()
-              ) || wcData[0]; // Fallback to first search result if no exact match
+              // Filter out "mini" perfumes to avoid pulling wrong SKU/stock
+              const filteredWcData = wcData.filter((w: any) => {
+                const wcName = w.name ? w.name.toLowerCase() : '';
+                return !wcName.includes('mini') && !wcName.includes('מיני');
+              });
+              
+              if (filteredWcData.length > 0) {
+                // Exact name match (case insensitive) if we used search
+                matchedProduct = filteredWcData.find((w: any) => 
+                  w.name && w.name.trim().toLowerCase() === localProd.name.trim().toLowerCase()
+                ) || filteredWcData[0]; // Fallback to first non-mini search result
+              }
             } else {
               matchedProduct = wcData[0];
             }
             
             if (matchedProduct) {
               const stock = matchedProduct.stock_quantity || 0;
+              const updateData: any = { stockQuantity: stock, isSynced: true };
+              
+              // If we searched by name and found a SKU, save it as barcode
+              if (usedSearch && matchedProduct.sku) {
+                updateData.barcode = matchedProduct.sku;
+              }
               
               await db.update(products)
-                .set({ stockQuantity: stock, isSynced: true })
+                .set(updateData)
                 .where(eq(products.id, localProd.id));
                 
               return 1;
