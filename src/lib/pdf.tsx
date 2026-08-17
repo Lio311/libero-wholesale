@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   totalBox: {
-    width: '40%',
+    width: '50%',
     padding: 10,
     borderWidth: 1,
     borderColor: '#000',
@@ -149,17 +149,17 @@ const OrderPDF = ({ order, items, origin }: { order: any, items: any[], origin: 
             <RText>:שם העסק</RText>
             <RText style={{ marginRight: 4 }}>{order.businessName}</RText>
           </View>
-          <View style={{ flexDirection: 'row-reverse', flex: 1 }}>
+          <View style={{ flexDirection: 'row-reverse', flex: 1, justifyContent: 'flex-end' }}>
             <RText>:איש קשר</RText>
             <RText style={{ marginRight: 4 }}>{order.customerName}</RText>
           </View>
         </View>
         <View style={styles.row}>
-          <View style={{ flexDirection: 'row-reverse' }}>
+          <View style={{ flexDirection: 'row-reverse', flex: 1 }}>
             <RText>:אימייל</RText>
             <RText style={{ marginRight: 4 }}>{order.customerEmail}</RText>
           </View>
-          <View style={{ flexDirection: 'row-reverse' }}>
+          <View style={{ flexDirection: 'row-reverse', flex: 1, justifyContent: 'flex-end' }}>
             <RText>:טלפון</RText>
             <RText style={{ marginRight: 4 }}>{order.customerPhone}</RText>
           </View>
