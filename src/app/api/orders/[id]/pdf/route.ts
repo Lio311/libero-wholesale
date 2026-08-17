@@ -6,10 +6,11 @@ import { generateOrderPDFBuffer } from '@/lib/pdf';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const orderId = params.id;
+    const resolvedParams = await params;
+    const orderId = resolvedParams.id;
     
     // Fetch order
     const orderData = await db.query.orders.findFirst({
