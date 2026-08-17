@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, MoreHorizontal, Edit, Trash2, Loader2, ArrowUpDown, ArrowUp, ArrowDown, Image as ImageIcon, CheckCircle2 } from "lucide-react";
+import { Search, Plus, MoreHorizontal, Edit, Trash2, Loader2, ArrowUpDown, ArrowUp, ArrowDown, Image as ImageIcon, CheckCircle2, Pencil } from "lucide-react";
 import { ProductDialog } from "./ProductDialog";
 import { ImageModal } from "@/components/ImageModal";
 import { deleteProduct } from "./actions";
@@ -268,7 +268,11 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                             <span className="font-bold text-primary">₪{Number(product.price).toFixed(2)}</span>
                             <span className="flex items-center justify-center gap-1">
                               מלאי: {product.stockQuantity}
-                              {product.isSynced && <span title="מסונכרן מול WooCommerce"><CheckCircle2 className="h-3 w-3 text-green-500" /></span>}
+                              {product.isSynced ? (
+                                <span title="מסונכרן מול WooCommerce"><CheckCircle2 className="h-3 w-3 text-green-500" /></span>
+                              ) : (
+                                <span title="ניהול מלאי ידני"><Pencil className="h-3 w-3 text-muted-foreground" /></span>
+                              )}
                             </span>
                           </div>
                         </div>
@@ -291,7 +295,11 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                         <div className="flex items-center justify-center gap-2">
                           <span className="flex items-center gap-1">
                             {product.stockQuantity}
-                            {product.isSynced && <span title="מסונכרן מול WooCommerce"><CheckCircle2 className="h-4 w-4 text-green-500" /></span>}
+                            {product.isSynced ? (
+                              <span title="מסונכרן מול WooCommerce"><CheckCircle2 className="h-4 w-4 text-green-500" /></span>
+                            ) : (
+                              <span title="ניהול מלאי ידני"><Pencil className="h-4 w-4 text-muted-foreground" /></span>
+                            )}
                           </span>
                           {product.stockQuantity < 10 && <Badge variant="destructive" className="hidden md:inline-flex h-5 px-1 text-[10px]">מלאי נמוך</Badge>}
                         </div>
