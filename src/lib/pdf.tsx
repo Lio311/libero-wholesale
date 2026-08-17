@@ -33,7 +33,8 @@ async function registerFonts(origin: string) {
 
 const reverseHebrew = (text: string | null | undefined) => {
   if (!text) return text || '';
-  return String(text);
+  // Wrap with RLE (U+202B) and PDF (U+202C) to force RTL base direction
+  return '\u202B' + String(text) + '\u202C';
 };
 
 const RText = ({ children, style }: { children: React.ReactNode, style?: any }) => {
