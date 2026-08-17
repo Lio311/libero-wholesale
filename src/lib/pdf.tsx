@@ -1,3 +1,4 @@
+import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Font, renderToStream } from '@react-pdf/renderer';
 import path from 'path';
 import fs from 'fs';
