@@ -2,14 +2,46 @@ import { Document, Page, Text, View, StyleSheet, Font, renderToStream } from '@r
 import path from 'path';
 import fs from 'fs';
 
-// Register Hebrew Font using static paths so Next.js can trace and bundle them on Vercel
-Font.register({
-  family: 'Heebo',
-  fonts: [
-    { src: path.join(process.cwd(), 'public', 'fonts', 'Heebo-Regular.ttf'), fontWeight: 'normal' },
-    { src: path.join(process.cwd(), 'public', 'fonts', 'Heebo-Bold.ttf'), fontWeight: 'bold' }
-  ]
-});
+let fontsRegistered = false;
+
+async function registerFonts() {
+  if (fontsRegistered) return;
+  
+  try {
+    // Attempt to load from network to avoid Vercel filesystem tracing issues
+    const [regularRes, boldRes] = await Promise.all([
+      fetch('https://cdn.jsdelivr.net/gh/OdedEzer/heebo@master/fonts/ttf/Heebo-Regular.ttf'),
+      fetch('https://cdn.jsdelivr.net/gh/OdedEzer/heebo@master/fonts/ttf/Heebo-Bold.ttf')
+    ]);
+    
+    if (regularRes.ok && boldRes.ok) {
+      const regularBuffer = await regularRes.arrayBuffer();
+      const boldBuffer = await boldRes.arrayBuffer();
+      
+      Font.register({
+        family: 'Heebo',
+        fonts: [
+          { src: regularBuffer, fontWeight: 'normal' },
+          { src: boldBuffer, fontWeight: 'bold' }
+        ]
+      });
+      fontsRegistered = true;
+      return;
+    }
+  } catch (e) {
+    console.warn('Network font load failed, using local fs fallback:', e);
+  }
+  
+  // Fallback to local FS (mostly for local dev)
+  Font.register({
+    family: 'Heebo',
+    fonts: [
+      { src: path.join(process.cwd(), 'public', 'fonts', 'Heebo-Regular.ttf'), fontWeight: 'normal' },
+      { src: path.join(process.cwd(), 'public', 'fonts', 'Heebo-Bold.ttf'), fontWeight: 'bold' }
+    ]
+  });
+  fontsRegistered = true;
+}
 
 const styles = StyleSheet.create({
   page: {
@@ -183,6 +215,8 @@ const OrderPDF = ({ order, items }: { order: any, items: any[] }) => (
 );
 
 export async function generateOrderPDFBuffer(order: any, items: any[]): Promise<Uint8Array> {
+  await registerFonts();
+  
   const stream = await renderToStream(<OrderPDF order={order} items={items} />);
   return new Promise((resolve, reject) => {
     const chunks: Uint8Array[] = [];

@@ -140,7 +140,7 @@ export function AccountClient({ store }: AccountClientProps) {
                 />
               </div>
               <div className="flex justify-between text-xs mt-1.5 text-muted-foreground">
-                <span>זמין: ₪{availableCredit.toLocaleString('en-US')}</span>
+                <span>זמין: <span dir="ltr">₪{availableCredit.toLocaleString('en-US')}</span></span>
                 <span>מסגרת: ₪{creditLimitNum.toLocaleString('en-US')}</span>
               </div>
             </div>
