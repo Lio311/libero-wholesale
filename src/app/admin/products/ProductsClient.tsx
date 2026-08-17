@@ -322,7 +322,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                         <div className="flex flex-col items-center">
                           <span className="flex items-center gap-2 justify-center text-sm md:text-base">
                             <a 
-                              href={`https://libero-il.co.il/?s=${encodeURIComponent(product.name)}&post_type=product`}
+                              href={`/api/admin/redirect-product?barcode=${product.barcode || ''}&name=${encodeURIComponent(product.name)}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="hover:underline hover:text-primary transition-colors cursor-pointer"
