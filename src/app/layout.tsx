@@ -56,22 +56,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider 
-      localization={heIL}
-      appearance={{
-        elements: {
-          formButtonPrimary: "bg-primary text-primary-foreground hover:bg-primary/90",
-          card: "bg-card border border-border shadow-xl",
-          headerTitle: "text-foreground font-bold",
-          headerSubtitle: "text-muted-foreground",
-          dividerText: "text-muted-foreground",
-          formFieldLabel: "text-foreground",
-          formFieldInput: "bg-background border-border text-foreground focus:ring-primary",
-          footerActionText: "text-muted-foreground",
-          footerActionLink: "text-primary hover:text-primary/90"
-        }
-      }}
-    >
+    <ClerkProvider localization={heIL}>
       <html
         lang="he"
         dir="rtl"

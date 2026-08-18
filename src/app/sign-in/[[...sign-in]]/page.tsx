@@ -24,38 +24,23 @@ export default function Page() {
         </div>
 
         {/* Clerk SignIn */}
-        <div className="w-full [&_.cl-rootBox]:w-full [&_.cl-card]:w-full [&_.cl-card]:shadow-2xl [&_.cl-card]:border [&_.cl-card]:border-white/10 [&_.cl-card]:bg-zinc-950/80 [&_.cl-card]:backdrop-blur-xl [&_.cl-header]:hidden">
+        <div className="w-full [&_.cl-rootBox]:w-full [&_.cl-card]:w-full [&_.cl-header]:hidden">
           <SignIn 
             appearance={{
               baseTheme: dark,
               variables: {
                 colorPrimary: 'hsl(var(--primary))',
-                colorBackground: 'transparent',
-                colorText: 'white',
-                colorInputText: 'white',
+                colorBackground: 'rgba(24, 24, 27, 0.5)', // zinc-900/50
                 colorInputBackground: 'rgba(255, 255, 255, 0.05)',
+                colorText: 'white',
                 borderRadius: '1rem',
               },
               elements: {
                 rootBox: "w-full",
-                card: "w-full rounded-2xl p-6 sm:p-8",
-                socialButtonsBlockButton: "bg-white/5 border border-white/10 hover:bg-white/10 text-white transition-all rounded-xl h-12 shadow-sm font-medium",
-                socialButtonsBlockButtonText: "text-white font-semibold",
-                socialButtonsProviderIcon: "mr-2 scale-110",
-                dividerText: "text-zinc-500 font-medium px-4",
-                dividerLine: "bg-white/10",
-                formFieldLabel: "text-zinc-300 font-semibold mb-1.5",
-                formFieldInput: "bg-white/5 border border-white/10 text-white focus:border-primary focus:ring-1 focus:ring-primary h-12 rounded-xl transition-all shadow-sm",
-                formButtonPrimary: "bg-primary text-primary-foreground hover:bg-primary/90 h-12 rounded-xl font-bold text-base transition-all shadow-md hover:shadow-lg w-full mt-2 border-0",
-                footerActionText: "text-zinc-400",
-                footerActionLink: "text-primary hover:text-primary/90 font-bold",
-                formFieldSuccessText: "text-green-400",
-                formFieldErrorText: "text-red-400 font-medium",
-                identityPreviewText: "text-white font-medium",
-                identityPreviewEditButton: "text-primary hover:text-primary/80",
-                alternativeMethodsBlockButton: "text-zinc-300 hover:text-white hover:bg-white/5 border-white/10",
-                alternativeMethodsBlockButtonText: "text-zinc-300",
-                otpCodeFieldInput: "bg-white/5 border-white/10 text-white focus:border-primary focus:ring-primary",
+                card: "w-full rounded-2xl p-6 sm:p-8 border border-white/10 shadow-2xl backdrop-blur-xl",
+                formButtonPrimary: "bg-white text-black hover:bg-zinc-200 transition-all font-bold",
+                socialButtonsBlockButton: "border border-white/10 hover:bg-white/5 transition-all text-white",
+                footerActionLink: "text-white hover:text-zinc-300 font-bold",
               }
             }}
           />
