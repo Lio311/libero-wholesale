@@ -3,13 +3,13 @@ import { dark } from "@clerk/themes";
 
 export default function Page() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-black relative overflow-hidden" dir="rtl">
+    <div className="dark min-h-screen w-full flex items-center justify-center bg-black relative overflow-hidden" dir="rtl">
       {/* Dynamic Background Elements */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[150px] -translate-y-1/3 translate-x-1/3 pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[150px] translate-y-1/3 -translate-x-1/3 pointer-events-none" />
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
       
-      <div className="relative z-10 w-full max-w-md px-6 flex flex-col items-center">
+      <div className="dark relative z-10 w-full max-w-md px-6 flex flex-col items-center">
         {/* Logo */}
         <div className="mb-10 text-center">
           <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 shadow-2xl mb-6 inline-block">
@@ -29,18 +29,23 @@ export default function Page() {
             appearance={{
               baseTheme: dark,
               variables: {
-                colorPrimary: 'hsl(var(--primary))',
-                colorBackground: 'rgba(24, 24, 27, 0.5)', // zinc-900/50
-                colorInputBackground: 'rgba(255, 255, 255, 0.05)',
+                colorPrimary: 'white',
+                colorBackground: '#18181b', // solid zinc-900 for safety, no rgba bug
+                colorInputBackground: '#27272a',
                 colorText: 'white',
+                colorInputText: 'white',
+                colorTextSecondary: '#a1a1aa',
                 borderRadius: '1rem',
               },
               elements: {
                 rootBox: "w-full",
-                card: "w-full rounded-2xl p-6 sm:p-8 border border-white/10 shadow-2xl backdrop-blur-xl",
-                formButtonPrimary: "bg-white text-black hover:bg-zinc-200 transition-all font-bold",
-                socialButtonsBlockButton: "border border-white/10 hover:bg-white/5 transition-all text-white",
-                footerActionLink: "text-white hover:text-zinc-300 font-bold",
+                card: "w-full rounded-2xl p-6 sm:p-8 border border-white/10 shadow-2xl",
+                formButtonPrimary: "!bg-white !text-black hover:!bg-zinc-200 transition-all font-bold",
+                socialButtonsBlockButton: "border border-white/10 hover:bg-zinc-800 transition-all !text-white",
+                socialButtonsBlockButtonText: "!text-white font-semibold",
+                footerActionLink: "!text-white hover:!text-zinc-300 font-bold",
+                dividerText: "!text-zinc-400",
+                formFieldLabel: "!text-zinc-200",
               }
             }}
           />
