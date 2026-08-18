@@ -23,15 +23,15 @@ export default function Page() {
         </div>
 
         {/* Clerk SignIn */}
-        <div className="w-full max-w-sm [&_.cl-rootBox]:w-full [&_.cl-card]:w-full [&_.cl-header]:!hidden [&_.cl-footer]:!hidden [&_.cl-dividerRow]:!hidden [&_.cl-logoBox]:!hidden">
+        <div className="w-full max-w-sm [&_.cl-rootBox]:w-full [&_.cl-card]:w-full [&_.cl-card]:!bg-transparent [&_.cl-card]:!shadow-none [&_.cl-card]:!border-0 [&_.cl-card]:!p-0 [&_.cl-header]:!hidden [&_.cl-footer]:!hidden [&_.cl-dividerRow]:!hidden [&_.cl-logoBox]:!hidden">
           <SignIn 
             appearance={{
               elements: {
                 rootBox: "w-full",
-                card: "w-full bg-transparent shadow-none border-0 p-0",
+                card: "w-full !bg-transparent !shadow-none !border-0 !p-0",
                 formButtonPrimary: "hidden",
-                socialButtonsBlockButton: "bg-white border border-white/20 hover:bg-zinc-100 transition-all text-black h-12 rounded-xl shadow-lg w-full max-w-sm mx-auto",
-                socialButtonsBlockButtonText: "text-black font-bold",
+                socialButtonsBlockButton: "!bg-white border border-zinc-200 hover:!bg-zinc-100 transition-all !text-black h-12 rounded-xl shadow-lg w-full max-w-xs mx-auto",
+                socialButtonsBlockButtonText: "!text-black font-bold",
                 footerAction: "hidden",
                 headerTitle: "hidden",
                 headerSubtitle: "hidden",
