@@ -28,8 +28,10 @@ export default function Page() {
             appearance={{
               elements: {
                 rootBox: "w-full",
-                card: "w-full rounded-2xl p-6 sm:p-8 shadow-2xl",
-                formButtonPrimary: "bg-black text-white hover:bg-zinc-800 transition-all font-bold h-11",
+                card: "w-full bg-transparent shadow-none border-0 p-0",
+                formButtonPrimary: "hidden",
+                socialButtonsBlockButton: "bg-white border border-white/20 hover:bg-zinc-100 transition-all text-black h-12 rounded-xl shadow-lg w-full max-w-sm mx-auto",
+                socialButtonsBlockButtonText: "text-black font-bold",
                 footerAction: "hidden",
                 headerTitle: "hidden",
                 headerSubtitle: "hidden",
