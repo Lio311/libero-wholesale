@@ -22,15 +22,14 @@ export default function Page() {
           </p>
         </div>
 
-        {/* Clerk SignIn */}
-        <div className="w-full max-w-sm [&_.cl-rootBox]:w-full [&_.cl-card]:w-full [&_.cl-card]:!bg-transparent [&_.cl-card]:!shadow-none [&_.cl-card]:!border-0 [&_.cl-card]:!p-0 [&_.cl-header]:!hidden [&_.cl-footer]:!hidden [&_.cl-dividerRow]:!hidden [&_.cl-logoBox]:!hidden">
+        <div className="w-full max-w-sm [&_.cl-rootBox]:w-full [&_.cl-card]:w-full [&_.cl-card]:!bg-transparent [&_.cl-card]:!shadow-none [&_.cl-card]:!border-0 [&_.cl-card]:!p-0 [&_.cl-header]:!hidden [&_.cl-footer]:!hidden [&_.cl-dividerRow]:!hidden [&_.cl-logoBox]:!hidden [&_.cl-main]:!flex [&_.cl-main]:!flex-col [&_.cl-main]:!items-center [&_.cl-socialButtons]:!w-full [&_.cl-socialButtons]:!flex [&_.cl-socialButtons]:!justify-center flex justify-center">
           <SignIn 
             appearance={{
               elements: {
                 rootBox: "w-full",
-                card: "w-full !bg-transparent !shadow-none !border-0 !p-0",
+                card: "w-full !bg-transparent !shadow-none !border-0 !p-0 flex flex-col items-center justify-center",
                 formButtonPrimary: "hidden",
-                socialButtonsBlockButton: "!bg-white border border-zinc-200 hover:!bg-zinc-100 transition-all !text-black h-12 rounded-xl shadow-lg w-full max-w-xs mx-auto",
+                socialButtonsBlockButton: "!bg-white border border-zinc-200 hover:!bg-zinc-100 transition-all !text-black h-12 rounded-xl shadow-lg w-full max-w-xs mx-auto flex !justify-center !items-center !gap-3",
                 socialButtonsBlockButtonText: "!text-black font-bold",
                 footerAction: "hidden",
                 headerTitle: "hidden",
