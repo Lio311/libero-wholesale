@@ -1,4 +1,5 @@
 import { SignIn } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 
 export default function Page() {
   return (
@@ -26,6 +27,7 @@ export default function Page() {
         <div className="w-full [&_.cl-rootBox]:w-full [&_.cl-card]:w-full [&_.cl-card]:shadow-2xl [&_.cl-card]:border [&_.cl-card]:border-white/10 [&_.cl-card]:bg-zinc-950/80 [&_.cl-card]:backdrop-blur-xl [&_.cl-header]:hidden">
           <SignIn 
             appearance={{
+              baseTheme: dark,
               variables: {
                 colorPrimary: 'hsl(var(--primary))',
                 colorBackground: 'transparent',
