@@ -23,13 +23,15 @@ export default function Page() {
         </div>
 
         {/* Clerk SignIn */}
-        <div className="w-full [&_.cl-rootBox]:w-full [&_.cl-card]:w-full [&_.cl-header]:hidden">
+        <div className="w-full max-w-sm [&_.cl-rootBox]:w-full [&_.cl-card]:w-full">
           <SignIn 
             appearance={{
               elements: {
                 rootBox: "w-full",
                 card: "w-full rounded-2xl p-6 sm:p-8 shadow-2xl",
                 formButtonPrimary: "bg-black text-white hover:bg-zinc-800 transition-all font-bold h-11",
+                header: "hidden",
+                footer: "hidden",
               }
             }}
           />
