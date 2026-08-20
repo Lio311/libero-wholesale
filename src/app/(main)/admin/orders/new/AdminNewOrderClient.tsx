@@ -157,7 +157,13 @@ export function AdminNewOrderClient({ stores }: { stores: Store[] }) {
           <label className="block text-sm font-medium mb-1">בחר לקוח</label>
           <Select value={selectedStoreId} onValueChange={setSelectedStoreId}>
             <SelectTrigger className="w-full md:w-1/2 bg-background border-border" dir="rtl">
-              <SelectValue placeholder="בחר לקוח..." />
+              {selectedStoreId ? (
+                <span className="flex-1 text-right">
+                  {stores.find(s => s.id === selectedStoreId)?.name} ({stores.find(s => s.id === selectedStoreId)?.contactName})
+                </span>
+              ) : (
+                <span className="flex-1 text-right text-muted-foreground">בחר לקוח...</span>
+              )}
             </SelectTrigger>
             <SelectContent>
               {stores.map(store => (
