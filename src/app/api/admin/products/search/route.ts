@@ -30,12 +30,14 @@ export async function GET(req: NextRequest) {
         or(
           ilike(products.name, `%${query}%`),
           ilike(products.nameHe, `%${query}%`),
-          ilike(products.barcode, `%${query}%`)
+          ilike(products.barcode, `%${query}%`),
+          ilike(products.brand, `%${query}%`),
+          ilike(products.brandHe, `%${query}%`)
         ),
         eq(products.status, 'active'),
         eq(products.isDraft, false)
       ),
-      limit: 10,
+      limit: 50,
     });
 
     return NextResponse.json({ products: searchResults });
