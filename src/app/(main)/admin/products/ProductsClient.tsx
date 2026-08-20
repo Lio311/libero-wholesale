@@ -348,17 +348,20 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                       </TableCell>
                       <TableCell className="hidden md:table-cell text-muted-foreground text-sm text-center">{product.size || '-'}</TableCell>
                       <TableCell className="hidden md:table-cell text-center">
-                        {(() => {
-                          const matchingBrand = brands.find(b => b.name === product.brand || b.nameHe === product.brand);
-                          if (matchingBrand?.logoUrl) {
-                            return (
-                              <div className="h-8 w-16 mx-auto relative flex items-center justify-center">
-                                <Image src={matchingBrand.logoUrl} alt={product.brand || "Brand"} fill className="object-contain" />
-                              </div>
-                            );
-                          }
-                          return product.brand || '-';
-                        })()}
+                        <div className="flex flex-col items-center justify-center gap-1">
+                          {(() => {
+                            const matchingBrand = brands.find(b => b.name === product.brand || b.nameHe === product.brand);
+                            if (matchingBrand?.logoUrl) {
+                              return (
+                                <div className="h-8 w-16 relative flex items-center justify-center">
+                                  <Image src={matchingBrand.logoUrl} alt={product.brand || "Brand"} fill className="object-contain" />
+                                </div>
+                              );
+                            }
+                            return null;
+                          })()}
+                          <span className="text-xs font-medium text-muted-foreground">{product.brand || '-'}</span>
+                        </div>
                       </TableCell>
                       <TableCell className="hidden md:table-cell text-center">
                         <div className="flex items-center justify-center gap-2">

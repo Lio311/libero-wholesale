@@ -79,13 +79,14 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
       </TableCell>
       <TableCell className="text-center font-mono text-[10px] md:text-xs w-[40px] md:w-[80px] px-0.5 md:px-4">{product.size || "-"}</TableCell>
       <TableCell className="hidden md:table-cell px-1 md:px-4 text-center">
-        {brandLogo ? (
-          <div className="h-12 w-24 mx-auto relative flex items-center justify-center">
-            <img src={brandLogo} alt={product.brand || "Brand"} className="max-h-full max-w-full object-contain" />
-          </div>
-        ) : (
-          <span className="text-sm truncate max-w-[120px] inline-block">{product.brandHe || product.brand || '-'}</span>
-        )}
+        <div className="flex flex-col items-center justify-center gap-1">
+          {brandLogo && (
+            <div className="h-10 w-20 relative flex items-center justify-center">
+              <img src={brandLogo} alt={product.brand || "Brand"} className="max-h-full max-w-full object-contain" />
+            </div>
+          )}
+          <span className="text-xs truncate max-w-[120px] font-medium inline-block text-muted-foreground">{product.brandHe || product.brand || '-'}</span>
+        </div>
       </TableCell>
       <TableCell className="text-center font-medium w-[40px] md:w-[80px] text-[11px] md:text-sm px-0.5 md:px-4">
         <span dir="ltr" className="inline-block">{product.stockQuantity}</span>
