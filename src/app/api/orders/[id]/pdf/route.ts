@@ -36,6 +36,7 @@ export async function GET(
       .select({
         id: orderItems.id,
         quantity: orderItems.quantity,
+        testerQuantity: orderItems.testerQuantity,
         unitPrice: orderItems.unitPrice,
         totalPrice: orderItems.totalPrice,
         productName: products.name,

@@ -106,6 +106,7 @@ export const orderItems = pgTable('order_items', {
   orderId: uuid('order_id').references(() => orders.id).notNull(),
   productId: uuid('product_id').references(() => products.id).notNull(),
   quantity: integer('quantity').notNull(),
+  testerQuantity: integer('tester_quantity'), // Manually set tester quantity
   unitPrice: decimal('unit_price', { precision: 10, scale: 2 }).notNull(),
   totalPrice: decimal('total_price', { precision: 12, scale: 2 }).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),

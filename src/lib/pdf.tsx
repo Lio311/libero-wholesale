@@ -201,7 +201,7 @@ const OrderPDF = ({ order, items, origin }: { order: any, items: any[], origin: 
                 <View style={styles.tableColPrice}><RText style={styles.tableCell}>₪ {Number(item.unitPrice).toFixed(2)}</RText></View>
                 <View style={styles.tableColTotal}><RText style={styles.tableCell}>₪ {Number(item.totalPrice).toFixed(2)}</RText></View>
               </View>
-              {Boolean(item.testerRatio) && item.quantity >= item.testerRatio ? (
+              {((item.testerQuantity !== undefined && item.testerQuantity !== null && item.testerQuantity > 0) || (item.testerQuantity == null && Boolean(item.testerRatio) && item.quantity >= item.testerRatio)) ? (
                 <View style={styles.tableRow}>
                   <View style={styles.tableColDesc}>
                     <Link src={`${origin}/catalog`} style={{ textDecoration: 'none', color: '#16a34a' }}>
@@ -209,7 +209,7 @@ const OrderPDF = ({ order, items, origin }: { order: any, items: any[], origin: 
                     </Link>
                   </View>
                   <View style={styles.tableColMakat}><RText style={styles.tableCell}>{item.barcode || '—'}</RText></View>
-                  <View style={styles.tableColQty}><RText style={[styles.tableCell, { color: '#16a34a', fontWeight: 'bold' }]}>{Math.floor(item.quantity / item.testerRatio)}</RText></View>
+                  <View style={styles.tableColQty}><RText style={[styles.tableCell, { color: '#16a34a', fontWeight: 'bold' }]}>{item.testerQuantity ?? Math.floor(item.quantity / item.testerRatio)}</RText></View>
                   <View style={styles.tableColPrice}><RText style={styles.tableCell}>₪ 0.00</RText></View>
                   <View style={styles.tableColTotal}><RText style={styles.tableCell}>₪ 0.00</RText></View>
                 </View>
