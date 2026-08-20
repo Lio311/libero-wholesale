@@ -7,7 +7,7 @@ const brandTranslations = {
   "Fomowa": "פומווה",
   "IPiccirilli": "אי פיצ'ירילי",
   "Theodoros Kalotinis": "תאודורוס קלוטיניס",
-  "Dudar Milano": "דודר מילאנו",
+  "Duduar Milano": "דודר מילאנו",
   "Farmacia SS. Annunziata": "פרמצ'יה סס אנונציאטה",
   "Bergamoss": "ברגמוס",
   "Memoirs Of A Perfume Collector": "ממוארס אוף א פרפיום קולקטור"

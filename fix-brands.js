@@ -39,7 +39,7 @@ const brandMapping = [
     ]
   },
   {
-    brand: "Dudar Milano",
+    brand: "Duduar Milano",
     products: [
       "Vodkaviar", "Vani' Caviar", "Tabaco", "Pinada", "Peccatorum", "Not A Cake", "Neros", "Litchi Daiquiri", "Happy Apple", "Deliziosa", "Crystal Sea", "Coco Island"
     ]

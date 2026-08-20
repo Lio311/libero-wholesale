@@ -9,7 +9,7 @@ async function main() {
 
   // Update sizes to 50ml
   const res50 = await client.query(
-    "UPDATE products SET size = '50ml' WHERE brand IN ('Bergamoss', 'Bohoboco', 'Theodoros Kalotinis', 'Dudar Milano')"
+    "UPDATE products SET size = '50ml' WHERE brand IN ('Bergamoss', 'Bohoboco', 'Theodoros Kalotinis', 'Duduar Milano')"
   );
   console.log(`Updated ${res50.rowCount} products to 50ml`);
 

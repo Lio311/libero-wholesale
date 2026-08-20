@@ -19,7 +19,7 @@ async function main() {
   await client.query("UPDATE products SET brand = 'Memoirs Of A Perfume Collector', brand_he = 'Memoirs Of A Perfume Collector' WHERE name = 'Vanilla Skies'");
   
   // What about "Apple" matching "Happy Apple"?
-  await client.query("UPDATE products SET brand = 'Dudar Milano', brand_he = 'Dudar Milano' WHERE name = 'Happy Apple'");
+  await client.query("UPDATE products SET brand = 'Duduar Milano', brand_he = 'Duduar Milano' WHERE name = 'Happy Apple'");
 
   // What about "Rose" matching "Oderose", "Musky Rose"?
   // Oderose -> Elisire
