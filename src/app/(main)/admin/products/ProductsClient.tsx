@@ -59,15 +59,30 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
 
   const handleSync = async () => {
     setIsSyncing(true);
-    toast("מסנכרן מלאי מול WooCommerce", { description: "זה עשוי לקחת מספר רגעים..." });
+    let currentPage = 1;
+    let updatedTotal = 0;
+    
+    toast("מתחיל סנכרון מלאי...", { description: "זה עשוי לקחת מספר רגעים." });
+    
     try {
-      const res = await fetch("/api/sync-inventory");
-      const data = await res.json();
-      if (res.ok && data.success) {
-        toast.success("סנכרון מלאי הושלם!", { description: data.message });
-        window.location.reload();
-      } else {
-        toast.error("שגיאה בסנכרון מלאי", { description: data.error || data.message || "נסה שוב מאוחר יותר" });
+      while (true) {
+        toast("מסנכרן מלאי מול WooCommerce", { description: `מעבד עמוד ${currentPage}...` });
+        const res = await fetch(`/api/sync-inventory?format=json&page=${currentPage}&updated=${updatedTotal}`);
+        const data = await res.json();
+        
+        if (res.ok && data.success) {
+          updatedTotal = data.totalUpdated ?? updatedTotal;
+          if (data.hasMore && data.nextPage) {
+            currentPage = data.nextPage;
+          } else {
+            toast.success("סנכרון מלאי הושלם!", { description: `עודכנו ${updatedTotal} מוצרים בהצלחה.` });
+            window.location.reload();
+            break;
+          }
+        } else {
+          toast.error("שגיאה בסנכרון מלאי", { description: data.error || data.message || "נסה שוב מאוחר יותר" });
+          break;
+        }
       }
     } catch (error) {
       toast.error("שגיאה", { description: "אירעה שגיאה בחיבור לשרת" });

@@ -86,31 +86,48 @@ export async function GET(req: Request) {
     await Promise.all(promises);
     
     const newTotal = totalUpdated + batchUpdated;
+    const format = url.searchParams.get("format");
+    const hasMore = wcProducts.length === 100;
 
-    // If it's a cron job, we don't want to rely on the browser to follow redirects.
-    // However, Vercel crons shouldn't run for more than 10-60 seconds.
+    if (format === "json") {
+      return NextResponse.json({
+        success: true,
+        message: `Processed page ${wcPage}, updated ${batchUpdated} products.`,
+        hasMore,
+        nextPage: wcPage + 1,
+        totalUpdated: newTotal
+      });
+    }
+
     // If it's a manual run (browser), return a meta-refresh HTML page so the browser handles pagination.
     if (!isCron) {
+      if (!hasMore) {
+        return NextResponse.json({ 
+          success: true, 
+          message: `Sync completed! Total products updated: ${newTotal}`
+        });
+      }
+
       const nextUrl = `/api/sync-inventory?secret=${secret}&page=${wcPage + 1}&updated=${newTotal}`;
       
       const html = `
-        <html>
+        <html dir="rtl">
           <head>
             <meta http-equiv="refresh" content="1;url=${nextUrl}" />
-            <title>Syncing Inventory...</title>
+            <title>מסנכרן מלאי...</title>
             <style>
-              body { font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f9fafb; }
+              body { font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f9fafb; text-align: center; }
               .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px; }
               @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
             </style>
           </head>
           <body>
             <div class="loader"></div>
-            <h2>Syncing WooCommerce Inventory...</h2>
-            <p>Processed page ${wcPage}. Updated ${batchUpdated} products in this batch.</p>
-            <p>Total updated so far: ${newTotal}</p>
-            <p>Moving to page ${wcPage + 1} automatically in 1 second...</p>
-            <p><small>Do not close this tab until you see the "Sync completed!" message.</small></p>
+            <h2>מסנכרן מלאי מול WooCommerce...</h2>
+            <p>מעבד עמוד ${wcPage}. עודכנו ${batchUpdated} מוצרים בחלק זה.</p>
+            <p>סה"כ עודכנו עד כה: ${newTotal}</p>
+            <p>עובר לעמוד ${wcPage + 1} באופן אוטומטי בעוד שניה...</p>
+            <p><small>נא לא לסגור את העמוד עד לקבלת הודעת סיום!</small></p>
           </body>
         </html>
       `;
