@@ -4,6 +4,7 @@ import { orders, orderItems, products } from "@/lib/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
 import { checkIsAdmin } from "@/lib/admin";
+import { wc } from "@/lib/woocommerce";
 
 export async function DELETE(
   req: NextRequest,
@@ -37,14 +38,24 @@ export async function DELETE(
       where: eq(orderItems.orderId, id),
     });
 
-    // We use sequential updates because Neon HTTP doesn't fully support interactive transactions out of the box
-    // Restore stock for each item
+    // Restore stock for each item (local + WooCommerce)
     for (const item of items) {
+      // Restore local stock
       await db.update(products)
         .set({
           stockQuantity: sql`${products.stockQuantity} + ${item.quantity}`
         })
         .where(eq(products.id, item.productId));
+
+      // Restore WooCommerce stock (fire-and-forget)
+      const product = await db.query.products.findFirst({
+        where: eq(products.id, item.productId),
+      });
+      if (product?.barcode) {
+        wc.adjustStockBySku(product.barcode, item.quantity).catch((err) =>
+          console.error(`[AdminDeleteOrder] Failed to sync WC stock for ${product.barcode}:`, err)
+        );
+      }
     }
 
     // Delete order items

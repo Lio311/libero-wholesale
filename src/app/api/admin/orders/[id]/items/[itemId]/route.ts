@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { orders, orderItems, products } from "@/lib/db/schema";
 import { eq, sql, and } from "drizzle-orm";
 import { getAuth } from "@clerk/nextjs/server";
+import { wc } from "@/lib/woocommerce";
 
 export async function PATCH(
   req: NextRequest,
@@ -20,6 +21,8 @@ export async function PATCH(
     }
 
     const newQty = Number(quantity);
+    let stockDelta = 0;
+    let productId = "";
 
     // Using transaction for stock sync
     await db.transaction(async (tx) => {
@@ -30,6 +33,8 @@ export async function PATCH(
       if (!item) throw new Error("Order item not found");
 
       const diff = newQty - item.quantity;
+      stockDelta = -diff; // delta for WC: if diff > 0, we deduct (negative delta)
+      productId = item.productId;
       const newTotalPrice = newQty * Number(item.unitPrice);
 
       // Update stock: if diff > 0, we deduct from stock. If diff < 0, we add to stock.
@@ -55,6 +60,18 @@ export async function PATCH(
         .where(eq(orders.id, id));
     });
 
+    // Sync stock change to WooCommerce (outside transaction, fire-and-forget)
+    if (productId && stockDelta !== 0) {
+      const product = await db.query.products.findFirst({
+        where: eq(products.id, productId),
+      });
+      if (product?.barcode) {
+        wc.adjustStockBySku(product.barcode, stockDelta).catch((err) =>
+          console.error(`[AdminUpdateItem] Failed to sync WC stock for ${product.barcode}:`, err)
+        );
+      }
+    }
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("Error updating order item:", error);
@@ -72,12 +89,18 @@ export async function DELETE(
 
     const { id, itemId } = await params;
 
+    let restoredProductId = "";
+    let restoredQuantity = 0;
+
     await db.transaction(async (tx) => {
       const item = await tx.query.orderItems.findFirst({
         where: and(eq(orderItems.id, itemId), eq(orderItems.orderId, id)),
       });
 
       if (!item) throw new Error("Order item not found");
+
+      restoredProductId = item.productId;
+      restoredQuantity = item.quantity;
 
       // Restore stock
       await tx.update(products)
@@ -98,6 +121,18 @@ export async function DELETE(
         .set({ totalAmount: finalAmount.toString(), itemsCount: allItems.length })
         .where(eq(orders.id, id));
     });
+
+    // Sync stock restoration to WooCommerce (fire-and-forget)
+    if (restoredProductId && restoredQuantity > 0) {
+      const product = await db.query.products.findFirst({
+        where: eq(products.id, restoredProductId),
+      });
+      if (product?.barcode) {
+        wc.adjustStockBySku(product.barcode, restoredQuantity).catch((err) =>
+          console.error(`[AdminDeleteItem] Failed to sync WC stock for ${product.barcode}:`, err)
+        );
+      }
+    }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

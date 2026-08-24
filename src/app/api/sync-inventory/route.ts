@@ -2,121 +2,119 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { products } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { wc } from "@/lib/woocommerce";
 
-// You can protect this route with a secret key if needed.
-// For example, appending ?secret=YOUR_SECRET to the URL.
-export const maxDuration = 60; // Max execution time for Vercel Hobby tier
+export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
+/**
+ * Sync inventory from WooCommerce → local DB.
+ * 
+ * Strategy: Fetch ALL WooCommerce products once, build a SKU→stock map,
+ * then update local products in bulk. This avoids the broken redirect chain
+ * and N+1 API calls per product.
+ * 
+ * Runs as a Vercel cron job (see vercel.json).
+ */
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
     const secret = url.searchParams.get("secret");
     
+    // Allow Vercel cron (no secret needed) or manual trigger with secret
     if (process.env.SYNC_SECRET && secret !== process.env.SYNC_SECRET) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const WC_URL = "https://libero-il.co.il";
-    const WC_CK = process.env.LIBERO_WC_CK;
-    const WC_CS = process.env.LIBERO_WC_CS;
-
-    if (!WC_CK || !WC_CS) {
-      return NextResponse.json({ error: "WooCommerce credentials not configured" }, { status: 500 });
-    }
-
-    let startIdx = parseInt(url.searchParams.get("start") || "0", 10);
-    let totalUpdated = parseInt(url.searchParams.get("updated") || "0", 10);
-    const maxLocalPerRun = 50; // Process 50 local products per request
-
-    // 1. Fetch only local products that have a barcode (SKU)
-    const localProducts = await db.select({
-      id: products.id,
-      barcode: products.barcode,
-      name: products.name
-    }).from(products);
-    
-    const productsWithBarcode = localProducts.filter(p => p.barcode && p.barcode.trim() !== '');
-    const productsWithoutBarcode = localProducts.filter(p => !p.barcode || p.barcode.trim() === '');
-    
-    // Mark products without barcodes as unsynced (only run on first chunk)
-    if (startIdx === 0 && productsWithoutBarcode.length > 0) {
-      for (const p of productsWithoutBarcode) {
-        await db.update(products)
-          .set({ isSynced: false })
-          .where(eq(products.id, p.id));
+      // Check for Vercel cron header (Vercel sends this automatically)
+      const authHeader = req.headers.get("authorization");
+      const cronSecret = process.env.CRON_SECRET;
+      if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
     }
 
-    if (productsWithBarcode.length === 0) {
-      return NextResponse.json({ success: true, message: "No local products with barcodes found." });
+    // 1. Fetch all WooCommerce products in one pass
+    console.log("[Sync] Fetching all WooCommerce products...");
+    const wcProducts = await wc.fetchAllProducts();
+    
+    if (wcProducts.length === 0) {
+      return NextResponse.json({ 
+        success: true, 
+        message: "No products found in WooCommerce (check API credentials)." 
+      });
     }
 
-    const chunkToProcess = productsWithBarcode.slice(startIdx, startIdx + maxLocalPerRun);
+    // 2. Build SKU → stock map from WooCommerce
+    const wcStockMap = new Map<string, number>();
+    for (const wcProd of wcProducts) {
+      if (wcProd.sku) {
+        wcStockMap.set(wcProd.sku, wcProd.stock_quantity ?? 0);
+      }
+    }
+    console.log(`[Sync] WooCommerce: ${wcProducts.length} products, ${wcStockMap.size} with SKU`);
 
-    const credentials = Buffer.from(`${WC_CK}:${WC_CS}`).toString('base64');
-    const headers = {
-      'Authorization': `Basic ${credentials}`,
-      'Content-Type': 'application/json'
-    };
+    // 3. Fetch all local products
+    const localProducts = await db.select({
+      id: products.id,
+      barcode: products.barcode,
+      name: products.name,
+      stockQuantity: products.stockQuantity,
+    }).from(products);
 
+    // 4. Update local stock from WooCommerce data
     let updatedCount = 0;
-    const concurrentLimit = 10;
-    
-    for (let i = 0; i < chunkToProcess.length; i += concurrentLimit) {
-      const batch = chunkToProcess.slice(i, i + concurrentLimit);
+    let notFoundCount = 0;
+    let noBarcodeCount = 0;
+
+    // Process in concurrent batches of 10
+    const BATCH_SIZE = 10;
+    for (let i = 0; i < localProducts.length; i += BATCH_SIZE) {
+      const batch = localProducts.slice(i, i + BATCH_SIZE);
       
-      const fetchPromises = batch.map(async (localProd) => {
-        try {
-          const fetchUrl = `${WC_URL}/wp-json/wc/v3/products?sku=${encodeURIComponent(localProd.barcode!)}`;
-          const res = await fetch(fetchUrl, { headers });
-          if (!res.ok) return 0;
-          
-          const wcData = await res.json();
-          if (wcData && wcData.length > 0) {
-            const matchedProduct = wcData[0];
-            const stock = matchedProduct.stock_quantity || 0;
-            
-            await db.update(products)
-              .set({ stockQuantity: stock, isSynced: true })
-              .where(eq(products.id, localProd.id));
-              
-            return 1;
-          } else {
-            // Product not found in WooCommerce, mark as unsynced
-            await db.update(products)
-              .set({ isSynced: false })
-              .where(eq(products.id, localProd.id));
-            return 0;
-          }
-        } catch (err) {
-          console.error(`Failed to fetch/update product ${localProd.barcode}:`, err);
-          return 0;
+      const promises = batch.map(async (localProd) => {
+        if (!localProd.barcode || localProd.barcode.trim() === "") {
+          await db.update(products)
+            .set({ isSynced: false })
+            .where(eq(products.id, localProd.id));
+          return "no_barcode";
+        }
+
+        const wcStock = wcStockMap.get(localProd.barcode);
+        
+        if (wcStock !== undefined) {
+          await db.update(products)
+            .set({ stockQuantity: wcStock, isSynced: true })
+            .where(eq(products.id, localProd.id));
+          return "updated";
+        } else {
+          await db.update(products)
+            .set({ isSynced: false })
+            .where(eq(products.id, localProd.id));
+          return "not_found";
         }
       });
-      
-      const results = await Promise.all(fetchPromises);
-      updatedCount += results.reduce<number>((a, b) => a + b, 0);
+
+      const results = await Promise.all(promises);
+      for (const result of results) {
+        if (result === "updated") updatedCount++;
+        else if (result === "not_found") notFoundCount++;
+        else if (result === "no_barcode") noBarcodeCount++;
+      }
     }
-    
-    totalUpdated += updatedCount;
-    
-    const nextStart = startIdx + maxLocalPerRun;
-    
-    if (nextStart < productsWithBarcode.length) {
-      url.searchParams.set("start", nextStart.toString());
-      url.searchParams.set("updated", totalUpdated.toString());
-      return NextResponse.redirect(url.toString(), { status: 302 });
-    }
+
+    const message = `Synced ${updatedCount}/${localProducts.length} products. ` +
+      `Not found in WC: ${notFoundCount}. No barcode: ${noBarcodeCount}.`;
+    console.log(`[Sync] ${message}`);
 
     return NextResponse.json({ 
       success: true, 
-      updatedInDb: totalUpdated,
-      totalChecked: productsWithBarcode.length,
-      message: `Successfully synced ${totalUpdated} products out of ${productsWithBarcode.length} local products with barcodes.` 
+      updatedInDb: updatedCount,
+      totalLocal: localProducts.length,
+      wcProductCount: wcProducts.length,
+      notFoundInWc: notFoundCount,
+      noBarcode: noBarcodeCount,
+      message,
     });
   } catch (error) {
-    console.error("Sync Error:", error);
+    console.error("[Sync] Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

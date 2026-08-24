@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { orders, orderItems, products } from "@/lib/db/schema";
+import { orders, orderItems, products, stores } from "@/lib/db/schema";
 import { auth } from "@clerk/nextjs/server";
 import { eq, sql } from "drizzle-orm";
+import { wc } from "@/lib/woocommerce";
 
 export async function POST(req: Request) {
   try {
@@ -65,7 +66,7 @@ export async function POST(req: Request) {
       notes: customerDetails.notes || null,
     }).returning();
 
-    // Create order items
+    // Create order items and update stock (local + WooCommerce)
     for (const item of items) {
       const lineTotal = Number(item.product.price) * item.quantity;
       await db.insert(orderItems).values({
@@ -76,10 +77,17 @@ export async function POST(req: Request) {
         totalPrice: lineTotal.toString(),
       });
       
-      // Update stock quantity
+      // Update local stock
       await db.execute(
         sql`UPDATE products SET stock_quantity = stock_quantity - ${item.quantity} WHERE id = ${item.product.id}`
       );
+
+      // Sync stock deduction to WooCommerce
+      if (item.product.barcode) {
+        wc.adjustStockBySku(item.product.barcode, -item.quantity).catch((err) =>
+          console.error(`[Checkout] Failed to sync WC stock for ${item.product.barcode}:`, err)
+        );
+      }
     }
 
     // Update store balance if storeId exists

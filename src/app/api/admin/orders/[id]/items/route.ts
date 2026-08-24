@@ -5,6 +5,7 @@ import { eq, sql, and } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
 import { checkIsAdmin } from "@/lib/admin";
 import { randomUUID } from "crypto";
+import { wc } from "@/lib/woocommerce";
 
 export async function POST(
   req: NextRequest,
@@ -101,10 +102,17 @@ export async function POST(
       };
     }
 
-    // Deduct stock
+    // Deduct local stock
     await db.update(products)
       .set({ stockQuantity: sql`${products.stockQuantity} - ${quantity}` })
       .where(eq(products.id, productId));
+
+    // Sync stock deduction to WooCommerce (fire-and-forget)
+    if (product.barcode) {
+      wc.adjustStockBySku(product.barcode, -quantity).catch((err) =>
+        console.error(`[AdminAddItem] Failed to sync WC stock for ${product.barcode}:`, err)
+      );
+    }
 
     // Update order totals
     // Get all items to calculate new totals
