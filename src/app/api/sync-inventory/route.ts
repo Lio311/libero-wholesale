@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { products } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { wc } from "@/lib/woocommerce";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { checkIsAdmin } from "@/lib/admin";
 
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
@@ -12,19 +14,35 @@ export async function GET(req: Request) {
     const url = new URL(req.url);
     const secret = url.searchParams.get("secret");
     
-    // Auth check
-    if (process.env.SYNC_SECRET && secret !== process.env.SYNC_SECRET) {
-      const authHeader = req.headers.get("authorization");
-      const cronSecret = process.env.CRON_SECRET;
-      if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Auth check: Try to see if user is a logged-in admin first
+    let isAuthorizedAdmin = false;
+    try {
+      const user = await currentUser();
+      const isAdmin = await checkIsAdmin(user?.emailAddresses?.[0]?.emailAddress);
+      if (isAdmin) {
+        isAuthorizedAdmin = true;
+      }
+    } catch (e) {
+      // Ignore auth error in case this is called via Vercel Cron without context
+    }
+
+    // If not an admin, check secrets
+    if (!isAuthorizedAdmin) {
+      if (process.env.SYNC_SECRET && secret !== process.env.SYNC_SECRET) {
+        const authHeader = req.headers.get("authorization");
+        const cronSecret = process.env.CRON_SECRET;
+        if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
       }
     }
 
     // WooCommerce page to fetch
     const wcPage = parseInt(url.searchParams.get("page") || "1", 10);
     const totalUpdated = parseInt(url.searchParams.get("updated") || "0", 10);
-    const isCron = !secret; // If no secret, it's triggered by Vercel cron
+    // If not triggered by a manual secret, we treat it as an automated/admin request
+    const isCron = !secret && !isAuthorizedAdmin; 
+
 
     console.log(`[Sync] Fetching WooCommerce page ${wcPage}...`);
     
