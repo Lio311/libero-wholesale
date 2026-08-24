@@ -43,11 +43,11 @@ export async function GET(req: Request) {
     // If not triggered by a manual secret, we treat it as an automated/admin request
     const isCron = !secret && !isAuthorizedAdmin; 
 
-
     console.log(`[Sync] Fetching WooCommerce page ${wcPage}...`);
     
-    // Fetch ONLY ONE page from WooCommerce (100 products max) to avoid 504 timeouts
-    const wcUrl = `https://libero-il.co.il/wp-json/wc/v3/products?per_page=100&page=${wcPage}`;
+    // Fetch ONLY ONE page from WooCommerce (100 products max) to avoid 504 timeouts.
+    // We order by modified descending so that the cron job (which only hits page 1) catches the latest changes.
+    const wcUrl = `https://libero-il.co.il/wp-json/wc/v3/products?per_page=100&page=${wcPage}&orderby=modified&order=desc`;
     const credentials = Buffer.from(`${process.env.LIBERO_WC_CK}:${process.env.LIBERO_WC_CS}`).toString('base64');
     
     const res = await fetch(wcUrl, {
