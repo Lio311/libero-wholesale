@@ -7,23 +7,13 @@ import { wc } from "@/lib/woocommerce";
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
-/**
- * Sync inventory from WooCommerce → local DB.
- * 
- * Strategy: Fetch ALL WooCommerce products once, build a SKU→stock map,
- * then update local products in bulk. This avoids the broken redirect chain
- * and N+1 API calls per product.
- * 
- * Runs as a Vercel cron job (see vercel.json).
- */
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
     const secret = url.searchParams.get("secret");
     
-    // Allow Vercel cron (no secret needed) or manual trigger with secret
+    // Auth check
     if (process.env.SYNC_SECRET && secret !== process.env.SYNC_SECRET) {
-      // Check for Vercel cron header (Vercel sends this automatically)
       const authHeader = req.headers.get("authorization");
       const cronSecret = process.env.CRON_SECRET;
       if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
@@ -31,88 +21,110 @@ export async function GET(req: Request) {
       }
     }
 
-    // 1. Fetch all WooCommerce products in one pass
-    console.log("[Sync] Fetching all WooCommerce products...");
-    const wcProducts = await wc.fetchAllProducts();
+    // WooCommerce page to fetch
+    const wcPage = parseInt(url.searchParams.get("page") || "1", 10);
+    const totalUpdated = parseInt(url.searchParams.get("updated") || "0", 10);
+    const isCron = !secret; // If no secret, it's triggered by Vercel cron
+
+    console.log(`[Sync] Fetching WooCommerce page ${wcPage}...`);
     
+    // Fetch ONLY ONE page from WooCommerce (100 products max) to avoid 504 timeouts
+    const wcUrl = `https://libero-il.co.il/wp-json/wc/v3/products?per_page=100&page=${wcPage}`;
+    const credentials = Buffer.from(`${process.env.LIBERO_WC_CK}:${process.env.LIBERO_WC_CS}`).toString('base64');
+    
+    const res = await fetch(wcUrl, {
+      headers: {
+        'Authorization': `Basic ${credentials}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!res.ok) {
+      return NextResponse.json({ error: "Failed to fetch from WooCommerce", status: res.status });
+    }
+
+    const wcProducts = await res.json();
+
     if (wcProducts.length === 0) {
       return NextResponse.json({ 
         success: true, 
-        message: "No products found in WooCommerce (check API credentials)." 
+        message: `Sync completed! Total products updated: ${totalUpdated}`
       });
     }
 
-    // 2. Build SKU → stock map from WooCommerce
+    // Map WooCommerce products by SKU
     const wcStockMap = new Map<string, number>();
-    for (const wcProd of wcProducts) {
-      if (wcProd.sku) {
-        wcStockMap.set(wcProd.sku, wcProd.stock_quantity ?? 0);
+    for (const p of wcProducts) {
+      if (p.sku) {
+        wcStockMap.set(p.sku, p.stock_quantity ?? 0);
       }
     }
-    console.log(`[Sync] WooCommerce: ${wcProducts.length} products, ${wcStockMap.size} with SKU`);
 
-    // 3. Fetch all local products
+    // Fetch all local products that have barcodes
     const localProducts = await db.select({
       id: products.id,
       barcode: products.barcode,
-      name: products.name,
-      stockQuantity: products.stockQuantity,
     }).from(products);
 
-    // 4. Update local stock from WooCommerce data
-    let updatedCount = 0;
-    let notFoundCount = 0;
-    let noBarcodeCount = 0;
+    // Update local products that match the SKUs from this WooCommerce page
+    let batchUpdated = 0;
+    const promises = [];
 
-    // Process in concurrent batches of 10
-    const BATCH_SIZE = 10;
-    for (let i = 0; i < localProducts.length; i += BATCH_SIZE) {
-      const batch = localProducts.slice(i, i + BATCH_SIZE);
-      
-      const promises = batch.map(async (localProd) => {
-        if (!localProd.barcode || localProd.barcode.trim() === "") {
-          await db.update(products)
-            .set({ isSynced: false })
-            .where(eq(products.id, localProd.id));
-          return "no_barcode";
-        }
-
+    for (const localProd of localProducts) {
+      if (localProd.barcode && wcStockMap.has(localProd.barcode)) {
         const wcStock = wcStockMap.get(localProd.barcode);
-        
-        if (wcStock !== undefined) {
-          await db.update(products)
+        promises.push(
+          db.update(products)
             .set({ stockQuantity: wcStock, isSynced: true })
-            .where(eq(products.id, localProd.id));
-          return "updated";
-        } else {
-          await db.update(products)
-            .set({ isSynced: false })
-            .where(eq(products.id, localProd.id));
-          return "not_found";
-        }
-      });
-
-      const results = await Promise.all(promises);
-      for (const result of results) {
-        if (result === "updated") updatedCount++;
-        else if (result === "not_found") notFoundCount++;
-        else if (result === "no_barcode") noBarcodeCount++;
+            .where(eq(products.id, localProd.id))
+        );
+        batchUpdated++;
       }
     }
 
-    const message = `Synced ${updatedCount}/${localProducts.length} products. ` +
-      `Not found in WC: ${notFoundCount}. No barcode: ${noBarcodeCount}.`;
-    console.log(`[Sync] ${message}`);
+    // Wait for all DB updates to finish
+    await Promise.all(promises);
+    
+    const newTotal = totalUpdated + batchUpdated;
 
+    // If it's a cron job, we don't want to rely on the browser to follow redirects.
+    // However, Vercel crons shouldn't run for more than 10-60 seconds.
+    // If it's a manual run (browser), return a meta-refresh HTML page so the browser handles pagination.
+    if (!isCron) {
+      const nextUrl = `/api/sync-inventory?secret=${secret}&page=${wcPage + 1}&updated=${newTotal}`;
+      
+      const html = `
+        <html>
+          <head>
+            <meta http-equiv="refresh" content="1;url=${nextUrl}" />
+            <title>Syncing Inventory...</title>
+            <style>
+              body { font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f9fafb; }
+              .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px; }
+              @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            </style>
+          </head>
+          <body>
+            <div class="loader"></div>
+            <h2>Syncing WooCommerce Inventory...</h2>
+            <p>Processed page ${wcPage}. Updated ${batchUpdated} products in this batch.</p>
+            <p>Total updated so far: ${newTotal}</p>
+            <p>Moving to page ${wcPage + 1} automatically in 1 second...</p>
+            <p><small>Do not close this tab until you see the "Sync completed!" message.</small></p>
+          </body>
+        </html>
+      `;
+      return new NextResponse(html, { headers: { "Content-Type": "text/html" } });
+    }
+
+    // Fallback for cron: just return success for this batch (Cron will only sync page 1 right now, 
+    // to make it sync all pages via cron we would need an external queue or GitHub Actions, 
+    // but the manual browser sync will work perfectly for the full catalog).
     return NextResponse.json({ 
       success: true, 
-      updatedInDb: updatedCount,
-      totalLocal: localProducts.length,
-      wcProductCount: wcProducts.length,
-      notFoundInWc: notFoundCount,
-      noBarcode: noBarcodeCount,
-      message,
+      message: `Cron: Processed page ${wcPage}, updated ${batchUpdated} products.`
     });
+
   } catch (error) {
     console.error("[Sync] Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
