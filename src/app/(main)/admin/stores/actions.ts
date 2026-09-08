@@ -41,8 +41,8 @@ export async function deleteStore(storeId: string) {
     await db.delete(stores).where(eq(stores.id, storeId));
     revalidatePath("/admin/stores");
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error deleting store:", error);
-    return { success: false, error: "Failed to delete store" };
+    return { success: false, error: error.message || "Failed to delete store" };
   }
 }

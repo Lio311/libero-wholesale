@@ -76,7 +76,7 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
       if (result.success) {
         toast.success("העסק נמחק בהצלחה!");
       } else {
-        toast.error("אירעה שגיאה במחיקת העסק");
+        toast.error(result.error || "אירעה שגיאה במחיקת העסק");
       }
     });
   };
