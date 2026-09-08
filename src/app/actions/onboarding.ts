@@ -1,9 +1,13 @@
 "use server";
 
+import * as React from 'react';
 import { db } from "@/lib/db";
 import { stores } from "@/lib/db/schema";
 import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { getNotificationEmails, sendEmail } from "@/lib/email";
+import { render } from "@react-email/components";
+import { NewCustomerNotificationEmail } from "@/components/emails/NewCustomerNotification";
 
 export async function submitOnboarding(formData: FormData) {
   try {
@@ -31,6 +35,27 @@ export async function submitOnboarding(formData: FormData) {
       address: address,
       status: "pending",
     });
+
+    try {
+      const adminEmails = await getNotificationEmails();
+      if (adminEmails.length > 0) {
+        const storeObj = {
+          name: businessName,
+          contactName: contactName,
+          email: email,
+          phone: phone,
+          address: address,
+        };
+        const html = await render(React.createElement(NewCustomerNotificationEmail, { store: storeObj }));
+        sendEmail({
+          to: adminEmails,
+          subject: `לקוח חדש ממתין לאישור - ${businessName}`,
+          html
+        }).catch(err => console.error("Failed to send admin notification email inner:", err));
+      }
+    } catch (emailErr) {
+      console.error("Failed to render/send admin notification email:", emailErr);
+    }
 
     revalidatePath("/", "layout");
     return { success: true };

@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
+import * as React from 'react';
 import { db } from "@/lib/db";
 import { orders, orderItems, products, stores } from "@/lib/db/schema";
 import { auth } from "@clerk/nextjs/server";
 import { eq, sql } from "drizzle-orm";
 import { wc } from "@/lib/woocommerce";
+import { getNotificationEmails, sendEmail } from "@/lib/email";
+import { render } from "@react-email/components";
+import { NewOrderNotificationEmail } from "@/components/emails/NewOrderNotification";
 
 export async function POST(req: Request) {
   try {
@@ -97,7 +101,20 @@ export async function POST(req: Request) {
       );
     }
 
-    // TODO: Send emails and generate PDF invoice (Phase 3)
+    // Send emails and generate PDF invoice (Phase 3)
+    try {
+      const adminEmails = await getNotificationEmails();
+      if (adminEmails.length > 0) {
+        const html = await render(React.createElement(NewOrderNotificationEmail, { order: newOrder }));
+        sendEmail({ // fire and forget
+          to: adminEmails,
+          subject: `הזמנה חדשה התקבלה - #${newOrder.orderNumber}`,
+          html
+        }).catch(err => console.error("Failed to send admin notification email inner:", err));
+      }
+    } catch (emailErr) {
+      console.error("Failed to render/send admin notification email:", emailErr);
+    }
 
     return NextResponse.json({ success: true, orderId: newOrder.id, orderNumber: newOrder.orderNumber });
   } catch (error) {

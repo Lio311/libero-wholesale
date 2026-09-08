@@ -1,9 +1,9 @@
-const { neon } = require('@neondatabase/serverless');
-require('dotenv').config({ path: '.env.local' });
+import { neon } from '@neondatabase/serverless';
+import * as dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
 const sql = neon(process.env.DATABASE_URL);
-
 async function run() {
-  const p = await sql`SELECT id, name, size, barcode, is_synced FROM products WHERE name = 'Fiore di Cotone'`;
-  console.log(p);
+  const result = await sql`SELECT id, name, contact_name FROM stores LIMIT 5;`;
+  console.log(result);
 }
 run();
