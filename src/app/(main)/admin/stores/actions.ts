@@ -35,3 +35,14 @@ export async function approveStore(storeId: string) {
     return { success: false, error: "Failed to approve store" };
   }
 }
+
+export async function deleteStore(storeId: string) {
+  try {
+    await db.delete(stores).where(eq(stores.id, storeId));
+    revalidatePath("/admin/stores");
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting store:", error);
+    return { success: false, error: "Failed to delete store" };
+  }
+}

@@ -6,9 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ShieldAlert, ShieldCheck, User, Store, CheckCircle2 } from "lucide-react";
+import { Search, ShieldAlert, ShieldCheck, User, Store, CheckCircle2, Trash2 } from "lucide-react";
 import { format } from "date-fns";
-import { toggleUserRole, approveStore } from "./actions";
+import { toggleUserRole, approveStore, deleteStore } from "./actions";
 import { toast } from "sonner";
 import Image from "next/image";
 
@@ -67,6 +67,22 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
       }
     });
   };
+
+  const handleDeleteStore = (storeId: string) => {
+    if (!confirm("האם אתה בטוח שברצונך למחוק עסק זה?")) return;
+    
+    startTransition(async () => {
+      const result = await deleteStore(storeId);
+      if (result.success) {
+        toast.success("העסק נמחק בהצלחה!");
+      } else {
+        toast.error("אירעה שגיאה במחיקת העסק");
+      }
+    });
+  };
+
+  const orphanedStores = stores.filter(store => !initialUsers.find(u => u.id === store.clerkUserId));
+
 
   return (
     <div className="space-y-6">
@@ -209,6 +225,59 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                     );
                   })
                 )}
+                {orphanedStores.map((store) => (
+                  <TableRow key={store.id} className="border-border hover:bg-muted/20 transition-colors bg-red-500/5">
+                    <TableCell className="px-1 md:px-4">
+                      <div className="flex items-center gap-1.5 md:gap-3">
+                        <div className="h-6 w-6 md:h-8 md:w-8 rounded-full overflow-hidden bg-muted flex items-center justify-center shrink-0">
+                          <User className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-medium text-destructive text-[10px] md:text-sm max-w-[60px] md:max-w-none truncate">משתמש נמחק</span>
+                          <span className="text-muted-foreground text-[10px] truncate max-w-[100px]">{store.name}</span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      <span className="text-muted-foreground">{store.contactName || "-"}</span>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm hidden md:table-cell">
+                      -
+                    </TableCell>
+                    <TableCell className="px-1 md:px-4">
+                      <div className="flex justify-center">
+                        <Badge variant="outline" className="px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">לא זמין</Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell className="px-1 md:px-4">
+                      <div className="flex justify-center">
+                        {store.status === 'active' ? (
+                          <Badge className="bg-green-500/20 text-green-400 border-green-500/50 inline-flex w-max items-center gap-0.5 md:gap-1 px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">
+                            <Store className="h-2 w-2 md:h-3 md:w-3" /> <span className="hidden md:inline">עסק מאושר</span><span className="md:hidden">מאושר</span>
+                          </Badge>
+                        ) : (
+                          <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/50 inline-flex w-max items-center gap-0.5 md:gap-1 px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">
+                            <Store className="h-2 w-2 md:h-3 md:w-3" /> <span className="hidden md:inline">ממתין לאישור</span><span className="md:hidden">ממתין</span>
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center px-1 md:px-4">
+                      <div className="flex flex-wrap items-center justify-center gap-1 md:gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="h-6 w-6 md:h-8 md:w-auto p-0 md:px-3 text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20"
+                          onClick={() => handleDeleteStore(store.id)}
+                          disabled={isPending}
+                        >
+                          <Trash2 className="h-3 w-3 md:h-4 md:w-4 md:ml-2" />
+                          <span className="hidden md:inline">מחק עסק יתום</span>
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </div>
