@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Font, renderToStream, Link } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font, renderToStream, Link, Image } from '@react-pdf/renderer';
 import path from 'path';
 import fs from 'fs';
 
@@ -132,7 +132,7 @@ const OrderPDF = ({ order, items, origin }: { order: any, items: any[], origin: 
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
         <View>
-          <RText style={styles.title}>Libero Wholesale</RText>
+          <Image src={`${origin}/libero-w.png`} style={{ width: 160, height: 'auto' }} />
           <RText style={styles.subtitle}>סיכום הזמנה / הצעת מחיר (להפקת חשבונית)</RText>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
