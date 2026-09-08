@@ -131,8 +131,8 @@ const OrderPDF = ({ order, items, origin }: { order: any, items: any[], origin: 
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
-        <View>
-          <Image src={`${origin}/libero-w.png`} style={{ width: 160, height: 'auto' }} />
+        <View style={{ alignItems: 'flex-end' }}>
+          <Image src={`${origin}/libero-w.png`} style={{ width: 160, height: 'auto', alignSelf: 'flex-end', marginRight: -4, marginBottom: 4 }} />
           <RText style={styles.subtitle}>סיכום הזמנה / הצעת מחיר (להפקת חשבונית)</RText>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
