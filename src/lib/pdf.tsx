@@ -36,6 +36,11 @@ const reverseHebrew = (text: string | null | undefined) => {
   return String(text);
 };
 
+const formatNumber = (value: number | string): string => {
+  const num = Number(value);
+  return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+
 const RText = ({ children, style }: { children: React.ReactNode, style?: any }) => {
   const content = React.Children.toArray(children).join('');
   return <Text style={style}>{reverseHebrew(content)}</Text>;
@@ -189,7 +194,7 @@ const OrderPDF = ({ order, items, origin }: { order: any, items: any[], origin: 
             <View style={[styles.tableColTotal, { backgroundColor: '#f4f4f5' }]}><RText style={styles.tableCellHeader}>סה"כ</RText></View>
           </View>
           {items.map((item, i) => (
-            <View key={i}>
+            <View key={i} wrap={false}>
               <View style={styles.tableRow}>
                 <View style={styles.tableColDesc}>
                   <Link src={`${origin}/catalog`} style={{ textDecoration: 'none', color: '#000' }}>
@@ -198,8 +203,8 @@ const OrderPDF = ({ order, items, origin }: { order: any, items: any[], origin: 
                 </View>
                 <View style={styles.tableColMakat}><RText style={styles.tableCell}>{item.barcode || '—'}</RText></View>
                 <View style={styles.tableColQty}><RText style={styles.tableCell}>{item.quantity}</RText></View>
-                <View style={styles.tableColPrice}><RText style={styles.tableCell}>₪ {Number(item.unitPrice).toFixed(2)}</RText></View>
-                <View style={styles.tableColTotal}><RText style={styles.tableCell}>₪ {Number(item.totalPrice).toFixed(2)}</RText></View>
+                <View style={styles.tableColPrice}><RText style={styles.tableCell}>₪ {formatNumber(item.unitPrice)}</RText></View>
+                <View style={styles.tableColTotal}><RText style={styles.tableCell}>₪ {formatNumber(item.totalPrice)}</RText></View>
               </View>
               {((item.testerQuantity !== undefined && item.testerQuantity !== null && item.testerQuantity > 0) || (item.testerQuantity == null && Boolean(item.testerRatio) && item.quantity >= item.testerRatio)) ? (
                 <View style={styles.tableRow}>
@@ -219,19 +224,20 @@ const OrderPDF = ({ order, items, origin }: { order: any, items: any[], origin: 
         </View>
       </View>
 
+      <View wrap={false}>
       <View style={styles.totalSection}>
         <View style={styles.totalBox}>
           <View style={styles.row}>
             <RText style={{ fontWeight: 'normal' }}>:סכום ביניים</RText>
-            <RText style={{ fontWeight: 'normal' }}>₪ {(Number(order.totalAmount) / 1.18).toFixed(2)}</RText>
+            <RText style={{ fontWeight: 'normal' }}>₪ {formatNumber(Number(order.totalAmount) / 1.18)}</RText>
           </View>
           <View style={styles.row}>
             <RText style={{ fontWeight: 'normal' }}>:(18%) מע"מ</RText>
-            <RText style={{ fontWeight: 'normal' }}>₪ {(Number(order.totalAmount) - (Number(order.totalAmount) / 1.18)).toFixed(2)}</RText>
+            <RText style={{ fontWeight: 'normal' }}>₪ {formatNumber(Number(order.totalAmount) - (Number(order.totalAmount) / 1.18))}</RText>
           </View>
           <View style={[styles.row, { marginTop: 5, borderTopWidth: 1, borderTopColor: '#e4e4e7', borderTopStyle: 'solid', paddingTop: 5 }]}>
             <RText style={{ fontWeight: 'bold' }}>:סה"כ לתשלום (כולל מע"מ)</RText>
-            <RText style={{ fontWeight: 'bold' }}>₪ {Number(order.totalAmount).toFixed(2)}</RText>
+            <RText style={{ fontWeight: 'bold' }}>₪ {formatNumber(order.totalAmount)}</RText>
           </View>
         </View>
       </View>
@@ -239,6 +245,7 @@ const OrderPDF = ({ order, items, origin }: { order: any, items: any[], origin: 
       <View style={{ marginTop: 50, textAlign: 'center', fontSize: 10, color: '#71717a' }}>
         <RText>.מסמך זה מיועד להפקת חשבונית ואינו מהווה חשבונית מס</RText>
         <RText>.Libero Wholesale תודה שבחרתם</RText>
+      </View>
       </View>
     </Page>
   </Document>
