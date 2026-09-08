@@ -44,10 +44,13 @@ export async function GET(req: Request) {
 
     // Render and send the New Customer Email
     const customerHtml = await render(React.createElement(NewCustomerNotificationEmail, { 
-      customerName: "ישראל ישראלי",
-      businessName: "חנות טסט",
-      email: "israel@example.com",
-      phone: "050-1234567"
+      store: {
+        name: "חנות טסט",
+        contactName: "ישראל ישראלי",
+        email: "israel@example.com",
+        phone: "050-1234567",
+        address: "רחוב בדיקה 1"
+      }
     }));
 
     await sendEmail({
