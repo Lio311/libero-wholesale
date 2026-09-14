@@ -3,6 +3,10 @@
     {
       "path": "/api/sync-inventory",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/marketing/daily-email",
+      "schedule": "0 12 * * *"
     }
   ]
 }

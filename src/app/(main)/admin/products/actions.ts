@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { products, brands } from "@/lib/db/schema";
+import { products, brands, productChanges } from "@/lib/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -62,7 +62,7 @@ export async function createProduct(formData: FormData) {
       return { error: "Missing required fields or invalid format." };
     }
 
-    await db.insert(products).values({
+    const [inserted] = await db.insert(products).values({
       name,
       barcode,
       brand,
@@ -81,7 +81,15 @@ export async function createProduct(formData: FormData) {
       priceDropPrice,
       testerRatio,
       status: "active",
-    });
+    }).returning({ id: products.id });
+
+    if (!isDraft && inserted) {
+      await db.insert(productChanges).values({
+        productId: inserted.id,
+        changeType: 'new_product',
+        newValue: name
+      });
+    }
 
     revalidatePath("/admin/products");
     revalidatePath("/catalog");
@@ -146,6 +154,9 @@ export async function updateProduct(id: string, formData: FormData) {
     const testerRatio = testerRatioStr ? parseInt(testerRatioStr, 10) : null;
 
     if (!name) return { error: "Name is required." };
+    
+    // Fetch existing to compare for marketing alerts
+    const existing = await db.query.products.findFirst({ where: eq(products.id, id) });
 
     const updateData: any = {
       name,
@@ -178,6 +189,38 @@ export async function updateProduct(id: string, formData: FormData) {
 
     await db.update(products).set(updateData).where(eq(products.id, id));
 
+    if (existing) {
+      // 1. Draft to active
+      if (existing.isDraft && !isDraft) {
+        await db.insert(productChanges).values({
+          productId: id,
+          changeType: 'draft_to_active',
+        });
+      }
+      
+      // 2. Price change (only if it's active now, or became active, but let's log anyway. Email job can filter if draft)
+      if (priceStr && existing.price && parseFloat(existing.price) !== parseFloat(priceStr)) {
+        await db.insert(productChanges).values({
+          productId: id,
+          changeType: 'price_change',
+          oldValue: existing.price.toString(),
+          newValue: parseFloat(priceStr).toString()
+        });
+      }
+      
+      // 3. Back in stock
+      if (stockStr !== null && stockStr !== "") {
+        const newStock = parseInt(stockStr, 10);
+        if (existing.stockQuantity === 0 && newStock > 0) {
+          await db.insert(productChanges).values({
+            productId: id,
+            changeType: 'back_in_stock',
+            newValue: newStock.toString()
+          });
+        }
+      }
+    }
+
     revalidatePath("/admin/products");
     revalidatePath("/catalog");
     return { success: true };
@@ -206,10 +249,25 @@ export async function bulkUpdatePrices(ids: string[], price: number) {
       return { error: "Invalid input." };
     }
     
+    const existingProducts = await db.query.products.findMany({
+      where: inArray(products.id, ids)
+    });
+
     await db.update(products).set({
       price: price.toString(),
       updatedAt: new Date(),
     }).where(inArray(products.id, ids));
+
+    for (const prod of existingProducts) {
+      if (prod.price && parseFloat(prod.price) !== price) {
+        await db.insert(productChanges).values({
+          productId: prod.id,
+          changeType: 'price_change',
+          oldValue: prod.price.toString(),
+          newValue: price.toString()
+        });
+      }
+    }
 
     revalidatePath("/admin/products");
     revalidatePath("/catalog");
@@ -226,10 +284,25 @@ export async function bulkUpdateStatus(ids: string[], isDraft: boolean) {
       return { error: "Invalid input." };
     }
     
+    const existingProducts = await db.query.products.findMany({
+      where: inArray(products.id, ids)
+    });
+
     await db.update(products).set({
       isDraft,
       updatedAt: new Date(),
     }).where(inArray(products.id, ids));
+
+    if (!isDraft) {
+      for (const prod of existingProducts) {
+        if (prod.isDraft) {
+          await db.insert(productChanges).values({
+            productId: prod.id,
+            changeType: 'draft_to_active'
+          });
+        }
+      }
+    }
 
     revalidatePath("/admin/products");
     revalidatePath("/catalog");

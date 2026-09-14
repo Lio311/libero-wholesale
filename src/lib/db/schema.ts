@@ -32,6 +32,7 @@ export const stores = pgTable('stores', {
   isFrozen: boolean('is_frozen').default(false).notNull(),
   frozenReason: text('frozen_reason'),
   status: storeStatusEnum('status').default('pending').notNull(),
+  marketingOptOut: boolean('marketing_opt_out').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -166,5 +167,36 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
   product: one(products, {
     fields: [orderItems.productId],
     references: [products.id],
+  }),
+}));
+
+export const productChangeTypeEnum = pgEnum('product_change_type', ['new_product', 'price_change', 'draft_to_active', 'back_in_stock']);
+
+export const productChanges = pgTable('product_changes', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  productId: uuid('product_id').references(() => products.id).notNull(),
+  changeType: productChangeTypeEnum('change_type').notNull(),
+  oldValue: text('old_value'),
+  newValue: text('new_value'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const marketingEmailLogs = pgTable('marketing_email_logs', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  storeId: uuid('store_id').references(() => stores.id).notNull(),
+  sentAt: timestamp('sent_at').defaultNow().notNull(),
+});
+
+export const productChangesRelations = relations(productChanges, ({ one }) => ({
+  product: one(products, {
+    fields: [productChanges.productId],
+    references: [products.id],
+  }),
+}));
+
+export const marketingEmailLogsRelations = relations(marketingEmailLogs, ({ one }) => ({
+  store: one(stores, {
+    fields: [marketingEmailLogs.storeId],
+    references: [stores.id],
   }),
 }));

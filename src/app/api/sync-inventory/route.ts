@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { products } from "@/lib/db/schema";
+import { products, productChanges } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { wc } from "@/lib/woocommerce";
 import { auth, currentUser } from "@clerk/nextjs/server";
@@ -82,16 +82,30 @@ export async function GET(req: Request) {
     const localProducts = await db.select({
       id: products.id,
       barcode: products.barcode,
+      stockQuantity: products.stockQuantity,
     }).from(products);
 
     // Update local products that match the SKUs from this WooCommerce page
     let batchUpdated = 0;
-    const promises = [];
+    const updatePromises = [];
+    const logPromises = [];
 
     for (const localProd of localProducts) {
       if (localProd.barcode && wcStockMap.has(localProd.barcode)) {
         const wcStock = wcStockMap.get(localProd.barcode);
-        promises.push(
+        
+        // Check if back in stock
+        if (localProd.stockQuantity === 0 && wcStock !== undefined && wcStock > 0) {
+          logPromises.push(
+            db.insert(productChanges).values({
+              productId: localProd.id,
+              changeType: 'back_in_stock',
+              newValue: wcStock.toString()
+            })
+          );
+        }
+
+        updatePromises.push(
           db.update(products)
             .set({ stockQuantity: wcStock, isSynced: true })
             .where(eq(products.id, localProd.id))
@@ -100,8 +114,11 @@ export async function GET(req: Request) {
       }
     }
 
-    // Wait for all DB updates to finish
-    await Promise.all(promises);
+    // Wait for all DB updates and logs to finish
+    await Promise.all(updatePromises);
+    if (logPromises.length > 0) {
+      await Promise.all(logPromises);
+    }
     
     const newTotal = totalUpdated + batchUpdated;
     const format = url.searchParams.get("format");

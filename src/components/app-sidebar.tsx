@@ -23,7 +23,8 @@ import {
   ShoppingCart,
   Box,
   User,
-  FileText
+  FileText,
+  Mail
 } from "lucide-react";
 import { useCartStore } from "@/store/cart"
 import { usePathname } from "next/navigation"
@@ -207,6 +208,15 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                               {pendingStoresCount}
                             </span>
                           )}
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton 
+                          render={<Link href="/admin/marketing-logs" />}
+                          className={`group ${getButtonClass("/admin/marketing-logs")} !no-underline`}
+                        >
+                          <Mail className={getIconClass("/admin/marketing-logs")} />
+                          <span className={pathname === "/admin/marketing-logs" ? "font-semibold text-white" : ""}>יומן דיוורים</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     </SidebarMenu>
