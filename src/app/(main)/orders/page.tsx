@@ -1,24 +1,40 @@
 import { db } from "@/lib/db";
-import { orders } from "@/lib/db/schema";
-import { desc } from "drizzle-orm";
+import { orders, stores } from "@/lib/db/schema";
+import { desc, eq } from "drizzle-orm";
 import { OrdersClient } from "./OrdersClient";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 
 export default async function OrdersPage() {
-  // In a real app, we'd filter by storeId belonging to the current Clerk user.
-  // For demonstration, we fetch the latest orders.
-  const history = await db.query.orders.findMany({
-    orderBy: [desc(orders.createdAt)],
-    limit: 50,
-    with: {
-      orderItems: {
-        with: {
-          product: true
+  const { userId } = await auth();
+
+  if (!userId) {
+    redirect("/sign-in");
+  }
+
+  // Find the store belonging to this user
+  const userStore = await db.query.stores.findFirst({
+    where: eq(stores.clerkUserId, userId)
+  });
+
+  let history: any[] = [];
+
+  if (userStore) {
+    history = await db.query.orders.findMany({
+      where: eq(orders.storeId, userStore.id),
+      orderBy: [desc(orders.createdAt)],
+      limit: 50,
+      with: {
+        orderItems: {
+          with: {
+            product: true
+          }
         }
       }
-    }
-  });
+    });
+  }
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto w-full">
