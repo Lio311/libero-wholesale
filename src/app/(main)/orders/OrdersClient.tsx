@@ -86,11 +86,11 @@ export function OrdersClient({ orders }: OrdersClientProps) {
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow className="border-border hover:bg-transparent">
-              <TableHead className="w-[120px] text-right">מספר הזמנה</TableHead>
-              <TableHead className="w-[200px] text-right">תאריך</TableHead>
-              <TableHead className="w-[180px] text-right">סטטוס הזמנה</TableHead>
-              <TableHead className="text-right">סטטוס תשלום</TableHead>
-              <TableHead className="text-left pl-8">סכום כולל</TableHead>
+              <TableHead className="w-[20%] text-right">מספר הזמנה</TableHead>
+              <TableHead className="w-[20%] text-right">תאריך</TableHead>
+              <TableHead className="w-[20%] text-right">סטטוס הזמנה</TableHead>
+              <TableHead className="w-[20%] text-right">סטטוס תשלום</TableHead>
+              <TableHead className="w-[20%] text-left pl-8">סכום כולל</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
