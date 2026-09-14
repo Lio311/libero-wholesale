@@ -12,7 +12,7 @@ export function MobileHeader() {
   const totalItems = getTotalItems();
 
   return (
-    <div className="relative flex items-center justify-between px-4 md:hidden border-b border-border/40 bg-black/80 backdrop-blur-3xl z-10 shrink-0 shadow-sm h-16">
+    <div className="relative flex items-center justify-between px-4 md:hidden border-b border-border/40 bg-black/80 backdrop-blur-3xl z-10 shrink-0 shadow-sm h-16 pt-[env(safe-area-inset-top)]">
       
       {/* Right side in RTL (first element) */}
       <SidebarTrigger className="h-10 w-10 text-white hover:text-white/80 hover:bg-white/10 rounded-full">

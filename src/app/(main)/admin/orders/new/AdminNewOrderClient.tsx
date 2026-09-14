@@ -217,95 +217,189 @@ export function AdminNewOrderClient({ stores }: { stores: Store[] }) {
       </div>
 
       {items.length > 0 && (
-        <div className="border border-border rounded-xl overflow-x-auto bg-card/30 relative z-10">
-          <Table className="w-full">
-            <TableHeader className="bg-muted/50">
-              <TableRow className="hover:bg-transparent">
-                <TableHead className="w-16 text-center">תמונה</TableHead>
-                <TableHead className="text-right">מוצר</TableHead>
-                <TableHead className="text-center w-[120px]">כמות</TableHead>
-                <TableHead className="text-center w-[120px]">כמות טסטרים</TableHead>
-                <TableHead className="text-center">מחיר יחידה</TableHead>
-                <TableHead className="text-center">סה״כ</TableHead>
-                <TableHead className="w-[50px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {items.map((item) => {
-                const autoTesters = Boolean(item.product.testerRatio) && item.quantity >= item.product.testerRatio! 
-                  ? Math.floor(item.quantity / item.product.testerRatio!) 
-                  : 0;
+        <div className="border border-border rounded-xl overflow-hidden bg-card/30 relative z-10">
+          <div className="hidden md:block overflow-x-auto">
+            <Table className="w-full">
+              <TableHeader className="bg-muted/50">
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="w-16 text-center">תמונה</TableHead>
+                  <TableHead className="text-right">מוצר</TableHead>
+                  <TableHead className="text-center w-[120px]">כמות</TableHead>
+                  <TableHead className="text-center w-[120px]">כמות טסטרים</TableHead>
+                  <TableHead className="text-center">מחיר יחידה</TableHead>
+                  <TableHead className="text-center">סה״כ</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {items.map((item) => {
+                  const autoTesters = Boolean(item.product.testerRatio) && item.quantity >= item.product.testerRatio! 
+                    ? Math.floor(item.quantity / item.product.testerRatio!) 
+                    : 0;
 
-                return (
-                  <TableRow key={item.product.id} className="hover:bg-muted/20">
-                    <TableCell className="p-2">
+                  return (
+                    <TableRow key={item.product.id} className="hover:bg-muted/20">
+                      <TableCell className="p-2">
+                        {item.product.imageUrl ? (
+                          <div className="h-12 w-12 bg-white rounded-md border flex items-center justify-center mx-auto p-1">
+                            <img src={item.product.imageUrl} alt={item.product.name} className="max-h-full max-w-full object-contain" />
+                          </div>
+                        ) : (
+                          <div className="h-12 w-12 bg-muted rounded-md flex items-center justify-center mx-auto text-[10px] text-muted-foreground">אין תמונה</div>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-medium">{item.product.nameHe || item.product.name}</div>
+                        <div className="text-xs text-muted-foreground flex gap-2 mt-1">
+                          <span>{item.product.brandHe || item.product.brand}</span>
+                          {item.product.barcode && <span>• ברקוד: {item.product.barcode}</span>}
+                        </div>
+                        {item.product.testerRatio && (
+                          <div className="text-xs text-green-600 mt-1">
+                            יחס טסטרים מוגדר: 1 ל-{item.product.testerRatio} (מגיע כברירת מחדל {autoTesters})
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-1">
+                          <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => handleUpdateItem(item.product.id, "quantity", item.quantity - 1)}>
+                            <Minus className="w-3 h-3" />
+                          </Button>
+                          <Input 
+                            type="number" 
+                            className="h-6 w-12 text-center p-0" 
+                            value={item.quantity} 
+                            onChange={(e) => handleUpdateItem(item.product.id, "quantity", parseInt(e.target.value) || 0)}
+                          />
+                          <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => handleUpdateItem(item.product.id, "quantity", item.quantity + 1)}>
+                            <Plus className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-1">
+                          <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => handleUpdateItem(item.product.id, "testerQuantity", item.testerQuantity - 1)}>
+                            <Minus className="w-3 h-3" />
+                          </Button>
+                          <Input 
+                            type="number" 
+                            className="h-6 w-12 text-center p-0" 
+                            value={item.testerQuantity} 
+                            onChange={(e) => handleUpdateItem(item.product.id, "testerQuantity", parseInt(e.target.value) || 0)}
+                          />
+                          <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => handleUpdateItem(item.product.id, "testerQuantity", item.testerQuantity + 1)}>
+                            <Plus className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center font-mono" dir="ltr">₪{item.unitPrice.toFixed(2)}</TableCell>
+                      <TableCell className="text-center font-mono font-bold" dir="ltr">₪{(item.quantity * item.unitPrice).toFixed(2)}</TableCell>
+                      <TableCell>
+                        <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteItem(item.product.id)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden space-y-3 p-3">
+            {items.map((item) => {
+              const autoTesters = Boolean(item.product.testerRatio) && item.quantity >= item.product.testerRatio! 
+                ? Math.floor(item.quantity / item.product.testerRatio!) 
+                : 0;
+
+              return (
+                <div key={item.product.id} className="border border-border rounded-xl p-3 bg-card/30 flex flex-col gap-3">
+                  <div className="flex gap-3">
+                    <div className="w-16 h-16 shrink-0">
                       {item.product.imageUrl ? (
-                        <div className="h-12 w-12 bg-white rounded-md border flex items-center justify-center mx-auto p-1">
+                        <div className="h-full w-full bg-white rounded-md border flex items-center justify-center p-1">
                           <img src={item.product.imageUrl} alt={item.product.name} className="max-h-full max-w-full object-contain" />
                         </div>
                       ) : (
-                        <div className="h-12 w-12 bg-muted rounded-md flex items-center justify-center mx-auto text-[10px] text-muted-foreground">אין תמונה</div>
+                        <div className="h-full w-full bg-muted rounded-md flex items-center justify-center text-[10px] text-muted-foreground text-center leading-tight p-1">אין תמונה</div>
                       )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="font-medium">{item.product.nameHe || item.product.name}</div>
-                      <div className="text-xs text-muted-foreground flex gap-2 mt-1">
-                        <span>{item.product.brandHe || item.product.brand}</span>
-                        {item.product.barcode && <span>• ברקוד: {item.product.barcode}</span>}
+                    </div>
+                    <div className="flex-1 flex flex-col justify-start">
+                      <div className="font-medium text-sm line-clamp-2">
+                        {item.product.nameHe || item.product.name}
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {item.product.brandHe || item.product.brand}
                       </div>
                       {item.product.testerRatio && (
                         <div className="text-xs text-green-600 mt-1">
-                          יחס טסטרים מוגדר: 1 ל-{item.product.testerRatio} (מגיע כברירת מחדל {autoTesters})
+                          טסטרים (ברירת מחדל: {autoTesters})
                         </div>
                       )}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex items-center justify-center gap-1">
-                        <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => handleUpdateItem(item.product.id, "quantity", item.quantity - 1)}>
-                          <Minus className="w-3 h-3" />
+                    </div>
+                    <div className="text-left font-mono font-bold text-sm shrink-0" dir="ltr">
+                      ₪{(item.quantity * item.unitPrice).toFixed(2)}
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/50">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[10px] text-muted-foreground text-center">כמות</span>
+                      <div className="flex items-center justify-center gap-2">
+                        <Button variant="outline" size="icon" className="h-9 w-9" onClick={() => handleUpdateItem(item.product.id, "quantity", item.quantity - 1)}>
+                          <Minus className="w-4 h-4" />
                         </Button>
                         <Input 
                           type="number" 
-                          className="h-6 w-12 text-center p-0" 
+                          className="h-9 w-12 text-center p-0 font-bold" 
                           value={item.quantity} 
                           onChange={(e) => handleUpdateItem(item.product.id, "quantity", parseInt(e.target.value) || 0)}
                         />
-                        <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => handleUpdateItem(item.product.id, "quantity", item.quantity + 1)}>
-                          <Plus className="w-3 h-3" />
+                        <Button variant="outline" size="icon" className="h-9 w-9" onClick={() => handleUpdateItem(item.product.id, "quantity", item.quantity + 1)}>
+                          <Plus className="w-4 h-4" />
                         </Button>
                       </div>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex items-center justify-center gap-1">
-                        <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => handleUpdateItem(item.product.id, "testerQuantity", item.testerQuantity - 1)}>
-                          <Minus className="w-3 h-3" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[10px] text-muted-foreground text-center">טסטרים</span>
+                      <div className="flex items-center justify-center gap-2">
+                        <Button variant="outline" size="icon" className="h-9 w-9" onClick={() => handleUpdateItem(item.product.id, "testerQuantity", item.testerQuantity - 1)}>
+                          <Minus className="w-4 h-4" />
                         </Button>
                         <Input 
                           type="number" 
-                          className="h-6 w-12 text-center p-0" 
+                          className="h-9 w-12 text-center p-0 font-bold" 
                           value={item.testerQuantity} 
                           onChange={(e) => handleUpdateItem(item.product.id, "testerQuantity", parseInt(e.target.value) || 0)}
                         />
-                        <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => handleUpdateItem(item.product.id, "testerQuantity", item.testerQuantity + 1)}>
-                          <Plus className="w-3 h-3" />
+                        <Button variant="outline" size="icon" className="h-9 w-9" onClick={() => handleUpdateItem(item.product.id, "testerQuantity", item.testerQuantity + 1)}>
+                          <Plus className="w-4 h-4" />
                         </Button>
                       </div>
-                    </TableCell>
-                    <TableCell className="text-center font-mono" dir="ltr">₪{item.unitPrice.toFixed(2)}</TableCell>
-                    <TableCell className="text-center font-mono font-bold" dir="ltr">₪{(item.quantity * item.unitPrice).toFixed(2)}</TableCell>
-                    <TableCell>
-                      <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteItem(item.product.id)}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                    <span className="text-xs text-muted-foreground" dir="ltr">
+                      ₪{item.unitPrice.toFixed(2)} / יח'
+                    </span>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="text-destructive hover:bg-destructive/10 h-9 w-9"
+                      onClick={() => handleDeleteItem(item.product.id)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
           
           <div className="bg-muted/30 p-4 border-t flex justify-end">
-            <div className="w-64 space-y-2">
+            <div className="w-full sm:w-64 space-y-2">
               <div className="flex justify-between text-sm">
                 <span>סכום ביניים:</span>
                 <span className="font-mono">₪{subTotal.toFixed(2)}</span>
@@ -319,7 +413,7 @@ export function AdminNewOrderClient({ stores }: { stores: Store[] }) {
                 <span className="font-mono text-primary">₪{totalAmount.toFixed(2)}</span>
               </div>
               
-              <Button className="w-full mt-4" onClick={handleSubmit} disabled={isSubmitting}>
+              <Button className="w-full mt-4 h-10" onClick={handleSubmit} disabled={isSubmitting}>
                 {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                 צור הזמנה
               </Button>

@@ -138,7 +138,7 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                               )}
                             </div>
                             <div className="flex flex-col">
-                              <span className="font-medium text-foreground text-[10px] md:text-sm max-w-[60px] md:max-w-none truncate">{user.firstName} {user.lastName}</span>
+                                <span className="font-medium text-foreground text-[10px] md:text-sm max-w-[100px] md:max-w-none truncate">{user.firstName} {user.lastName}</span>
                             </div>
                           </div>
                         </TableCell>
@@ -151,9 +151,9 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                         <TableCell className="px-1 md:px-4">
                           <div className="flex justify-center">
                             {isAdmin ? (
-                              <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/50 px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">מנהל</Badge>
+                              <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/50 px-1 py-0 md:px-2 md:py-0.5 text-[11px] md:text-xs">מנהל</Badge>
                             ) : (
-                              <Badge variant="secondary" className="px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">לקוח</Badge>
+                              <Badge variant="secondary" className="px-1 py-0 md:px-2 md:py-0.5 text-[11px] md:text-xs">לקוח</Badge>
                             )}
                           </div>
                         </TableCell>
@@ -161,11 +161,11 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                           <div className="flex justify-center">
                             {userStore ? (
                               userStore.status === 'active' ? (
-                                <Badge className="bg-green-500/20 text-green-400 border-green-500/50 inline-flex w-max items-center gap-0.5 md:gap-1 px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">
+                                <Badge className="bg-green-500/20 text-green-400 border-green-500/50 inline-flex w-max items-center gap-0.5 md:gap-1 px-1 py-0 md:px-2 md:py-0.5 text-[11px] md:text-xs">
                                   <Store className="h-2 w-2 md:h-3 md:w-3" /> <span className="hidden md:inline">עסק מאושר</span><span className="md:hidden">מאושר</span>
                                 </Badge>
                               ) : (
-                                <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/50 inline-flex w-max items-center gap-0.5 md:gap-1 px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">
+                                <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/50 inline-flex w-max items-center gap-0.5 md:gap-1 px-1 py-0 md:px-2 md:py-0.5 text-[11px] md:text-xs">
                                   <Store className="h-2 w-2 md:h-3 md:w-3" /> <span className="hidden md:inline">ממתין לאישור</span><span className="md:hidden">ממתין</span>
                                 </Badge>
                               )
@@ -180,7 +180,7 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                               <Button 
                                 variant="outline" 
                                 size="sm" 
-                                className="h-6 w-6 md:h-8 md:w-auto p-0 md:px-3 text-green-400 hover:text-green-500 hover:bg-green-500/10 border-green-500/20"
+                                className="h-8 w-8 md:h-8 md:w-auto p-0 md:px-3 text-green-400 hover:text-green-500 hover:bg-green-500/10 border-green-500/20"
                                 onClick={() => handleApproveStore(userStore.id)}
                                 disabled={isPending}
                               >
@@ -192,7 +192,7 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                               <Button 
                                 variant="outline" 
                                 size="sm" 
-                                className="h-6 w-6 md:h-8 md:w-auto p-0 md:px-3 text-muted-foreground border-border cursor-not-allowed opacity-70"
+                                className="h-8 w-8 md:h-8 md:w-auto p-0 md:px-3 text-muted-foreground border-border cursor-not-allowed opacity-70"
                                 disabled
                               >
                                 <ShieldAlert className="h-3 w-3 md:h-4 md:w-4 md:ml-2" />
@@ -202,7 +202,7 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                               <Button 
                                 variant="outline" 
                                 size="sm" 
-                                className={`h-6 w-6 md:h-8 md:w-auto p-0 md:px-3 ${isAdmin ? 'text-orange-400 hover:text-orange-500 hover:bg-orange-500/10 border-orange-500/20' : 'text-blue-400 hover:text-blue-500 hover:bg-blue-500/10 border-blue-500/20'}`}
+                                className={`h-8 w-8 md:h-8 md:w-auto p-0 md:px-3 ${isAdmin ? 'text-orange-400 hover:text-orange-500 hover:bg-orange-500/10 border-orange-500/20' : 'text-blue-400 hover:text-blue-500 hover:bg-blue-500/10 border-blue-500/20'}`}
                                 onClick={() => handleToggleRole(user.id, user.role)}
                                 disabled={isPending}
                               >
@@ -233,7 +233,7 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                           <User className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
                         </div>
                         <div className="flex flex-col">
-                          <span className="font-medium text-destructive text-[10px] md:text-sm max-w-[60px] md:max-w-none truncate">משתמש נמחק</span>
+                          <span className="font-medium text-destructive text-[10px] md:text-sm max-w-[100px] md:max-w-none truncate">משתמש נמחק</span>
                           <span className="text-muted-foreground text-[10px] truncate max-w-[100px]">{store.name}</span>
                         </div>
                       </div>
@@ -246,17 +246,17 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                     </TableCell>
                     <TableCell className="px-1 md:px-4">
                       <div className="flex justify-center">
-                        <Badge variant="outline" className="px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">לא זמין</Badge>
+                        <Badge variant="outline" className="px-1 py-0 md:px-2 md:py-0.5 text-[11px] md:text-xs">לא זמין</Badge>
                       </div>
                     </TableCell>
                     <TableCell className="px-1 md:px-4">
                       <div className="flex justify-center">
                         {store.status === 'active' ? (
-                          <Badge className="bg-green-500/20 text-green-400 border-green-500/50 inline-flex w-max items-center gap-0.5 md:gap-1 px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">
+                          <Badge className="bg-green-500/20 text-green-400 border-green-500/50 inline-flex w-max items-center gap-0.5 md:gap-1 px-1 py-0 md:px-2 md:py-0.5 text-[11px] md:text-xs">
                             <Store className="h-2 w-2 md:h-3 md:w-3" /> <span className="hidden md:inline">עסק מאושר</span><span className="md:hidden">מאושר</span>
                           </Badge>
                         ) : (
-                          <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/50 inline-flex w-max items-center gap-0.5 md:gap-1 px-1 py-0 md:px-2 md:py-0.5 text-[9px] md:text-xs">
+                          <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/50 inline-flex w-max items-center gap-0.5 md:gap-1 px-1 py-0 md:px-2 md:py-0.5 text-[11px] md:text-xs">
                             <Store className="h-2 w-2 md:h-3 md:w-3" /> <span className="hidden md:inline">ממתין לאישור</span><span className="md:hidden">ממתין</span>
                           </Badge>
                         )}
@@ -267,7 +267,7 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="h-6 w-6 md:h-8 md:w-auto p-0 md:px-3 text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20"
+                          className="h-8 w-8 md:h-8 md:w-auto p-0 md:px-3 text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20"
                           onClick={() => handleDeleteStore(store.id)}
                           disabled={isPending}
                         >

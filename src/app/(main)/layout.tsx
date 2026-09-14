@@ -43,7 +43,7 @@ export default async function MainLayout({
         <AppSidebar isAdmin={isAdmin} pendingStoresCount={pendingStoresCount} />
         <main className="flex-1 w-full relative p-0 md:p-4 flex flex-col h-[100dvh]">
           <MobileHeader />
-          <div id="main-scroll-area" className="bg-card w-full h-full md:rounded-[2.5rem] shadow-sm md:border border-border/40 overflow-y-auto relative flex-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div id="main-scroll-area" className="bg-card w-full h-full md:rounded-[2.5rem] shadow-sm md:border border-border/40 overflow-y-auto relative flex-1 pb-[env(safe-area-inset-bottom)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div className={`h-full min-h-max ${isPendingApproval ? 'filter blur-sm pointer-events-none select-none opacity-50' : ''}`}>
               {children}
             </div>

@@ -84,7 +84,7 @@ export function FinanceClient({ stores, totalReceivables, totalCreditExposure }:
           <CardContent>
             <div className="space-y-2 mt-2">
               {storesOverLimit.map(store => (
-                <div key={store.id} className="flex justify-between items-center bg-muted/30 p-2 rounded-md">
+                <div key={store.id} className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-muted/30 p-2 rounded-md gap-1">
                   <span className="font-medium">{store.name}</span>
                   <div className="font-mono text-sm flex gap-4">
                     <span>ניצול: ₪{Number(store.currentBalance).toLocaleString()}</span>
@@ -104,7 +104,7 @@ export function FinanceClient({ stores, totalReceivables, totalCreditExposure }:
           <CardDescription>מצב פיננסי ותנאי תשלום ברמת לקוח</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border border-border overflow-hidden">
+          <div className="rounded-md border border-border overflow-x-auto hidden md:block">
             <Table>
               <TableHeader className="bg-muted/50">
                 <TableRow className="border-border">
@@ -143,6 +143,43 @@ export function FinanceClient({ stores, totalReceivables, totalCreditExposure }:
                 )}
               </TableBody>
             </Table>
+          </div>
+          
+          <div className="md:hidden flex flex-col gap-3">
+            {stores.length === 0 ? (
+              <div className="text-center p-6 text-muted-foreground border border-border rounded-lg">אין נתונים פיננסיים</div>
+            ) : (
+              stores.map((store) => {
+                const balance = Number(store.currentBalance);
+                const limit = Number(store.creditLimit);
+                const available = Math.max(0, limit - balance);
+                
+                return (
+                  <div key={store.id} className="p-4 border border-border rounded-lg bg-card/50 flex flex-col gap-3">
+                    <div className="flex justify-between items-start">
+                      <div className="font-medium">{store.name}</div>
+                      <Badge variant="outline" className="border-border bg-muted/20 text-muted-foreground">
+                        {store.paymentTerms}
+                      </Badge>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm mt-1">
+                      <div className="flex flex-col">
+                        <span className="text-muted-foreground text-xs">מסגרת אשראי</span>
+                        <span className="font-mono">₪{limit.toLocaleString()}</span>
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <span className="text-muted-foreground text-xs">יתרה לניצול</span>
+                        <span className="font-mono text-green-400">₪{available.toLocaleString()}</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center pt-2 border-t border-border/50">
+                      <span className="text-sm font-medium text-muted-foreground">חוב פתוח</span>
+                      <span className="font-mono font-bold text-primary">₪{balance.toLocaleString()}</span>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </CardContent>
       </Card>

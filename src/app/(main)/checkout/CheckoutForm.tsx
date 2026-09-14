@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -14,6 +14,7 @@ export function CheckoutForm({ store }: { store: any }) {
   const { items, getSubtotalPrice, getVatAmount, getTotalPrice, clearCart } = useCartStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const router = useRouter();
 
   if (items.length === 0) {
@@ -68,12 +69,12 @@ export function CheckoutForm({ store }: { store: any }) {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="flex flex-col-reverse lg:grid lg:grid-cols-3 gap-8">
       {/* Checkout Form */}
-      <div className="lg:col-span-2 bg-card p-6 md:p-10 rounded-[2.5rem] border border-border shadow-sm">
+      <div className="lg:col-span-2 bg-card p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border border-border shadow-sm">
         <h2 className="text-2xl font-bold mb-8">פרטי משלוח ויצירת קשר</h2>
         <form id="checkout-form" onSubmit={onSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-2 sm:gap-6">
             <div className="space-y-2">
               <Label htmlFor="businessName">שם העסק (קריאה בלבד)</Label>
               <Input id="businessName" name="businessName" defaultValue={store.name} readOnly className="bg-muted h-12 rounded-xl" />
@@ -84,7 +85,7 @@ export function CheckoutForm({ store }: { store: any }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-2 sm:gap-6">
             <div className="space-y-2">
               <Label htmlFor="customerPhone">טלפון נייד</Label>
               <Input id="customerPhone" name="customerPhone" defaultValue={store.phone} required dir="ltr" className="text-right h-12 rounded-xl" />
@@ -109,8 +110,57 @@ export function CheckoutForm({ store }: { store: any }) {
         </form>
       </div>
 
-      {/* Order Summary */}
-      <div className="bg-card p-6 md:p-8 rounded-[2.5rem] border border-border shadow-sm h-fit sticky top-6">
+      <div className="flex flex-col gap-8">
+        {/* Mobile Order Summary */}
+        <div className="lg:hidden bg-card p-5 rounded-2xl border border-border shadow-sm">
+          <button 
+            type="button"
+            className="w-full flex justify-between items-center font-bold text-lg"
+            onClick={() => setIsSummaryOpen(!isSummaryOpen)}
+          >
+            <span>סיכום הזמנה ({items.length} פריטים)</span>
+            <div className="flex items-center gap-2">
+              <span className="text-primary font-mono">₪{getTotalPrice().toFixed(2)}</span>
+              {isSummaryOpen ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
+            </div>
+          </button>
+          
+          {isSummaryOpen && (
+            <div className="mt-4 pt-4 border-t border-border/50">
+              <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 mb-4">
+                {items.map((item) => (
+                  <div key={item.product.id} className="flex gap-3 items-center">
+                    <div className="relative h-12 w-12 bg-muted/50 rounded-lg border border-border/50 flex-shrink-0">
+                      {item.product.imageUrl && (
+                        <Image src={item.product.imageUrl} alt={item.product.name} fill className="object-contain p-1" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold line-clamp-2">{item.product.nameHe || item.product.name}</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{item.quantity} יחידות</p>
+                    </div>
+                    <div className="text-sm font-bold font-mono">
+                      ₪{(Number(item.product.price) * item.quantity).toFixed(2)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <Separator className="my-4 bg-border/60" />
+              <div className="flex justify-between items-center text-sm mb-2">
+                <span className="text-muted-foreground">סכום ביניים</span>
+                <span className="font-mono font-medium">₪{getSubtotalPrice().toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center text-sm mb-4">
+                <span className="text-muted-foreground">מע"מ (18%)</span>
+                <span className="font-mono font-medium">₪{getVatAmount().toFixed(2)}</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Desktop Order Summary */}
+        <div className="hidden lg:block bg-card p-6 md:p-8 rounded-2xl md:rounded-[2.5rem] border border-border shadow-sm h-fit sticky top-6">
         <h2 className="text-2xl font-bold mb-8">סיכום הזמנה</h2>
         
         <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 mb-8">
@@ -165,6 +215,7 @@ export function CheckoutForm({ store }: { store: any }) {
           {isLoading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
           סיום ושליחת הזמנה
         </Button>
+        </div>
       </div>
     </div>
   );

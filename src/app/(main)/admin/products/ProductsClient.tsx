@@ -394,10 +394,10 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                       <TableCell className="hidden md:table-cell text-center font-mono font-bold text-primary">₪{Number(product.price).toFixed(2)}</TableCell>
                       <TableCell className="text-center p-1 md:p-2">
                         <div className="flex items-center justify-center gap-1 md:gap-2">
-                          <Button onClick={() => handleEdit(product)} variant="ghost" size="icon" className="h-7 w-7 md:h-8 md:w-8 text-muted-foreground hover:text-foreground">
+                          <Button onClick={() => handleEdit(product)} variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
                             <Edit className="h-3 w-3 md:h-4 md:w-4" />
                           </Button>
-                          <Button onClick={() => handleDelete(product.id)} disabled={isDeleting === product.id} variant="ghost" size="icon" className="h-7 w-7 md:h-8 md:w-8 text-muted-foreground hover:text-destructive">
+                          <Button onClick={() => handleDelete(product.id)} disabled={isDeleting === product.id} variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-destructive">
                             {isDeleting === product.id ? <Loader2 className="h-3 w-3 md:h-4 md:w-4 animate-spin" /> : <Trash2 className="h-3 w-3 md:h-4 md:w-4" />}
                           </Button>
                         </div>

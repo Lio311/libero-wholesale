@@ -46,8 +46,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
+  userScalable: true,
 };
 
 export default function RootLayout({
@@ -62,7 +62,7 @@ export default function RootLayout({
         dir="rtl"
         className={`${heebo.variable} ${ibmMono.variable} h-full antialiased`}
       >
-        <body className="h-[100dvh] overflow-hidden flex flex-col font-sans bg-background text-foreground select-none">
+        <body className="h-[100dvh] overflow-hidden flex flex-col font-sans bg-background text-foreground">
           {children}
           <Toaster position="top-center" richColors />
         </body>

@@ -84,17 +84,17 @@ export function BrandDialog({ brand, open, onOpenChange }: BrandDialogProps) {
         <form onSubmit={onSubmit} className="space-y-6 py-4">
           
           <div className="space-y-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right font-medium text-sm">שם (אנגלית)</Label>
-              <Input id="name" name="name" defaultValue={brand?.name || ""} className="col-span-3 rounded-xl border-border bg-background" required />
+            <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4">
+              <Label htmlFor="name" className="text-start sm:text-right font-medium text-sm">שם (אנגלית)</Label>
+              <Input id="name" name="name" defaultValue={brand?.name || ""} className="sm:col-span-3 rounded-xl border-border bg-background" required />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="nameHe" className="text-right font-medium text-sm">שם (עברית)</Label>
-              <Input id="nameHe" name="nameHe" defaultValue={brand?.nameHe || ""} className="col-span-3 rounded-xl border-border bg-background" />
+            <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4">
+              <Label htmlFor="nameHe" className="text-start sm:text-right font-medium text-sm">שם (עברית)</Label>
+              <Input id="nameHe" name="nameHe" defaultValue={brand?.nameHe || ""} className="sm:col-span-3 rounded-xl border-border bg-background" />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right font-medium text-sm">לוגו מותג</Label>
-              <div className="col-span-3 flex items-center gap-3">
+            <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4">
+              <Label className="text-start sm:text-right font-medium text-sm">לוגו מותג</Label>
+              <div className="sm:col-span-3 flex items-center gap-3">
                 <Input id="imageUpload" type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
                 <Label 
                   htmlFor="imageUpload" 

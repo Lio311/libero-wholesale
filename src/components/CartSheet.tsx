@@ -71,21 +71,21 @@ export function CartSheet() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6 sm:h-7 sm:w-7 rounded-none"
+                        className="h-9 w-9 rounded-none"
                         onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                         disabled={item.quantity <= (item.product.minOrderQty || 1)}
                       >
-                        <Minus className="h-3 w-3" />
+                        <Minus className="h-4 w-4" />
                       </Button>
                       <span className="text-xs sm:text-sm w-6 sm:w-8 text-center font-mono">{item.quantity}</span>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6 sm:h-7 sm:w-7 rounded-none"
+                        className="h-9 w-9 rounded-none"
                         onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
                         disabled={item.quantity >= item.product.stockQuantity}
                       >
-                        <Plus className="h-3 w-3" />
+                        <Plus className="h-4 w-4" />
                       </Button>
                     </div>
                     <div className="text-sm font-bold font-mono">

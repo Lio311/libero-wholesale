@@ -7,6 +7,7 @@ import { ShoppingCart, Plus, Minus } from "lucide-react";
 import Image from "next/image";
 import { useCartStore } from "@/store/cart";
 import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ProductTableRowProps {
   product: Product;
@@ -19,6 +20,7 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
   const addItem = useCartStore(state => state.addItem);
   const [qty, setQty] = useState(1);
   const [isExpanded, setIsExpanded] = useState(false);
+  const isMobile = useIsMobile();
   
   const price = product.priceDropPrice ? Number(product.priceDropPrice) : Number(product.price);
   const total = (price * qty).toFixed(2);
@@ -28,7 +30,7 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
   }
 
   const toggleExpand = () => {
-    if (window.innerWidth < 768) {
+    if (isMobile) {
       setIsExpanded(!isExpanded);
     }
   };
@@ -77,7 +79,7 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
           </div>
         </div>
       </TableCell>
-      <TableCell className="text-center font-mono text-[10px] md:text-xs w-[40px] md:w-[80px] px-0.5 md:px-4">{product.size || "-"}</TableCell>
+      <TableCell className="hidden md:table-cell text-center font-mono text-[10px] md:text-xs w-[40px] md:w-[80px] px-0.5 md:px-4">{product.size || "-"}</TableCell>
       <TableCell className="hidden md:table-cell px-1 md:px-4 text-center">
         <div className="flex flex-col items-center justify-center gap-1">
           {brandLogo && (
@@ -88,7 +90,7 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
           <span className="text-xs truncate max-w-[120px] font-medium inline-block text-muted-foreground">{product.brandHe || product.brand || '-'}</span>
         </div>
       </TableCell>
-      <TableCell className="text-center font-medium w-[40px] md:w-[80px] text-[11px] md:text-sm px-0.5 md:px-4">
+      <TableCell className="hidden md:table-cell text-center font-medium w-[40px] md:w-[80px] text-[11px] md:text-sm px-0.5 md:px-4">
         <span dir="ltr" className="inline-block">{product.stockQuantity}</span>
       </TableCell>
       <TableCell className="text-center w-[60px] md:w-[100px] px-0.5 md:px-4">
@@ -151,7 +153,7 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
             <div className="flex justify-between items-center py-2 px-4">
               <span className="font-semibold">כמות</span>
               <div className="flex items-center gap-1 bg-background rounded-md border border-border p-0.5">
-                <Button variant="ghost" size="icon" className="h-7 w-7 rounded-sm shrink-0" onClick={(e) => { e.stopPropagation(); setQty(Math.max(1, qty - 1)); }} disabled={isOutOfStock || qty <= 1}>
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-sm shrink-0" onClick={(e) => { e.stopPropagation(); setQty(Math.max(1, qty - 1)); }} disabled={isOutOfStock || qty <= 1}>
                   <Minus className="h-3 w-3" />
                 </Button>
                 <Input 
@@ -164,10 +166,10 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
                     if (val > product.stockQuantity) val = product.stockQuantity;
                     setQty(val);
                   }}
-                  className="w-10 h-7 border-0 px-1 text-center text-xs font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-10 h-9 border-0 px-1 text-center text-xs font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   disabled={isOutOfStock}
                 />
-                <Button variant="ghost" size="icon" className="h-7 w-7 rounded-sm shrink-0" onClick={(e) => { e.stopPropagation(); setQty(Math.min(product.stockQuantity, qty + 1)); }} disabled={isOutOfStock || qty >= product.stockQuantity}>
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-sm shrink-0" onClick={(e) => { e.stopPropagation(); setQty(Math.min(product.stockQuantity, qty + 1)); }} disabled={isOutOfStock || qty >= product.stockQuantity}>
                   <Plus className="h-3 w-3" />
                 </Button>
               </div>

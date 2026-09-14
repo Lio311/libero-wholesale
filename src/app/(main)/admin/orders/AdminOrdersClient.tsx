@@ -346,7 +346,8 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
 
   return (
     <div className="w-full space-y-6">
-      <div className="border border-border rounded-xl overflow-x-auto bg-card/30 backdrop-blur-md">
+      {/* Desktop Table */}
+      <div className="hidden md:block border border-border rounded-xl overflow-x-auto bg-card/30 backdrop-blur-md">
         <Table className="w-full">
           <TableHeader className="bg-muted/50">
             <TableRow className="border-border hover:bg-transparent">
@@ -466,9 +467,111 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
         </Table>
       </div>
 
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-3">
+        {orders.length === 0 ? (
+          <div className="text-center p-8 text-muted-foreground border border-border rounded-xl bg-card/30">
+            אין הזמנות קודמות
+          </div>
+        ) : (
+          orders.map((order) => (
+            <div key={order.id} className="border border-border rounded-xl p-4 bg-card/30 flex flex-col gap-4">
+              <div className="flex justify-between items-start">
+                <div className="flex flex-col gap-1 cursor-pointer" onClick={() => handleOpenOrder(order)}>
+                  <span className="font-mono font-bold text-primary hover:underline text-lg">#{order.orderNumber}</span>
+                  <span className="font-medium">{order.store?.name || "לקוח מזדמן"}</span>
+                  {order.store?.contactName && <span className="text-xs text-muted-foreground">{order.store.contactName}</span>}
+                </div>
+                <div className="text-left flex flex-col gap-1 cursor-pointer" onClick={() => handleOpenOrder(order)}>
+                  <span className="font-mono font-bold text-lg">₪{Number(order.totalAmount).toFixed(2)}</span>
+                  <span className="text-xs text-muted-foreground">{format(new Date(order.createdAt), "dd/MM/yyyy HH:mm")}</span>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-xs text-muted-foreground">סטטוס הזמנה</span>
+                  {updatingId === order.id ? (
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground h-9">
+                      <Loader2 className="h-4 w-4 animate-spin" /> מעדכן...
+                    </div>
+                  ) : (
+                    <Select value={order.status} onValueChange={(val) => handleStatusChange(order.id, val as string)}>
+                      <SelectTrigger className="w-full h-9 text-xs border-border bg-background" dir="rtl">
+                        <span className="flex-1 text-right">{getStatusLabel(order.status)}</span>
+                      </SelectTrigger>
+                      <SelectContent side="bottom" sideOffset={4} align="end">
+                        <SelectItem value="pending">ממתין</SelectItem>
+                        <SelectItem value="processing">בטיפול</SelectItem>
+                        <SelectItem value="shipped">נשלח</SelectItem>
+                        <SelectItem value="delivered">נמסר</SelectItem>
+                        <SelectItem value="cancelled">בוטל</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-xs text-muted-foreground">סטטוס תשלום</span>
+                  {updatingId === `payment-${order.id}` ? (
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground h-9">
+                      <Loader2 className="h-4 w-4 animate-spin" /> מעדכן...
+                    </div>
+                  ) : (
+                    <Select value={order.paymentStatus} onValueChange={(val) => handlePaymentStatusChange(order.id, val as string)}>
+                      <SelectTrigger className="w-full h-9 text-xs border-border bg-background" dir="rtl">
+                        <span className="flex-1 text-right">{order.paymentStatus === 'paid' ? 'שולם' : 'טרם שולם'}</span>
+                      </SelectTrigger>
+                      <SelectContent side="bottom" sideOffset={4} align="end">
+                        <SelectItem value="paid">שולם</SelectItem>
+                        <SelectItem value="unpaid">טרם שולם</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-3 border-t border-border/50">
+                <div className="text-sm text-muted-foreground">
+                  {order.itemsCount} פריטים
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="h-9 w-9 text-muted-foreground hover:text-primary"
+                    onClick={() => handleDownloadPDF(order)}
+                    title="הורד PDF"
+                  >
+                    <FileDown className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="h-9 w-9 text-muted-foreground hover:text-primary"
+                    onClick={() => handleOpenOrder(order)}
+                    title="צפה וערוך"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="h-9 w-9 text-destructive hover:bg-destructive/10"
+                    onClick={() => handleDeleteOrder(order.id)}
+                    title="מחק הזמנה"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
       {selectedOrder && (
         <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
-          <DialogContent className="w-[95vw] max-w-6xl sm:max-w-6xl max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] px-4 md:px-6">
+          <DialogContent className="w-[95vw] sm:max-w-4xl lg:max-w-6xl max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] px-4 md:px-6">
             <DialogHeader className="pt-2 pl-10 pr-2">
               <DialogTitle className="text-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
@@ -557,81 +660,153 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                 )}
               </div>
 
-              <div className="border border-border rounded-xl overflow-x-auto relative z-10">
-                <Table className="w-full min-w-[500px] md:min-w-full">
-                  <TableHeader className="bg-muted/50">
-                    <TableRow className="hover:bg-transparent">
-                      <TableHead className="w-16 text-center">תמונה</TableHead>
-                      <TableHead className="text-right">מוצר</TableHead>
-                      <TableHead className="text-center w-[120px]">כמות</TableHead>
-                      <TableHead className="text-center">מחיר יחידה</TableHead>
-                      <TableHead className="text-center">סה״כ</TableHead>
-                      <TableHead className="w-[50px]"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {selectedOrder.orderItems?.map((item) => (
-                      <TableRow key={item.id} className="hover:bg-muted/20">
-                        <TableCell className="p-2">
+              <div className="border border-border rounded-xl overflow-hidden relative z-10">
+                <div className="hidden md:block overflow-x-auto">
+                  <Table className="w-full">
+                    <TableHeader className="bg-muted/50">
+                      <TableRow className="hover:bg-transparent">
+                        <TableHead className="w-16 text-center">תמונה</TableHead>
+                        <TableHead className="text-right">מוצר</TableHead>
+                        <TableHead className="text-center w-[120px]">כמות</TableHead>
+                        <TableHead className="text-center">מחיר יחידה</TableHead>
+                        <TableHead className="text-center">סה״כ</TableHead>
+                        <TableHead className="w-[50px]"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {selectedOrder.orderItems?.map((item) => (
+                        <TableRow key={item.id} className="hover:bg-muted/20">
+                          <TableCell className="p-2">
+                            {item.product.imageUrl ? (
+                              <div className="h-12 w-12 bg-white rounded-md border flex items-center justify-center mx-auto p-1">
+                                <img src={item.product.imageUrl} alt={item.product.name} className="max-h-full max-w-full object-contain" />
+                              </div>
+                            ) : (
+                              <div className="h-12 w-12 bg-muted rounded-md flex items-center justify-center mx-auto text-[10px] text-muted-foreground">אין תמונה</div>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Link href={`/catalog`} className="font-medium hover:underline text-primary">
+                              {item.product.nameHe || item.product.name}
+                            </Link>
+                            <div className="text-xs text-muted-foreground flex gap-2 mt-1">
+                              <span>{item.product.brandHe || item.product.brand}</span>
+                              {item.product.barcode && <span>• ברקוד: {item.product.barcode}</span>}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <Button 
+                                variant="outline" 
+                                size="icon" 
+                                className="h-9 w-9" 
+                                disabled={item.quantity <= 1 || updatingItemIds.has(item.id)}
+                                onClick={() => handleUpdateItemQuantity(selectedOrder.id, item.id, item.quantity - 1)}
+                              >
+                                <Minus className="w-4 h-4" />
+                              </Button>
+                              <span className="font-bold text-lg w-6 text-center">
+                                {updatingItemIds.has(item.id) ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : item.quantity}
+                              </span>
+                              <Button 
+                                variant="outline" 
+                                size="icon" 
+                                className="h-9 w-9" 
+                                disabled={updatingItemIds.has(item.id)}
+                                onClick={() => handleUpdateItemQuantity(selectedOrder.id, item.id, item.quantity + 1)}
+                              >
+                                <Plus className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-center font-mono" dir="ltr">₪{Number(item.unitPrice).toFixed(2)}</TableCell>
+                          <TableCell className="text-center font-mono font-bold" dir="ltr">₪{Number(item.totalPrice).toFixed(2)}</TableCell>
+                          <TableCell>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="text-destructive hover:bg-destructive/10 h-9 w-9"
+                              disabled={updatingItemIds.has(item.id)}
+                              onClick={() => handleDeleteItem(selectedOrder.id, item.id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                
+                {/* Mobile Cards */}
+                <div className="md:hidden space-y-3 p-3">
+                  {selectedOrder.orderItems?.map((item) => (
+                    <div key={item.id} className="border border-border rounded-xl p-3 bg-card/30 flex flex-col gap-3">
+                      <div className="flex gap-3">
+                        <div className="w-16 h-16 shrink-0">
                           {item.product.imageUrl ? (
-                            <div className="h-12 w-12 bg-white rounded-md border flex items-center justify-center mx-auto p-1">
+                            <div className="h-full w-full bg-white rounded-md border flex items-center justify-center p-1">
                               <img src={item.product.imageUrl} alt={item.product.name} className="max-h-full max-w-full object-contain" />
                             </div>
                           ) : (
-                            <div className="h-12 w-12 bg-muted rounded-md flex items-center justify-center mx-auto text-[10px] text-muted-foreground">אין תמונה</div>
+                            <div className="h-full w-full bg-muted rounded-md flex items-center justify-center text-[10px] text-muted-foreground text-center leading-tight p-1">אין תמונה</div>
                           )}
-                        </TableCell>
-                        <TableCell>
-                          <Link href={`/catalog`} className="font-medium hover:underline text-primary">
+                        </div>
+                        <div className="flex-1 flex flex-col justify-start">
+                          <Link href={`/catalog`} className="font-medium hover:underline text-primary text-sm line-clamp-2">
                             {item.product.nameHe || item.product.name}
                           </Link>
-                          <div className="text-xs text-muted-foreground flex gap-2 mt-1">
-                            <span>{item.product.brandHe || item.product.brand}</span>
-                            {item.product.barcode && <span>• ברקוד: {item.product.barcode}</span>}
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {item.product.brandHe || item.product.brand}
                           </div>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <Button 
-                              variant="outline" 
-                              size="icon" 
-                              className="h-6 w-6" 
-                              disabled={item.quantity <= 1 || updatingItemIds.has(item.id)}
-                              onClick={() => handleUpdateItemQuantity(selectedOrder.id, item.id, item.quantity - 1)}
-                            >
-                              <Minus className="w-3 h-3" />
-                            </Button>
-                            <span className="font-bold text-lg w-6 text-center">
-                              {updatingItemIds.has(item.id) ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : item.quantity}
-                            </span>
-                            <Button 
-                              variant="outline" 
-                              size="icon" 
-                              className="h-6 w-6" 
-                              disabled={updatingItemIds.has(item.id)}
-                              onClick={() => handleUpdateItemQuantity(selectedOrder.id, item.id, item.quantity + 1)}
-                            >
-                              <Plus className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center font-mono" dir="ltr">₪{Number(item.unitPrice).toFixed(2)}</TableCell>
-                        <TableCell className="text-center font-mono font-bold" dir="ltr">₪{Number(item.totalPrice).toFixed(2)}</TableCell>
-                        <TableCell>
+                        </div>
+                        <div className="text-left font-mono font-bold text-sm shrink-0" dir="ltr">
+                          ₪{Number(item.totalPrice).toFixed(2)}
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                        <div className="flex items-center justify-center gap-3">
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className="h-9 w-9" 
+                            disabled={item.quantity <= 1 || updatingItemIds.has(item.id)}
+                            onClick={() => handleUpdateItemQuantity(selectedOrder.id, item.id, item.quantity - 1)}
+                          >
+                            <Minus className="w-4 h-4" />
+                          </Button>
+                          <span className="font-bold text-lg w-8 text-center">
+                            {updatingItemIds.has(item.id) ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : item.quantity}
+                          </span>
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className="h-9 w-9" 
+                            disabled={updatingItemIds.has(item.id)}
+                            onClick={() => handleUpdateItemQuantity(selectedOrder.id, item.id, item.quantity + 1)}
+                          >
+                            <Plus className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-muted-foreground" dir="ltr">
+                            ₪{Number(item.unitPrice).toFixed(2)} / יח'
+                          </span>
                           <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="text-destructive hover:bg-destructive/10 h-8 w-8"
+                            className="text-destructive hover:bg-destructive/10 h-9 w-9 ml-[-8px]"
                             disabled={updatingItemIds.has(item.id)}
                             onClick={() => handleDeleteItem(selectedOrder.id, item.id)}
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
                 
                 <div className="bg-muted/30 p-4 border-t flex flex-col md:flex-row justify-between items-center gap-4">
                   <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
@@ -639,7 +814,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                     <Input 
                       type="number" 
                       min="0"
-                      className="w-24 h-8 text-center" 
+                      className="w-24 h-9 text-center" 
                       value={discountInput}
                       onChange={(e) => setDiscountInput(e.target.value)}
                       placeholder="0.00"
@@ -647,6 +822,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                     <Button 
                       size="sm" 
                       variant="secondary" 
+                      className="h-9"
                       disabled={updatingId === "discount"}
                       onClick={() => handleUpdateDiscount(selectedOrder.id)}
                     >
@@ -654,7 +830,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                     </Button>
                   </div>
                   <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-                    <Button variant="destructive" size="sm" onClick={() => handleDeleteOrder(selectedOrder.id)}>
+                    <Button variant="destructive" size="sm" className="h-9" onClick={() => handleDeleteOrder(selectedOrder.id)}>
                       <Trash2 className="w-4 h-4 ml-2" />
                       מחק הזמנה
                     </Button>

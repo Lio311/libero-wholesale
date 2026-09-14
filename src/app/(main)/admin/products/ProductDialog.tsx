@@ -124,17 +124,17 @@ export function ProductDialog({ product, open, onOpenChange, brands = [] }: Prod
             <div className="space-y-4">
               <h4 className="font-semibold text-sm text-muted-foreground border-b pb-1">פרטים בסיסיים</h4>
               
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right font-medium text-xs">שם (אנגלית)</Label>
-                <Input id="name" name="name" defaultValue={product?.name || ""} className="col-span-3 rounded-xl border-border bg-background" required />
+              <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4">
+                <Label htmlFor="name" className="text-start sm:text-right font-medium text-xs">שם (אנגלית)</Label>
+                <Input id="name" name="name" defaultValue={product?.name || ""} className="sm:col-span-3 rounded-xl border-border bg-background" required />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="nameHe" className="text-right font-medium text-xs">שם (עברית)</Label>
-                <Input id="nameHe" name="nameHe" defaultValue={product?.nameHe || ""} className="col-span-3 rounded-xl border-border bg-background" />
+              <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4">
+                <Label htmlFor="nameHe" className="text-start sm:text-right font-medium text-xs">שם (עברית)</Label>
+                <Input id="nameHe" name="nameHe" defaultValue={product?.nameHe || ""} className="sm:col-span-3 rounded-xl border-border bg-background" />
               </div>
-              <div className="grid grid-cols-4 items-start gap-4">
-                <Label htmlFor="brandSelect" className="text-right font-medium text-xs mt-3">מותג</Label>
-                <div className="col-span-3 space-y-2">
+              <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-4 sm:items-start sm:gap-4">
+                <Label htmlFor="brandSelect" className="text-start sm:text-right font-medium text-xs mt-3">מותג</Label>
+                <div className="sm:col-span-3 space-y-2">
                   <Select value={selectedBrand} onValueChange={(val) => setSelectedBrand(val || "no_brand")}>
                     <SelectTrigger className="w-full rounded-xl border-border bg-background" dir="rtl">
                       <SelectValue placeholder="בחר מותג...">
@@ -174,17 +174,17 @@ export function ProductDialog({ product, open, onOpenChange, brands = [] }: Prod
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="size" className="text-right font-medium text-xs">גודל (Size)</Label>
-                <Input id="size" name="size" type="number" step="any" defaultValue={product?.size?.replace(/[^0-9.]/g, '') || ""} className="col-span-3 rounded-xl border-border bg-background" />
+              <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4">
+                <Label htmlFor="size" className="text-start sm:text-right font-medium text-xs">גודל (Size)</Label>
+                <Input id="size" name="size" type="number" step="any" defaultValue={product?.size?.replace(/[^0-9.]/g, '') || ""} className="sm:col-span-3 rounded-xl border-border bg-background" />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="barcode" className="text-right font-medium text-xs">מק״ט/ברקוד</Label>
-                <Input id="barcode" name="barcode" defaultValue={product?.barcode || ""} className="col-span-3 rounded-xl border-border bg-background" />
+              <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4">
+                <Label htmlFor="barcode" className="text-start sm:text-right font-medium text-xs">מק״ט/ברקוד</Label>
+                <Input id="barcode" name="barcode" defaultValue={product?.barcode || ""} className="sm:col-span-3 rounded-xl border-border bg-background" />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right font-medium text-xs">העלאת תמונה</Label>
-                <div className="col-span-3 flex items-center gap-3">
+              <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4">
+                <Label className="text-start sm:text-right font-medium text-xs">העלאת תמונה</Label>
+                <div className="sm:col-span-3 flex items-center gap-3">
                   <Input id="imageUpload" type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
                   <Label 
                     htmlFor="imageUpload" 
@@ -210,12 +210,12 @@ export function ProductDialog({ product, open, onOpenChange, brands = [] }: Prod
             <div className="space-y-4">
               <h4 className="font-semibold text-sm text-muted-foreground border-b pb-1">תמחור ומלאי</h4>
 
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="price" className="text-right font-medium text-xs">מחיר רגיל</Label>
-                <Input id="price" name="price" type="number" step="0.01" defaultValue={product?.price || ""} className="col-span-3 rounded-xl border-border bg-background" required />
+              <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4">
+                <Label htmlFor="price" className="text-start sm:text-right font-medium text-xs">מחיר רגיל</Label>
+                <Input id="price" name="price" type="number" step="0.01" defaultValue={product?.price || ""} className="sm:col-span-3 rounded-xl border-border bg-background" required />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="priceDropPrice" className="text-right font-medium text-xs text-red-500">מחיר מבצע</Label>
+              <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4">
+                <Label htmlFor="priceDropPrice" className="text-start sm:text-right font-medium text-xs text-red-500">מחיר מבצע</Label>
                 <Input 
                   id="priceDropPrice" 
                   name="priceDropPrice" 
@@ -229,16 +229,16 @@ export function ProductDialog({ product, open, onOpenChange, brands = [] }: Prod
                       setIsOnSale(false);
                     }
                   }}
-                  className="col-span-3 rounded-xl border-border bg-background" 
+                  className="sm:col-span-3 rounded-xl border-border bg-background" 
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="stockQuantity" className="text-right font-medium text-xs">מלאי זמין</Label>
-                <Input id="stockQuantity" name="stockQuantity" type="number" defaultValue={product?.stockQuantity || 0} className="col-span-3 rounded-xl border-border bg-background" required />
+              <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4">
+                <Label htmlFor="stockQuantity" className="text-start sm:text-right font-medium text-xs">מלאי זמין</Label>
+                <Input id="stockQuantity" name="stockQuantity" type="number" defaultValue={product?.stockQuantity || 0} className="sm:col-span-3 rounded-xl border-border bg-background" required />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="testerRatio" className="text-right font-medium text-xs text-pink-600">יחס טסטרים</Label>
-                <Input id="testerRatio" name="testerRatio" type="number" placeholder="לדוגמה: 6 (1 ל-6)" defaultValue={product?.testerRatio || ""} className="col-span-3 rounded-xl border-border bg-background" />
+              <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-4 sm:items-center sm:gap-4">
+                <Label htmlFor="testerRatio" className="text-start sm:text-right font-medium text-xs text-pink-600">יחס טסטרים</Label>
+                <Input id="testerRatio" name="testerRatio" type="number" placeholder="לדוגמה: 6 (1 ל-6)" defaultValue={product?.testerRatio || ""} className="sm:col-span-3 rounded-xl border-border bg-background" />
               </div>
 
               <h4 className="font-semibold text-sm text-muted-foreground border-b pb-1 mt-6 pt-2">תגיות ותצוגה</h4>

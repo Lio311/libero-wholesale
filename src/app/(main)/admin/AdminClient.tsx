@@ -105,40 +105,68 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
             </div>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader className="bg-muted/50">
-                <TableRow className="border-border">
-                  <TableHead className="text-right">מספר</TableHead>
-                  <TableHead className="text-right">לקוח</TableHead>
-                  <TableHead className="text-right">תאריך</TableHead>
-                  <TableHead className="text-right">סטטוס</TableHead>
-                  <TableHead className="text-left">סכום</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recentOrders.length === 0 ? (
+            <div className="hidden md:block">
+              <Table>
+                <TableHeader className="bg-muted/50">
                   <TableRow className="border-border">
-                    <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">אין הזמנות חדשות</TableCell>
+                    <TableHead className="text-right">מספר</TableHead>
+                    <TableHead className="text-right">לקוח</TableHead>
+                    <TableHead className="text-right">תאריך</TableHead>
+                    <TableHead className="text-right">סטטוס</TableHead>
+                    <TableHead className="text-left">סכום</TableHead>
                   </TableRow>
-                ) : (
-                  recentOrders.map((order) => (
-                    <TableRow key={order.id} className="border-border hover:bg-muted/20 cursor-pointer">
-                      <TableCell className="font-mono">#{order.orderNumber}</TableCell>
-                      <TableCell className="font-medium">{order.store?.name || 'לא ידוע'}</TableCell>
-                      <TableCell className="text-muted-foreground">{format(new Date(order.createdAt), "dd/MM/yyyy")}</TableCell>
-                      <TableCell>
+                </TableHeader>
+                <TableBody>
+                  {recentOrders.length === 0 ? (
+                    <TableRow className="border-border">
+                      <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">אין הזמנות חדשות</TableCell>
+                    </TableRow>
+                  ) : (
+                    recentOrders.map((order) => (
+                      <TableRow key={order.id} className="border-border hover:bg-muted/20 cursor-pointer">
+                        <TableCell className="font-mono">#{order.orderNumber}</TableCell>
+                        <TableCell className="font-medium">{order.store?.name || 'לא ידוע'}</TableCell>
+                        <TableCell className="text-muted-foreground">{format(new Date(order.createdAt), "dd/MM/yyyy")}</TableCell>
+                        <TableCell>
+                          {order.status === "pending" && <Badge variant="secondary">ממתין</Badge>}
+                          {order.status === "processing" && <Badge className="bg-blue-500/20 text-blue-400">בטיפול</Badge>}
+                          {order.status === "shipped" && <Badge className="bg-purple-500/20 text-purple-400">נשלח</Badge>}
+                          {order.status === "delivered" && <Badge className="bg-green-500/20 text-green-400">נמסר</Badge>}
+                          {order.status === "cancelled" && <Badge variant="destructive">בוטל</Badge>}
+                        </TableCell>
+                        <TableCell className="text-left font-mono font-bold">₪{Number(order.totalAmount).toLocaleString()}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+            
+            {/* Mobile Cards */}
+            <div className="md:hidden flex flex-col gap-3">
+              {recentOrders.length === 0 ? (
+                <div className="text-center p-6 text-muted-foreground border border-border rounded-lg">אין הזמנות חדשות</div>
+              ) : (
+                recentOrders.map((order) => (
+                  <div key={order.id} className="p-4 border border-border rounded-lg bg-card/50 flex flex-col gap-2">
+                    <div className="flex justify-between items-start">
+                      <div className="font-medium">{order.store?.name || 'לא ידוע'}</div>
+                      <div className="font-mono text-sm">#{order.orderNumber}</div>
+                    </div>
+                    <div className="flex justify-between items-center mt-2">
+                      <div>
                         {order.status === "pending" && <Badge variant="secondary">ממתין</Badge>}
                         {order.status === "processing" && <Badge className="bg-blue-500/20 text-blue-400">בטיפול</Badge>}
                         {order.status === "shipped" && <Badge className="bg-purple-500/20 text-purple-400">נשלח</Badge>}
                         {order.status === "delivered" && <Badge className="bg-green-500/20 text-green-400">נמסר</Badge>}
                         {order.status === "cancelled" && <Badge variant="destructive">בוטל</Badge>}
-                      </TableCell>
-                      <TableCell className="text-left font-mono font-bold">₪{Number(order.totalAmount).toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+                      </div>
+                      <div className="font-mono font-bold">₪{Number(order.totalAmount).toLocaleString()}</div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </CardContent>
         </Card>
 

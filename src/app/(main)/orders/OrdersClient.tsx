@@ -82,7 +82,7 @@ export function OrdersClient({ orders }: OrdersClientProps) {
         </div>
       </div>
 
-      <div className="border border-border rounded-xl overflow-hidden bg-card/30 backdrop-blur-md">
+      <div className="hidden md:block border border-border rounded-xl overflow-hidden bg-card/30 backdrop-blur-md">
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow className="border-border hover:bg-transparent">
@@ -115,6 +115,35 @@ export function OrdersClient({ orders }: OrdersClientProps) {
             )}
           </TableBody>
         </Table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden flex flex-col gap-4">
+        {orders.length === 0 ? (
+          <div className="text-center p-8 border border-border rounded-xl bg-card/30 text-muted-foreground">
+            אין הזמנות קודמות
+          </div>
+        ) : (
+          orders.map((order) => (
+            <div 
+              key={order.id} 
+              onClick={() => setSelectedOrder(order)} 
+              className="border border-border rounded-xl p-4 bg-card/30 backdrop-blur-md cursor-pointer active:scale-[0.98] transition-transform flex flex-col gap-4 shadow-sm"
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="font-mono font-bold text-lg">#{order.orderNumber}</div>
+                  <div className="text-sm text-muted-foreground mt-0.5">{format(new Date(order.createdAt), "dd/MM/yyyy HH:mm")}</div>
+                </div>
+                <div className="font-mono font-bold text-xl text-primary">₪{Number(order.totalAmount).toFixed(2)}</div>
+              </div>
+              <div className="flex gap-2 items-center">
+                {getStatusBadge(order.status)}
+                {getPaymentBadge(order.paymentStatus)}
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {selectedOrder && (
@@ -152,7 +181,7 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                 </div>
               </div>
 
-              <div className="border border-border rounded-xl overflow-hidden">
+              <div className="hidden md:block border border-border rounded-xl overflow-hidden">
                 <Table>
                   <TableHeader className="bg-muted/50">
                     <TableRow className="hover:bg-transparent">
@@ -194,6 +223,43 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                     ))}
                   </TableBody>
                 </Table>
+              </div>
+
+              {/* Mobile Items View */}
+              <div className="md:hidden space-y-3">
+                <h3 className="font-semibold text-sm text-muted-foreground mb-2">פריטים בהזמנה</h3>
+                {selectedOrder.orderItems?.map((item) => (
+                  <div key={item.id} className="border border-border rounded-xl p-3 flex gap-3 bg-card/50">
+                    <div className="flex-shrink-0">
+                      {item.product.imageUrl ? (
+                        <div className="h-16 w-16 bg-white rounded-md border flex items-center justify-center p-1">
+                          <img src={item.product.imageUrl} alt={item.product.name} className="max-h-full max-w-full object-contain" />
+                        </div>
+                      ) : (
+                        <div className="h-16 w-16 bg-muted rounded-md flex items-center justify-center text-[10px] text-muted-foreground">אין תמונה</div>
+                      )}
+                    </div>
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="font-medium text-sm leading-tight">{item.product.nameHe || item.product.name}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">
+                          {item.product.brandHe || item.product.brand}
+                        </div>
+                        {item.product.testerRatio && item.quantity >= item.product.testerRatio && (
+                          <div className="text-[10px] font-semibold text-green-600 mt-1">
+                            + {Math.floor(item.quantity / item.product.testerRatio)} טסטר מתנה
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex justify-between items-end mt-2">
+                        <div className="text-sm">
+                          כמות: <span className="font-bold">{item.quantity}</span>
+                        </div>
+                        <div className="font-mono font-bold" dir="ltr">₪{Number(item.totalPrice).toFixed(2)}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </DialogContent>

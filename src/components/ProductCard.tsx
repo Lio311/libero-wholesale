@@ -104,11 +104,11 @@ export function ProductCard({ product, brandLogo, onImageClick }: ProductCardPro
           type="number" 
           min={1} 
           defaultValue={1}
-          className="w-12 h-8 px-1 text-center text-xs"
+          className="w-12 h-9 md:h-8 px-1 text-center text-xs"
           id={`qty-${product.id}`}
         />
         <Button 
-          className="flex-1 h-8 rounded-md font-medium text-xs px-2" 
+          className="flex-1 h-9 md:h-8 rounded-md font-medium text-xs px-2" 
           variant={isOutOfStock ? "secondary" : "default"}
           disabled={isOutOfStock}
           onClick={() => {
