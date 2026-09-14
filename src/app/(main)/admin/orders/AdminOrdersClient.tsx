@@ -357,7 +357,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
               <TableHead className="text-center hidden md:table-cell">פריטים</TableHead>
               <TableHead className="text-right">סטטוס הזמנה</TableHead>
               <TableHead className="text-right">סטטוס תשלום</TableHead>
-              <TableHead className="text-left">סכום כולל</TableHead>
+              <TableHead className="text-right">סכום כולל</TableHead>
               <TableHead className="w-[100px] text-center">פעולות</TableHead>
             </TableRow>
           </TableHeader>
@@ -426,7 +426,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                       </Select>
                     )}
                   </TableCell>
-                  <TableCell className="text-left font-mono font-bold cursor-pointer" onClick={() => handleOpenOrder(order)}>
+                  <TableCell className="text-right font-mono font-bold cursor-pointer" onClick={() => handleOpenOrder(order)}>
                     ₪{Number(order.totalAmount).toFixed(2)}
                   </TableCell>
                   <TableCell>
@@ -482,7 +482,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                   <span className="font-medium">{order.store?.name || "לקוח מזדמן"}</span>
                   {order.store?.contactName && <span className="text-xs text-muted-foreground">{order.store.contactName}</span>}
                 </div>
-                <div className="text-left flex flex-col gap-1 cursor-pointer" onClick={() => handleOpenOrder(order)}>
+                <div className="text-right flex flex-col gap-1 cursor-pointer" onClick={() => handleOpenOrder(order)}>
                   <span className="font-mono font-bold text-lg">₪{Number(order.totalAmount).toFixed(2)}</span>
                   <span className="text-xs text-muted-foreground">{format(new Date(order.createdAt), "dd/MM/yyyy HH:mm")}</span>
                 </div>
@@ -760,7 +760,7 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                             {item.product.brandHe || item.product.brand}
                           </div>
                         </div>
-                        <div className="text-left font-mono font-bold text-sm shrink-0" dir="ltr">
+                        <div className="text-right font-mono font-bold text-sm shrink-0" dir="ltr">
                           ₪{Number(item.totalPrice).toFixed(2)}
                         </div>
                       </div>

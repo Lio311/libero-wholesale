@@ -90,7 +90,7 @@ export function OrdersClient({ orders }: OrdersClientProps) {
               <TableHead className="w-[20%] text-right">תאריך</TableHead>
               <TableHead className="w-[20%] text-right">סטטוס הזמנה</TableHead>
               <TableHead className="w-[20%] text-right">סטטוס תשלום</TableHead>
-              <TableHead className="w-[20%] text-left pl-8">סכום כולל</TableHead>
+              <TableHead className="w-[20%] text-right">סכום כולל</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -109,7 +109,7 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                   </TableCell>
                   <TableCell>{getStatusBadge(order.status)}</TableCell>
                   <TableCell>{getPaymentBadge(order.paymentStatus)}</TableCell>
-                  <TableCell className="text-left font-mono font-bold pl-8">₪{Number(order.totalAmount).toFixed(2)}</TableCell>
+                  <TableCell className="text-right font-mono font-bold">₪{Number(order.totalAmount).toFixed(2)}</TableCell>
                 </TableRow>
               ))
             )}

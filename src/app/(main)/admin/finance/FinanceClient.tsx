@@ -110,9 +110,9 @@ export function FinanceClient({ stores, totalReceivables, totalCreditExposure }:
                 <TableRow className="border-border">
                   <TableHead className="text-right">לקוח</TableHead>
                   <TableHead className="text-right">תנאי תשלום</TableHead>
-                  <TableHead className="text-left">מסגרת אשראי</TableHead>
-                  <TableHead className="text-left">יתרה לניצול</TableHead>
-                  <TableHead className="text-left">חוב פתוח (אובליגו)</TableHead>
+                  <TableHead className="text-right">מסגרת אשראי</TableHead>
+                  <TableHead className="text-right">יתרה לניצול</TableHead>
+                  <TableHead className="text-right">חוב פתוח (אובליגו)</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -134,9 +134,9 @@ export function FinanceClient({ stores, totalReceivables, totalCreditExposure }:
                             {store.paymentTerms}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-left font-mono">₪{limit.toLocaleString()}</TableCell>
-                        <TableCell className="text-left font-mono text-green-400">₪{available.toLocaleString()}</TableCell>
-                        <TableCell className="text-left font-mono font-bold text-primary">₪{balance.toLocaleString()}</TableCell>
+                        <TableCell className="text-right font-mono">₪{limit.toLocaleString()}</TableCell>
+                        <TableCell className="text-right font-mono text-green-400">₪{available.toLocaleString()}</TableCell>
+                        <TableCell className="text-right font-mono font-bold text-primary">₪{balance.toLocaleString()}</TableCell>
                       </TableRow>
                     );
                   })

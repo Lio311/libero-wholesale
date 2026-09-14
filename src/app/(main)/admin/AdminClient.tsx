@@ -113,7 +113,7 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
                     <TableHead className="text-right">לקוח</TableHead>
                     <TableHead className="text-right">תאריך</TableHead>
                     <TableHead className="text-right">סטטוס</TableHead>
-                    <TableHead className="text-left">סכום</TableHead>
+                    <TableHead className="text-right">סכום</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -134,7 +134,7 @@ export function AdminClient({ stats, recentOrders }: AdminClientProps) {
                           {order.status === "delivered" && <Badge className="bg-green-500/20 text-green-400">נמסר</Badge>}
                           {order.status === "cancelled" && <Badge variant="destructive">בוטל</Badge>}
                         </TableCell>
-                        <TableCell className="text-left font-mono font-bold">₪{Number(order.totalAmount).toLocaleString()}</TableCell>
+                        <TableCell className="text-right font-mono font-bold">₪{Number(order.totalAmount).toLocaleString()}</TableCell>
                       </TableRow>
                     ))
                   )}
