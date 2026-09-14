@@ -11,9 +11,10 @@ import {
   Tailwind,
   Link
 } from '@react-email/components';
+import { getAppUrl } from '@/lib/email';
 
 export function NewCustomerNotificationEmail({ store }: { store: any }) {
-  const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.libero-wholesale.co.il'}/admin/stores`;
+  const dashboardUrl = `${getAppUrl()}/admin/stores`;
 
   return (
     <Html dir="rtl" lang="he">

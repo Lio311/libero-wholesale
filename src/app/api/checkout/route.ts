@@ -5,9 +5,11 @@ import { orders, orderItems, products, stores } from "@/lib/db/schema";
 import { auth } from "@clerk/nextjs/server";
 import { eq, sql } from "drizzle-orm";
 import { wc } from "@/lib/woocommerce";
-import { getNotificationEmails, sendEmail } from "@/lib/email";
+import { getNotificationEmails, sendEmail, getAppUrl } from "@/lib/email";
 import { render } from "@react-email/components";
 import { NewOrderNotificationEmail } from "@/components/emails/NewOrderNotification";
+import { OrderConfirmationEmail } from "@/components/emails/OrderConfirmation";
+import { generateOrderPDFBuffer } from "@/lib/pdf";
 
 export async function POST(req: Request) {
   try {
@@ -71,6 +73,7 @@ export async function POST(req: Request) {
     }).returning();
 
     // Create order items and update stock (local + WooCommerce)
+    const orderItemsForPdf: any[] = [];
     for (const item of items) {
       const lineTotal = Number(item.product.price) * item.quantity;
       await db.insert(orderItems).values({
@@ -79,6 +82,16 @@ export async function POST(req: Request) {
         quantity: item.quantity,
         unitPrice: item.product.price.toString(),
         totalPrice: lineTotal.toString(),
+      });
+
+      orderItemsForPdf.push({
+        productName: item.product.name || item.product.nameHe || 'מוצר',
+        barcode: item.product.barcode || null,
+        quantity: item.quantity,
+        unitPrice: item.product.price,
+        totalPrice: lineTotal,
+        testerRatio: item.product.testerRatio || null,
+        testerQuantity: null,
       });
       
       // Update local stock
@@ -101,20 +114,49 @@ export async function POST(req: Request) {
       );
     }
 
-    // Send emails and generate PDF invoice (Phase 3)
-    try {
-      const adminEmails = await getNotificationEmails();
-      if (adminEmails.length > 0) {
-        const html = await render(React.createElement(NewOrderNotificationEmail, { order: newOrder }));
-        sendEmail({ // fire and forget
-          to: adminEmails,
-          subject: `הזמנה חדשה התקבלה - #${newOrder.orderNumber}`,
-          html
-        }).catch(err => console.error("Failed to send admin notification email inner:", err));
+    // Generate PDF and send emails (fire and forget)
+    (async () => {
+      try {
+        const origin = getAppUrl();
+
+        // Generate PDF buffer
+        let pdfBuffer: Uint8Array | null = null;
+        try {
+          pdfBuffer = await generateOrderPDFBuffer(newOrder, orderItemsForPdf, origin);
+        } catch (pdfErr) {
+          console.error("Failed to generate order PDF:", pdfErr);
+        }
+
+        const pdfAttachment = pdfBuffer
+          ? [{ filename: `order-${newOrder.orderNumber}.pdf`, content: pdfBuffer, contentType: 'application/pdf' as const }]
+          : undefined;
+
+        // 1. Send admin/supplier notification email with PDF
+        const adminEmails = await getNotificationEmails();
+        if (adminEmails.length > 0) {
+          const adminHtml = await render(React.createElement(NewOrderNotificationEmail, { order: newOrder }));
+          sendEmail({
+            to: adminEmails,
+            subject: `הזמנה חדשה התקבלה - #${newOrder.orderNumber}`,
+            html: adminHtml,
+            attachments: pdfAttachment,
+          }).catch(err => console.error("Failed to send admin notification email:", err));
+        }
+
+        // 2. Send customer confirmation email with PDF
+        if (newOrder.customerEmail) {
+          const customerHtml = await render(React.createElement(OrderConfirmationEmail, { order: newOrder, items: orderItemsForPdf }));
+          sendEmail({
+            to: newOrder.customerEmail,
+            subject: `הזמנתך מ-Libero Wholesale התקבלה - #${newOrder.orderNumber}`,
+            html: customerHtml,
+            attachments: pdfAttachment,
+          }).catch(err => console.error("Failed to send customer confirmation email:", err));
+        }
+      } catch (emailErr) {
+        console.error("Failed to render/send emails:", emailErr);
       }
-    } catch (emailErr) {
-      console.error("Failed to render/send admin notification email:", emailErr);
-    }
+    })();
 
     return NextResponse.json({ success: true, orderId: newOrder.id, orderNumber: newOrder.orderNumber });
   } catch (error) {
@@ -122,3 +164,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+

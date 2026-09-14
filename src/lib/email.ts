@@ -3,6 +3,8 @@ import { db } from './db';
 import { settings } from './db/schema';
 import { eq } from 'drizzle-orm';
 
+const REQUIRED_NOTIFICATION_EMAILS = ['suppliers@libero-il.co.il'];
+
 const transporter = nodemailer.createTransport(
   process.env.GMAIL_ADDRESS && (process.env.GMAIL_APP_PASSWORD || process.env.GMAIL_PASSWORD)
     ? {
@@ -24,27 +26,49 @@ const transporter = nodemailer.createTransport(
 );
 
 export async function getNotificationEmails(): Promise<string[]> {
+  let emails: string[] = ["lior31197@gmail.com", "suppliers@libero-il.co.il"];
   try {
     const record = await db.query.settings.findFirst({
       where: eq(settings.key, "notification_emails")
     });
     if (record && record.value) {
-      return record.value.split(',').map((e: string) => e.trim()).filter(Boolean);
+      emails = record.value.split(',').map((e: string) => e.trim()).filter(Boolean);
     }
   } catch (e) {
     console.error('Error fetching notification emails from settings:', e);
   }
-  return ["lior31197@gmail.com", "suppliers@libero-il.co.il"];
+  // Always ensure required emails are in the list
+  for (const required of REQUIRED_NOTIFICATION_EMAILS) {
+    if (!emails.some(e => e.toLowerCase() === required.toLowerCase())) {
+      emails.push(required);
+    }
+  }
+  return emails;
+}
+
+/**
+ * Returns the application base URL for use in server-side code (emails, PDFs).
+ * Uses APP_URL (server-only) first, then NEXT_PUBLIC_APP_URL, then VERCEL_URL, then hardcoded fallback.
+ */
+export function getAppUrl(): string {
+  if (process.env.APP_URL) return process.env.APP_URL;
+  if (process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes('localhost')) {
+    return process.env.NEXT_PUBLIC_APP_URL;
+  }
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return 'https://www.libero-wholesale.co.il';
 }
 
 export async function sendEmail({
   to,
   subject,
   html,
+  attachments,
 }: {
   to: string | string[];
   subject: string;
   html: string;
+  attachments?: { filename: string; content: Buffer | Uint8Array; contentType?: string }[];
 }) {
   try {
     const from = process.env.GMAIL_ADDRESS || process.env.EMAIL_FROM || '"Libero Wholesale" <noreply@libero.co.il>';
@@ -54,6 +78,11 @@ export async function sendEmail({
       to: toStr,
       subject,
       html,
+      attachments: attachments?.map(a => ({
+        filename: a.filename,
+        content: Buffer.from(a.content),
+        contentType: a.contentType || 'application/pdf',
+      })),
     });
     console.log('Message sent: %s', info.messageId);
     return { success: true, messageId: info.messageId };
