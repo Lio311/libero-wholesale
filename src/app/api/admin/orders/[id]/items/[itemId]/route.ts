@@ -24,41 +24,39 @@ export async function PATCH(
     let stockDelta = 0;
     let productId = "";
 
-    // Using transaction for stock sync
-    await db.transaction(async (tx) => {
-      const item = await tx.query.orderItems.findFirst({
-        where: and(eq(orderItems.id, itemId), eq(orderItems.orderId, id)),
-      });
-
-      if (!item) throw new Error("Order item not found");
-
-      const diff = newQty - item.quantity;
-      stockDelta = -diff; // delta for WC: if diff > 0, we deduct (negative delta)
-      productId = item.productId;
-      const newTotalPrice = newQty * Number(item.unitPrice);
-
-      // Update stock: if diff > 0, we deduct from stock. If diff < 0, we add to stock.
-      // So stockQuantity = stockQuantity - diff
-      await tx.update(products)
-        .set({ stockQuantity: sql`${products.stockQuantity} - ${diff}` })
-        .where(eq(products.id, item.productId));
-
-      // Update order item
-      await tx.update(orderItems)
-        .set({ quantity: newQty, totalPrice: newTotalPrice.toString() })
-        .where(eq(orderItems.id, itemId));
-
-      // Recalculate order total
-      const allItems = await tx.query.orderItems.findMany({ where: eq(orderItems.orderId, id) });
-      const order = await tx.query.orders.findFirst({ where: eq(orders.id, id) });
-      
-      const sum = allItems.reduce((acc, curr) => acc + Number(curr.totalPrice), 0);
-      const finalAmount = Math.max(0, sum - Number(order?.discountAmount || 0));
-
-      await tx.update(orders)
-        .set({ totalAmount: finalAmount.toString(), itemsCount: allItems.length })
-        .where(eq(orders.id, id));
+    // Without transaction for neon-http support
+    const item = await db.query.orderItems.findFirst({
+      where: and(eq(orderItems.id, itemId), eq(orderItems.orderId, id)),
     });
+
+    if (!item) throw new Error("Order item not found");
+
+    const diff = newQty - item.quantity;
+    stockDelta = -diff; // delta for WC: if diff > 0, we deduct (negative delta)
+    productId = item.productId;
+    const newTotalPrice = newQty * Number(item.unitPrice);
+
+    // Update stock: if diff > 0, we deduct from stock. If diff < 0, we add to stock.
+    // So stockQuantity = stockQuantity - diff
+    await db.update(products)
+      .set({ stockQuantity: sql`${products.stockQuantity} - ${diff}` })
+      .where(eq(products.id, item.productId));
+
+    // Update order item
+    await db.update(orderItems)
+      .set({ quantity: newQty, totalPrice: newTotalPrice.toString() })
+      .where(eq(orderItems.id, itemId));
+
+    // Recalculate order total
+    const allItems = await db.query.orderItems.findMany({ where: eq(orderItems.orderId, id) });
+    const order = await db.query.orders.findFirst({ where: eq(orders.id, id) });
+    
+    const sum = allItems.reduce((acc, curr) => acc + Number(curr.totalPrice), 0);
+    const finalAmount = Math.max(0, sum - Number(order?.discountAmount || 0));
+
+    await db.update(orders)
+      .set({ totalAmount: finalAmount.toString(), itemsCount: allItems.length })
+      .where(eq(orders.id, id));
 
     // Sync stock change to WooCommerce (outside transaction, fire-and-forget)
     if (productId && stockDelta !== 0) {
@@ -92,35 +90,34 @@ export async function DELETE(
     let restoredProductId = "";
     let restoredQuantity = 0;
 
-    await db.transaction(async (tx) => {
-      const item = await tx.query.orderItems.findFirst({
-        where: and(eq(orderItems.id, itemId), eq(orderItems.orderId, id)),
-      });
-
-      if (!item) throw new Error("Order item not found");
-
-      restoredProductId = item.productId;
-      restoredQuantity = item.quantity;
-
-      // Restore stock
-      await tx.update(products)
-        .set({ stockQuantity: sql`${products.stockQuantity} + ${item.quantity}` })
-        .where(eq(products.id, item.productId));
-
-      // Delete order item
-      await tx.delete(orderItems).where(eq(orderItems.id, itemId));
-
-      // Recalculate order total
-      const allItems = await tx.query.orderItems.findMany({ where: eq(orderItems.orderId, id) });
-      const order = await tx.query.orders.findFirst({ where: eq(orders.id, id) });
-      
-      const sum = allItems.reduce((acc, curr) => acc + Number(curr.totalPrice), 0);
-      const finalAmount = Math.max(0, sum - Number(order?.discountAmount || 0));
-
-      await tx.update(orders)
-        .set({ totalAmount: finalAmount.toString(), itemsCount: allItems.length })
-        .where(eq(orders.id, id));
+    // Without transaction for neon-http support
+    const item = await db.query.orderItems.findFirst({
+      where: and(eq(orderItems.id, itemId), eq(orderItems.orderId, id)),
     });
+
+    if (!item) throw new Error("Order item not found");
+
+    restoredProductId = item.productId;
+    restoredQuantity = item.quantity;
+
+    // Restore stock
+    await db.update(products)
+      .set({ stockQuantity: sql`${products.stockQuantity} + ${item.quantity}` })
+      .where(eq(products.id, item.productId));
+
+    // Delete order item
+    await db.delete(orderItems).where(eq(orderItems.id, itemId));
+
+    // Recalculate order total
+    const allItems = await db.query.orderItems.findMany({ where: eq(orderItems.orderId, id) });
+    const order = await db.query.orders.findFirst({ where: eq(orders.id, id) });
+    
+    const sum = allItems.reduce((acc, curr) => acc + Number(curr.totalPrice), 0);
+    const finalAmount = Math.max(0, sum - Number(order?.discountAmount || 0));
+
+    await db.update(orders)
+      .set({ totalAmount: finalAmount.toString(), itemsCount: allItems.length })
+      .where(eq(orders.id, id));
 
     // Sync stock restoration to WooCommerce (fire-and-forget)
     if (restoredProductId && restoredQuantity > 0) {
