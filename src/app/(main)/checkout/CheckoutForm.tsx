@@ -107,6 +107,15 @@ export function CheckoutForm({ store }: { store: any }) {
           </div>
 
           {error && <p className="text-destructive font-medium">{error}</p>}
+
+          <Button 
+            type="submit" 
+            disabled={isLoading} 
+            className="w-full h-14 text-lg font-bold rounded-2xl shadow-lg shadow-primary/20 hover:shadow-xl transition-all lg:hidden"
+          >
+            {isLoading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+            סיום ושליחת הזמנה
+          </Button>
         </form>
       </div>
 
