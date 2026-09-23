@@ -12,6 +12,7 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  useSidebar
 } from "@/components/ui/sidebar"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 import { 
@@ -58,6 +59,7 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
   const setIsOpen = useCartStore((state) => state.setIsOpen)
   const totalItems = useCartStore((state) => state.getTotalItems())
   const pathname = usePathname()
+  const { setOpenMobile, isMobile } = useSidebar()
 
   const [openItems, setOpenItems] = useState<string[]>(["main"]);
 
@@ -89,7 +91,10 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
             return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton 
-                  onClick={() => setIsOpen(true)}
+                  onClick={() => {
+                    setIsOpen(true)
+                    if (isMobile) setOpenMobile(false)
+                  }}
                   className={`group ${getButtonClass(item.url)} !no-underline`}
                 >
                   <item.icon className={getIconClass(item.url)} />
@@ -110,6 +115,9 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                 <SidebarMenuButton 
                   render={<Link href={item.url} />}
                   className={`group ${getButtonClass(item.url)} !no-underline`}
+                  onClick={() => {
+                    if (isMobile) setOpenMobile(false)
+                  }}
                 >
                   <item.icon className={getIconClass(item.url)} />
                   <span className={isActive ? "font-semibold text-white" : ""}>{item.title}</span>
@@ -164,6 +172,9 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                         <SidebarMenuButton 
                           render={<Link href="/admin" />}
                           className={`group ${getButtonClass("/admin")} !no-underline`}
+                          onClick={() => {
+                            if (isMobile) setOpenMobile(false)
+                          }}
                         >
                           <Home className={getIconClass("/admin")} />
                           <span className={pathname === "/admin" ? "font-semibold text-white" : ""}>לוח בקרה</span>
@@ -173,6 +184,9 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                         <SidebarMenuButton 
                           render={<Link href="/admin/orders" />}
                           className={`group ${getButtonClass("/admin/orders")} !no-underline`}
+                          onClick={() => {
+                            if (isMobile) setOpenMobile(false)
+                          }}
                         >
                           <ShoppingCart className={getIconClass("/admin/orders")} />
                           <span className={pathname === "/admin/orders" ? "font-semibold text-white" : ""}>ניהול הזמנות</span>
@@ -182,6 +196,9 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                         <SidebarMenuButton 
                           render={<Link href="/admin/products" />}
                           className={`group ${getButtonClass("/admin/products")} !no-underline`}
+                          onClick={() => {
+                            if (isMobile) setOpenMobile(false)
+                          }}
                         >
                           <Box className={getIconClass("/admin/products")} />
                           <span className={pathname === "/admin/products" ? "font-semibold text-white" : ""}>ניהול מוצרים</span>
@@ -191,6 +208,9 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                         <SidebarMenuButton 
                           render={<Link href="/admin/brands" />}
                           className={`group ${getButtonClass("/admin/brands")} !no-underline`}
+                          onClick={() => {
+                            if (isMobile) setOpenMobile(false)
+                          }}
                         >
                           <ShoppingBag className={getIconClass("/admin/brands")} />
                           <span className={pathname === "/admin/brands" ? "font-semibold text-white" : ""}>ניהול מותגים</span>
@@ -200,6 +220,9 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                         <SidebarMenuButton 
                           render={<Link href="/admin/stores" />}
                           className={`group ${getButtonClass("/admin/stores")} !no-underline`}
+                          onClick={() => {
+                            if (isMobile) setOpenMobile(false)
+                          }}
                         >
                           <User className={getIconClass("/admin/stores")} />
                           <span className={pathname === "/admin/stores" ? "font-semibold text-white" : ""}>ניהול לקוחות</span>
@@ -214,6 +237,9 @@ export function AppSidebar({ isAdmin = false, pendingStoresCount = 0 }: { isAdmi
                         <SidebarMenuButton 
                           render={<Link href="/admin/marketing-logs" />}
                           className={`group ${getButtonClass("/admin/marketing-logs")} !no-underline`}
+                          onClick={() => {
+                            if (isMobile) setOpenMobile(false)
+                          }}
                         >
                           <Mail className={getIconClass("/admin/marketing-logs")} />
                           <span className={pathname === "/admin/marketing-logs" ? "font-semibold text-white" : ""}>יומן דיוורים</span>
