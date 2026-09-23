@@ -114,8 +114,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // Generate PDF and send emails (fire and forget)
-    (async () => {
+    // Generate PDF and send emails
+    await (async () => {
       try {
         const origin = getAppUrl();
 
@@ -135,7 +135,7 @@ export async function POST(req: Request) {
         const adminEmails = await getNotificationEmails();
         if (adminEmails.length > 0) {
           const adminHtml = await render(React.createElement(NewOrderNotificationEmail, { order: newOrder }));
-          sendEmail({
+          await sendEmail({
             to: adminEmails,
             subject: `הזמנה חדשה התקבלה - #${newOrder.orderNumber}`,
             html: adminHtml,
@@ -146,9 +146,9 @@ export async function POST(req: Request) {
         // 2. Send customer confirmation email with PDF
         if (newOrder.customerEmail) {
           const customerHtml = await render(React.createElement(OrderConfirmationEmail, { order: newOrder, items: orderItemsForPdf }));
-          sendEmail({
+          await sendEmail({
             to: newOrder.customerEmail,
-            subject: `הזמנתך מ-Libero Wholesale התקבלה - #${newOrder.orderNumber}`,
+            subject: `אישור הזמנה - #${newOrder.orderNumber}`,
             html: customerHtml,
             attachments: pdfAttachment,
           }).catch(err => console.error("Failed to send customer confirmation email:", err));
