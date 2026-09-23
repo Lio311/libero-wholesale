@@ -14,7 +14,7 @@ export default async function AdminFinancePage() {
   const totalCreditExposure = allStores.reduce((acc, store) => acc + Number(store.creditLimit), 0);
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto w-full">
+    <div className="p-4 md:p-8 max-w-[1920px] mx-auto w-full">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">מבט פיננסי ואובליגו</h1>
         <p className="text-muted-foreground mt-2">

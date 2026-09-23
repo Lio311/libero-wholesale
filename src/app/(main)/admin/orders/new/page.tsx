@@ -11,7 +11,7 @@ export default async function AdminNewOrderPage() {
   });
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto w-full">
+    <div className="p-4 md:p-8 max-w-[1920px] mx-auto w-full">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">יצירת הזמנה חדשה</h1>
         <p className="text-muted-foreground mt-2">

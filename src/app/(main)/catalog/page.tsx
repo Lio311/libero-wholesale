@@ -46,7 +46,7 @@ export default async function CatalogPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto w-full">
+    <div className="p-4 md:p-8 max-w-[1920px] mx-auto w-full">
       <div className="mb-4 text-center flex flex-col items-center">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight">קטלוג מוצרים</h1>
         {lastUpdateStr && (

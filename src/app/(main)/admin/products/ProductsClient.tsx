@@ -282,10 +282,10 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
               <Table className="w-full">
               <TableHeader className="bg-muted/50">
                 <TableRow className="border-border">
-                  <TableHead className="w-[50px] pr-4 pl-2 text-center">
+                  <TableHead className="pr-4 pl-2 text-center">
                     <Checkbox checked={isAllSelected} onCheckedChange={toggleAll} aria-label="בחר הכל" />
                   </TableHead>
-                  <TableHead className="text-center w-[50px] md:w-[60px] px-1 md:px-2">תמונה</TableHead>
+                  <TableHead className="text-center px-1 md:px-2">תמונה</TableHead>
                   <TableHead className="hidden md:table-cell text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("barcode")}>
                     מק״ט / ברקוד <SortIcon columnKey="barcode" />
                   </TableHead>
@@ -304,7 +304,7 @@ export function ProductsClient({ products: initialProducts, brands = [] }: Produ
                   <TableHead className="hidden md:table-cell text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort("price")}>
                     <span className="hidden md:inline">מחיר סיטונאי</span><span className="md:hidden">מחיר</span> <SortIcon columnKey="price" />
                   </TableHead>
-                  <TableHead className="text-center w-[70px] md:w-[100px] px-0 md:px-2">פעולות</TableHead>
+                  <TableHead className="text-center px-0 md:px-2">פעולות</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

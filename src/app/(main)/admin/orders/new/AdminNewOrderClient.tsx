@@ -222,13 +222,13 @@ export function AdminNewOrderClient({ stores }: { stores: Store[] }) {
             <Table className="w-full">
               <TableHeader className="bg-muted/50">
                 <TableRow className="hover:bg-transparent">
-                  <TableHead className="w-16 text-center">תמונה</TableHead>
+                  <TableHead className="text-center">תמונה</TableHead>
                   <TableHead className="text-right">מוצר</TableHead>
-                  <TableHead className="text-center w-[120px]">כמות</TableHead>
-                  <TableHead className="text-center w-[120px]">כמות טסטרים</TableHead>
+                  <TableHead className="text-center">כמות</TableHead>
+                  <TableHead className="text-center">כמות טסטרים</TableHead>
                   <TableHead className="text-center">מחיר יחידה</TableHead>
                   <TableHead className="text-center">סה״כ</TableHead>
-                  <TableHead className="w-[50px]"></TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

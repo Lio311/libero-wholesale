@@ -351,14 +351,14 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
         <Table className="w-full">
           <TableHeader className="bg-muted/50">
             <TableRow className="border-border hover:bg-transparent">
-              <TableHead className="w-[100px] text-right">מספר הזמנה</TableHead>
+              <TableHead className="text-right">מספר הזמנה</TableHead>
               <TableHead className="text-right">לקוח / חנות</TableHead>
               <TableHead className="text-right hidden md:table-cell">תאריך</TableHead>
               <TableHead className="text-center hidden md:table-cell">פריטים</TableHead>
               <TableHead className="text-right">סטטוס הזמנה</TableHead>
               <TableHead className="text-right">סטטוס תשלום</TableHead>
               <TableHead className="text-right">סכום כולל</TableHead>
-              <TableHead className="w-[100px] text-center">פעולות</TableHead>
+              <TableHead className="text-center">פעולות</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -665,12 +665,12 @@ export function AdminOrdersClient({ initialOrders }: AdminOrdersClientProps) {
                   <Table className="w-full">
                     <TableHeader className="bg-muted/50">
                       <TableRow className="hover:bg-transparent">
-                        <TableHead className="w-16 text-center">תמונה</TableHead>
+                        <TableHead className="text-center">תמונה</TableHead>
                         <TableHead className="text-right">מוצר</TableHead>
-                        <TableHead className="text-center w-[120px]">כמות</TableHead>
+                        <TableHead className="text-center">כמות</TableHead>
                         <TableHead className="text-center">מחיר יחידה</TableHead>
                         <TableHead className="text-center">סה״כ</TableHead>
-                        <TableHead className="w-[50px]"></TableHead>
+                        <TableHead></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>

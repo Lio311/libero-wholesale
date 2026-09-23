@@ -86,11 +86,11 @@ export function OrdersClient({ orders }: OrdersClientProps) {
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow className="border-border hover:bg-transparent">
-              <TableHead className="w-[20%] text-right">מספר הזמנה</TableHead>
-              <TableHead className="w-[20%] text-right">תאריך</TableHead>
-              <TableHead className="w-[20%] text-right">סטטוס הזמנה</TableHead>
-              <TableHead className="w-[20%] text-right">סטטוס תשלום</TableHead>
-              <TableHead className="w-[20%] text-right">סכום כולל</TableHead>
+              <TableHead className="text-right">מספר הזמנה</TableHead>
+              <TableHead className="text-right">תאריך</TableHead>
+              <TableHead className="text-right">סטטוס הזמנה</TableHead>
+              <TableHead className="text-right">סטטוס תשלום</TableHead>
+              <TableHead className="text-right">סכום כולל</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -185,7 +185,7 @@ export function OrdersClient({ orders }: OrdersClientProps) {
                 <Table>
                   <TableHeader className="bg-muted/50">
                     <TableRow className="hover:bg-transparent">
-                      <TableHead className="w-16 text-center">תמונה</TableHead>
+                      <TableHead className="text-center">תמונה</TableHead>
                       <TableHead className="text-right">מוצר</TableHead>
                       <TableHead className="text-center">כמות</TableHead>
                       <TableHead className="text-center">מחיר יחידה</TableHead>

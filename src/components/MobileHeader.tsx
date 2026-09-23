@@ -12,33 +12,36 @@ export function MobileHeader() {
   const totalItems = getTotalItems();
 
   return (
-    <div className="relative flex items-center justify-between px-4 md:hidden border-b border-border/40 bg-black/80 backdrop-blur-3xl z-10 shrink-0 shadow-sm h-16 pt-[env(safe-area-inset-top)]">
-      
-      {/* Right side in RTL (first element) */}
-      <SidebarTrigger className="h-10 w-10 text-white hover:text-white/80 hover:bg-white/10 rounded-full">
-        <Menu className="h-6 w-6" />
-      </SidebarTrigger>
+    <div className="flex flex-col md:hidden border-b border-border/40 bg-black/80 backdrop-blur-3xl z-10 shrink-0 shadow-sm">
+      <div className="h-[env(safe-area-inset-top)] w-full" />
+      <div className="relative flex items-center justify-between px-4 h-16 w-full">
+        
+        {/* Right side in RTL (first element) */}
+        <SidebarTrigger className="h-10 w-10 text-white hover:text-white/80 hover:bg-white/10 rounded-full">
+          <Menu className="h-6 w-6" />
+        </SidebarTrigger>
 
-      {/* Center Logo */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-        <img src="/libero-w-white.png" alt="Libero Logo" className="h-10 object-contain" />
-      </div>
+        {/* Center Logo */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <img src="/libero-w-white.png" alt="Libero Logo" className="h-10 object-contain" />
+        </div>
 
-      {/* Left side in RTL (last element) */}
-      <div className="flex items-center gap-1">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="relative text-white hover:bg-white/10 hover:text-white rounded-full"
-          onClick={() => setIsOpen(true)}
-        >
-          <ShoppingBag className="h-5 w-5" />
-          {totalItems > 0 && (
-            <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-white text-[10px] font-bold text-black flex items-center justify-center">
-              {totalItems}
-            </span>
-          )}
-        </Button>
+        {/* Left side in RTL (last element) */}
+        <div className="flex items-center gap-1">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="relative text-white hover:bg-white/10 hover:text-white rounded-full"
+            onClick={() => setIsOpen(true)}
+          >
+            <ShoppingBag className="h-5 w-5" />
+            {totalItems > 0 && (
+              <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-white text-[10px] font-bold text-black flex items-center justify-center">
+                {totalItems}
+              </span>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );

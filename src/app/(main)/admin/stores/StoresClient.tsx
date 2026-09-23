@@ -113,7 +113,7 @@ export function StoresClient({ users: initialUsers, stores }: StoresClientProps)
                   <TableHead className="text-right hidden md:table-cell">תאריך</TableHead>
                   <TableHead className="text-center px-1 md:px-4 text-[10px] md:text-sm">הרשאה</TableHead>
                   <TableHead className="text-center px-1 md:px-4 text-[10px] md:text-sm">עסק</TableHead>
-                  <TableHead className="text-center w-auto md:w-[150px] px-1 md:px-4 text-[10px] md:text-sm">פעולות</TableHead>
+                  <TableHead className="text-center px-1 md:px-4 text-[10px] md:text-sm">פעולות</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
