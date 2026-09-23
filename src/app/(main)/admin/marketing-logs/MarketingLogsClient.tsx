@@ -80,7 +80,7 @@ export function MarketingLogsClient({ initialLogs }: { initialLogs: Log[] }) {
         <div className="w-full sm:w-1/2">
           <Select value={typeFilter} onValueChange={(val) => setTypeFilter(val as string)}>
             <SelectTrigger>
-              <SelectValue placeholder="סנן לפי סוג" />
+              <SelectValue placeholder="סנן לפי סוג">{typeFilter === "all" ? "כל המיילים" : TYPE_LABELS[typeFilter]}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">כל המיילים</SelectItem>
