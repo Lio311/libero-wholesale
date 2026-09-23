@@ -15,6 +15,10 @@ export function CheckoutForm({ store }: { store: any }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
+  
+  const hasInitialDetails = Boolean(store.contactName && store.phone && store.address);
+  const [isEditingDetails, setIsEditingDetails] = useState(!hasInitialDetails);
+
   const router = useRouter();
 
   if (items.length === 0) {
@@ -74,32 +78,79 @@ export function CheckoutForm({ store }: { store: any }) {
       <div className="lg:col-span-2 bg-card p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border border-border shadow-sm">
         <h2 className="text-2xl font-bold mb-8">פרטי משלוח ויצירת קשר</h2>
         <form id="checkout-form" onSubmit={onSubmit} className="space-y-6">
-          <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-2 sm:gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="businessName">שם העסק (קריאה בלבד)</Label>
-              <Input id="businessName" name="businessName" defaultValue={store.name} readOnly className="bg-muted h-12 rounded-xl" />
+          {!isEditingDetails ? (
+            <div className="bg-muted/30 border border-border rounded-2xl p-5 space-y-4">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="font-semibold text-lg">פרטי העסק והמשלוח</h3>
+                <Button type="button" variant="ghost" size="sm" onClick={() => setIsEditingDetails(true)}>
+                  עריכה
+                </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-muted-foreground mb-1">שם העסק</p>
+                  <p className="font-medium">{store.name}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground mb-1">איש קשר</p>
+                  <p className="font-medium">{store.contactName}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground mb-1">טלפון</p>
+                  <p className="font-medium" dir="ltr" style={{ textAlign: 'right' }}>{store.phone}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground mb-1">אימייל</p>
+                  <p className="font-medium">{store.email}</p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-muted-foreground mb-1">כתובת משלוח</p>
+                  <p className="font-medium">{store.address}</p>
+                </div>
+              </div>
+              
+              <input type="hidden" name="customerName" value={store.contactName} />
+              <input type="hidden" name="customerPhone" value={store.phone} />
+              <input type="hidden" name="deliveryAddress" value={store.address} />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="customerName">איש קשר</Label>
-              <Input id="customerName" name="customerName" defaultValue={store.contactName} required className="h-12 rounded-xl" />
-            </div>
-          </div>
+          ) : (
+            <div className="space-y-6 border border-border rounded-2xl p-5 bg-card">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold text-lg">עריכת פרטי משלוח</h3>
+                {hasInitialDetails && (
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setIsEditingDetails(false)}>
+                    ביטול
+                  </Button>
+                )}
+              </div>
+              <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-2 sm:gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="businessName">שם העסק (קריאה בלבד)</Label>
+                  <Input id="businessName" name="businessName" defaultValue={store.name} readOnly className="bg-muted h-12 rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="customerName">איש קשר</Label>
+                  <Input id="customerName" name="customerName" defaultValue={store.contactName} required className="h-12 rounded-xl" />
+                </div>
+              </div>
 
-          <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-2 sm:gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="customerPhone">טלפון נייד</Label>
-              <Input id="customerPhone" name="customerPhone" defaultValue={store.phone} required dir="ltr" className="text-right h-12 rounded-xl" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="customerEmail">אימייל (קריאה בלבד)</Label>
-              <Input id="customerEmail" name="customerEmail" defaultValue={store.email} readOnly className="bg-muted text-right h-12 rounded-xl" dir="ltr" />
-            </div>
-          </div>
+              <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-2 sm:gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="customerPhone">טלפון נייד</Label>
+                  <Input id="customerPhone" name="customerPhone" defaultValue={store.phone} required dir="ltr" className="text-right h-12 rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="customerEmail">אימייל (קריאה בלבד)</Label>
+                  <Input id="customerEmail" name="customerEmail" defaultValue={store.email} readOnly className="bg-muted text-right h-12 rounded-xl" dir="ltr" />
+                </div>
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="deliveryAddress">כתובת משלוח</Label>
-            <Input id="deliveryAddress" name="deliveryAddress" defaultValue={store.address} required className="h-12 rounded-xl" />
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="deliveryAddress">כתובת משלוח</Label>
+                <Input id="deliveryAddress" name="deliveryAddress" defaultValue={store.address} required className="h-12 rounded-xl" />
+              </div>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="notes">הערות להזמנה (אופציונלי)</Label>
