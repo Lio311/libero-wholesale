@@ -70,6 +70,11 @@ export function ProductCard({ product, brandLogo, onImageClick }: ProductCardPro
             <CardTitle className="text-xs md:text-sm font-semibold leading-tight mt-0.5 line-clamp-2" title={product.nameHe || product.name}>
               {product.nameHe || product.name}
             </CardTitle>
+            {product.size && (
+              <span className="text-[10px] text-muted-foreground mt-0.5 block">
+                {product.size} {product.size.includes('מ"ל') || product.size.includes('מ״ל') || product.size.toLowerCase().includes('ml') ? '' : 'מ״ל'}
+              </span>
+            )}
           </div>
         </div>
       </CardHeader>

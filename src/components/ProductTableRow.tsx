@@ -62,6 +62,11 @@ export function ProductTableRow({ product, brandLogo, onImageClick }: ProductTab
           <span className="font-semibold text-[11px] md:text-sm truncate w-full whitespace-normal line-clamp-2 md:line-clamp-none leading-tight" title={product.nameHe || product.name}>
             {product.nameHe || product.name}
           </span>
+          {product.size && (
+            <span className="text-[10px] text-muted-foreground md:hidden mt-0.5">
+              {product.size} {product.size.includes('מ"ל') || product.size.includes('מ״ל') || product.size.toLowerCase().includes('ml') ? '' : 'מ״ל'}
+            </span>
+          )}
           <div className="flex flex-wrap items-center justify-center gap-1">
             {product.isOfficialImporter && <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-[9px] px-1 h-4 shadow-none">יבואן רשמי</Badge>}
             {product.isOnSale && <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20 text-[9px] px-1 h-4 shadow-none">מבצע</Badge>}
