@@ -39,7 +39,8 @@ export async function GET(req: Request) {
     await sendEmail({
       to: adminEmails,
       subject: "בדיקת מערכת: הזמנה חדשה התקבלה - #TEST-001",
-      html: orderHtml
+      html: orderHtml,
+      logOptions: { type: 'admin' }
     });
 
     // Render and send the New Customer Email
@@ -56,7 +57,8 @@ export async function GET(req: Request) {
     await sendEmail({
       to: adminEmails,
       subject: "בדיקת מערכת: לקוח חדש ממתין לאישור - חנות טסט",
-      html: customerHtml
+      html: customerHtml,
+      logOptions: { type: 'admin' }
     });
 
     return NextResponse.json({ 

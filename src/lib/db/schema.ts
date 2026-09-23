@@ -116,7 +116,7 @@ export const orderItems = pgTable('order_items', {
 // Transactions Table (Financial Ledger)
 export const transactions = pgTable('transactions', {
   id: uuid('id').defaultRandom().primaryKey(),
-  storeId: uuid('store_id').references(() => stores.id).notNull(),
+  storeId: uuid('store_id').references(() => stores.id),
   type: transactionTypeEnum('type').notNull(),
   amount: decimal('amount', { precision: 12, scale: 2 }).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -181,9 +181,12 @@ export const productChanges = pgTable('product_changes', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
-export const marketingEmailLogs = pgTable('marketing_email_logs', {
+export const emailLogs = pgTable('email_logs', {
+  type: varchar('type', { length: 50 }).notNull(),
+  recipientEmail: varchar('recipient_email', { length: 255 }).notNull(),
+  subject: varchar('subject', { length: 255 }).notNull(),
   id: uuid('id').defaultRandom().primaryKey(),
-  storeId: uuid('store_id').references(() => stores.id).notNull(),
+  storeId: uuid('store_id').references(() => stores.id),
   sentAt: timestamp('sent_at').defaultNow().notNull(),
 });
 
@@ -194,9 +197,9 @@ export const productChangesRelations = relations(productChanges, ({ one }) => ({
   }),
 }));
 
-export const marketingEmailLogsRelations = relations(marketingEmailLogs, ({ one }) => ({
+export const emailLogsRelations = relations(emailLogs, ({ one }) => ({
   store: one(stores, {
-    fields: [marketingEmailLogs.storeId],
+    fields: [emailLogs.storeId],
     references: [stores.id],
   }),
 }));

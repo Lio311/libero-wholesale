@@ -140,6 +140,7 @@ export async function POST(req: Request) {
             subject: `הזמנה חדשה התקבלה - #${newOrder.orderNumber}`,
             html: adminHtml,
             attachments: pdfAttachment,
+            logOptions: { type: 'admin', storeId: newOrder.storeId }
           }).catch(err => console.error("Failed to send admin notification email:", err));
         }
 
@@ -151,6 +152,7 @@ export async function POST(req: Request) {
             subject: `אישור הזמנה - #${newOrder.orderNumber}`,
             html: customerHtml,
             attachments: pdfAttachment,
+            logOptions: { type: 'customer', storeId: newOrder.storeId }
           }).catch(err => console.error("Failed to send customer confirmation email:", err));
         }
       } catch (emailErr) {

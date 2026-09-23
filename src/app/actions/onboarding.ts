@@ -50,7 +50,8 @@ export async function submitOnboarding(formData: FormData) {
         sendEmail({
           to: adminEmails,
           subject: `לקוח חדש ממתין לאישור - ${businessName}`,
-          html
+          html,
+          logOptions: { type: 'admin' }
         }).catch(err => console.error("Failed to send admin notification email inner:", err));
       }
     } catch (emailErr) {

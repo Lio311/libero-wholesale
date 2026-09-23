@@ -155,7 +155,7 @@ export function AdminNewOrderClient({ stores }: { stores: Store[] }) {
       <div className="bg-card/30 border border-border p-6 rounded-xl flex flex-col gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">בחר לקוח</label>
-          <Select value={selectedStoreId} onValueChange={setSelectedStoreId}>
+          <Select value={selectedStoreId} onValueChange={(val) => setSelectedStoreId(val as string)}>
             <SelectTrigger className="w-full md:w-1/2 bg-background border-border" dir="rtl">
               {selectedStoreId ? (
                 <span className="flex-1 text-right">

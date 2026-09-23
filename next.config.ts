@@ -20,6 +20,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   experimental: {
+    // @ts-ignore
     outputFileTracingIncludes: {
       '/api/orders/[id]/pdf': ['./public/fonts/**/*'],
     },

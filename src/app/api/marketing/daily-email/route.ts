@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { productChanges, products, stores, marketingEmailLogs } from "@/lib/db/schema";
+import { productChanges, products, stores, emailLogs } from "@/lib/db/schema";
 import { eq, gte, and, not, inArray, desc } from "drizzle-orm";
 import { sendEmail } from "@/lib/email";
 import { DailyMarketingEmail, ProductChangeInfo } from "@/components/emails/DailyMarketingEmail";
@@ -80,9 +80,9 @@ export async function GET(req: Request) {
     }
 
     // 3. Filter stores that already received an email in the last 24h (to strictly enforce 1 per day if accidentally triggered twice)
-    const recentLogs = await db.select({ storeId: marketingEmailLogs.storeId })
-      .from(marketingEmailLogs)
-      .where(gte(marketingEmailLogs.sentAt, yesterday));
+    const recentLogs = await db.select({ storeId: emailLogs.storeId })
+      .from(emailLogs)
+      .where(gte(emailLogs.sentAt, yesterday));
     
     const sentStoreIds = new Set(recentLogs.map(l => l.storeId));
     
@@ -102,14 +102,11 @@ export async function GET(req: Request) {
       const res = await sendEmail({
         to: store.email,
         subject: "Libero Wholesale - עדכונים חמים על מוצרים ומחירים!",
-        html: html
+        html: html,
+        logOptions: { type: 'marketing', storeId: store.id }
       });
       
       if (res.success) {
-        // Log it
-        await db.insert(marketingEmailLogs).values({
-          storeId: store.id
-        });
         sentCount++;
       }
     }

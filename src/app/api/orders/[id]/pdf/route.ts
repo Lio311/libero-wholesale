@@ -52,7 +52,7 @@ export async function GET(
     const pdfBuffer = await generateOrderPDFBuffer(orderData, itemsData, origin);
     
     // Return PDF
-    return new Response(pdfBuffer, {
+    return new Response(pdfBuffer as any, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',

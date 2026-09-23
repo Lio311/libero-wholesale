@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import { db } from './db';
-import { settings } from './db/schema';
+import { settings, emailLogs } from './db/schema';
 import { eq } from 'drizzle-orm';
 
 const REQUIRED_NOTIFICATION_EMAILS = ['suppliers@libero-il.co.il'];
@@ -64,11 +64,13 @@ export async function sendEmail({
   subject,
   html,
   attachments,
+  logOptions,
 }: {
   to: string | string[];
   subject: string;
   html: string;
   attachments?: { filename: string; content: Buffer | Uint8Array; contentType?: string }[];
+  logOptions?: { type: 'admin' | 'customer' | 'marketing'; storeId?: string | null };
 }) {
   try {
     const from = process.env.GMAIL_ADDRESS || process.env.EMAIL_FROM || '"Libero Wholesale" <noreply@libero.co.il>';
@@ -85,6 +87,18 @@ export async function sendEmail({
       })),
     });
     console.log('Message sent: %s', info.messageId);
+    if (logOptions) {
+      try {
+        await db.insert(emailLogs).values({
+          type: logOptions.type,
+          storeId: logOptions.storeId || null,
+          recipientEmail: toStr,
+          subject: subject
+        });
+      } catch (logErr) {
+        console.error('Failed to log email:', logErr);
+      }
+    }
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('Error sending email:', error);
