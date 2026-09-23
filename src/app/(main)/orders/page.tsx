@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { orders, stores } from "@/lib/db/schema";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, or } from "drizzle-orm";
 import { OrdersClient } from "./OrdersClient";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -19,22 +19,24 @@ export default async function OrdersPage() {
     where: eq(stores.clerkUserId, userId)
   });
 
-  let history: any[] = [];
-
+  const conditions = [eq(orders.clerkUserId, userId)];
+  
   if (userStore) {
-    history = await db.query.orders.findMany({
-      where: eq(orders.storeId, userStore.id),
-      orderBy: [desc(orders.createdAt)],
-      limit: 50,
-      with: {
-        orderItems: {
-          with: {
-            product: true
-          }
+    conditions.push(eq(orders.storeId, userStore.id));
+  }
+
+  const history = await db.query.orders.findMany({
+    where: or(...conditions),
+    orderBy: [desc(orders.createdAt)],
+    limit: 50,
+    with: {
+      orderItems: {
+        with: {
+          product: true
         }
       }
-    });
-  }
+    }
+  });
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto w-full">
