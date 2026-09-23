@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { products, productChanges } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
-import { wc } from "@/lib/woocommerce";
+import { eq, isNotNull } from "drizzle-orm";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { checkIsAdmin } from "@/lib/admin";
 
@@ -37,113 +36,148 @@ export async function GET(req: Request) {
       }
     }
 
-    // WooCommerce page to fetch
-    const wcPage = parseInt(url.searchParams.get("page") || "1", 10);
+    const startPage = parseInt(url.searchParams.get("page") || "1", 10);
     const totalUpdated = parseInt(url.searchParams.get("updated") || "0", 10);
+    
     // If not triggered by a manual secret, we treat it as an automated/admin request
     const isCron = !secret && !isAuthorizedAdmin; 
-
-    console.log(`[Sync] Fetching WooCommerce page ${wcPage}...`);
     
-    // Fetch ONLY ONE page from WooCommerce (100 products max) to avoid 504 timeouts.
-    // We order by modified descending so that the cron job (which only hits page 1) catches the latest changes.
-    const wcUrl = `https://libero-il.co.il/wp-json/wc/v3/products?per_page=100&page=${wcPage}&orderby=modified&order=desc`;
+    const BATCH_SIZE = 50;
+    let currentPage = startPage;
+    let currentTotalUpdated = totalUpdated;
+    let hasMore = true;
+    
+    const startTime = Date.now();
     const credentials = Buffer.from(`${process.env.LIBERO_WC_CK}:${process.env.LIBERO_WC_CS}`).toString('base64');
-    
-    const res = await fetch(wcUrl, {
-      headers: {
-        'Authorization': `Basic ${credentials}`,
-        'Content-Type': 'application/json'
+
+    while (hasMore) {
+      // Safety break for Vercel 60s limit (stop at 45s)
+      if (Date.now() - startTime > 45000) {
+        console.log("[Sync] Approaching time limit, stopping sync loop.");
+        break;
       }
-    });
 
-    if (!res.ok) {
-      return NextResponse.json({ error: "Failed to fetch from WooCommerce", status: res.status });
-    }
+      console.log(`[Sync] Processing local products page ${currentPage}...`);
+      const offset = (currentPage - 1) * BATCH_SIZE;
 
-    const wcProducts = await res.json();
+      // Fetch local products for this batch
+      const localProductsBatch = await db.select({
+        id: products.id,
+        barcode: products.barcode,
+        stockQuantity: products.stockQuantity,
+      }).from(products)
+        .where(isNotNull(products.barcode))
+        .limit(BATCH_SIZE)
+        .offset(offset);
 
-    if (wcProducts.length === 0) {
-      return NextResponse.json({ 
-        success: true, 
-        message: `Sync completed! Total products updated: ${totalUpdated}`
-      });
-    }
-
-    // Map WooCommerce products by SKU
-    const wcStockMap = new Map<string, number>();
-    for (const p of wcProducts) {
-      if (p.sku) {
-        wcStockMap.set(p.sku, p.stock_quantity ?? 0);
+      if (localProductsBatch.length === 0) {
+        hasMore = false;
+        break;
       }
-    }
 
-    // Fetch all local products that have barcodes
-    const localProducts = await db.select({
-      id: products.id,
-      barcode: products.barcode,
-      stockQuantity: products.stockQuantity,
-    }).from(products);
-
-    // Update local products that match the SKUs from this WooCommerce page
-    let batchUpdated = 0;
-    const updatePromises = [];
-    const logPromises = [];
-
-    for (const localProd of localProducts) {
-      if (localProd.barcode && wcStockMap.has(localProd.barcode)) {
-        const wcStock = wcStockMap.get(localProd.barcode);
+      // We chunk the WooCommerce API calls to avoid rate limits (e.g. 10 at a time)
+      let batchUpdated = 0;
+      const updatePromises: Promise<any>[] = [];
+      const logPromises: Promise<any>[] = [];
+      
+      const CHUNK_SIZE = 10;
+      for (let i = 0; i < localProductsBatch.length; i += CHUNK_SIZE) {
+        const chunk = localProductsBatch.slice(i, i + CHUNK_SIZE);
         
-        // Check if back in stock
-        if (localProd.stockQuantity === 0 && wcStock !== undefined && wcStock > 0) {
-          logPromises.push(
-            db.insert(productChanges).values({
-              productId: localProd.id,
-              changeType: 'back_in_stock',
-              newValue: wcStock.toString()
-            })
-          );
-        }
+        // Fetch stock for the chunk in parallel
+        await Promise.all(chunk.map(async (localProd) => {
+          if (!localProd.barcode) return;
+          
+          try {
+            const wcUrl = `https://libero-il.co.il/wp-json/wc/v3/products?sku=${encodeURIComponent(localProd.barcode)}`;
+            const res = await fetch(wcUrl, {
+              headers: {
+                'Authorization': `Basic ${credentials}`,
+                'Content-Type': 'application/json'
+              }
+            });
+            
+            if (res.ok) {
+              const wcData = await res.json();
+              if (wcData && wcData.length > 0) {
+                const wcProduct = wcData[0];
+                const wcStock = wcProduct.stock_quantity ?? 0;
+                
+                // If stock is different or needs sync
+                if (localProd.stockQuantity !== wcStock) {
+                  // Check if back in stock
+                  if (localProd.stockQuantity === 0 && wcStock > 0) {
+                    logPromises.push(
+                      db.insert(productChanges).values({
+                        productId: localProd.id,
+                        changeType: 'back_in_stock',
+                        newValue: wcStock.toString()
+                      })
+                    );
+                  }
 
-        updatePromises.push(
-          db.update(products)
-            .set({ stockQuantity: wcStock, isSynced: true })
-            .where(eq(products.id, localProd.id))
-        );
-        batchUpdated++;
+                  updatePromises.push(
+                    db.update(products)
+                      .set({ stockQuantity: wcStock, isSynced: true })
+                      .where(eq(products.id, localProd.id))
+                  );
+                  batchUpdated++;
+                } else {
+                  // Just mark as synced if it wasn't
+                  updatePromises.push(
+                    db.update(products)
+                      .set({ isSynced: true })
+                      .where(eq(products.id, localProd.id))
+                  );
+                }
+              }
+            }
+          } catch (err) {
+            console.error(`[Sync] Failed to fetch stock for SKU ${localProd.barcode}:`, err);
+          }
+        }));
+      }
+
+      // Wait for all DB updates and logs to finish for this batch
+      if (updatePromises.length > 0) await Promise.all(updatePromises);
+      if (logPromises.length > 0) await Promise.all(logPromises);
+
+      currentTotalUpdated += batchUpdated;
+      hasMore = localProductsBatch.length === BATCH_SIZE;
+
+      // If it's a manual UI request, break after one page so the UI can show progress and loop
+      if (!isCron) {
+        break;
+      }
+      
+      // Otherwise, cron continues to the next page
+      if (hasMore) {
+        currentPage++;
       }
     }
 
-    // Wait for all DB updates and logs to finish
-    await Promise.all(updatePromises);
-    if (logPromises.length > 0) {
-      await Promise.all(logPromises);
-    }
-    
-    const newTotal = totalUpdated + batchUpdated;
     const format = url.searchParams.get("format");
-    const hasMore = wcProducts.length === 100;
 
     if (format === "json") {
       return NextResponse.json({
         success: true,
-        message: `Processed page ${wcPage}, updated ${batchUpdated} products.`,
+        message: `Processed up to page ${currentPage}, total updated ${currentTotalUpdated} products.`,
         hasMore,
-        nextPage: wcPage + 1,
-        totalUpdated: newTotal
+        nextPage: hasMore ? currentPage + 1 : null,
+        totalUpdated: currentTotalUpdated
       });
     }
 
-    // If it's a manual run (browser), return a meta-refresh HTML page so the browser handles pagination.
+    // If it's a manual run (browser) without json format, return meta-refresh HTML
     if (!isCron) {
       if (!hasMore) {
         return NextResponse.json({ 
           success: true, 
-          message: `Sync completed! Total products updated: ${newTotal}`
+          message: `Sync completed! Total products updated: ${currentTotalUpdated}`
         });
       }
 
-      const nextUrl = `/api/sync-inventory?secret=${secret}&page=${wcPage + 1}&updated=${newTotal}`;
+      const nextUrl = `/api/sync-inventory?secret=${secret}&page=${currentPage + 1}&updated=${currentTotalUpdated}`;
       
       const html = `
         <html dir="rtl">
@@ -159,9 +193,9 @@ export async function GET(req: Request) {
           <body>
             <div class="loader"></div>
             <h2>מסנכרן מלאי מול WooCommerce...</h2>
-            <p>מעבד עמוד ${wcPage}. עודכנו ${batchUpdated} מוצרים בחלק זה.</p>
-            <p>סה"כ עודכנו עד כה: ${newTotal}</p>
-            <p>עובר לעמוד ${wcPage + 1} באופן אוטומטי בעוד שניה...</p>
+            <p>מעבד עמוד ${currentPage}. עודכנו מוצרים בחלק זה.</p>
+            <p>סה"כ עודכנו עד כה: ${currentTotalUpdated}</p>
+            <p>עובר לעמוד הבא באופן אוטומטי בעוד שניה...</p>
             <p><small>נא לא לסגור את העמוד עד לקבלת הודעת סיום!</small></p>
           </body>
         </html>
@@ -169,12 +203,10 @@ export async function GET(req: Request) {
       return new NextResponse(html, { headers: { "Content-Type": "text/html" } });
     }
 
-    // Fallback for cron: just return success for this batch (Cron will only sync page 1 right now, 
-    // to make it sync all pages via cron we would need an external queue or GitHub Actions, 
-    // but the manual browser sync will work perfectly for the full catalog).
+    // Fallback for cron success response
     return NextResponse.json({ 
       success: true, 
-      message: `Cron: Processed page ${wcPage}, updated ${batchUpdated} products.`
+      message: `Cron sync completed up to page ${currentPage}. Total updated: ${currentTotalUpdated}`
     });
 
   } catch (error) {
@@ -182,3 +214,4 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+
